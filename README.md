@@ -5,11 +5,12 @@ of object recognition. Each sample in the dataset is represented by a shape,
 color and texture value. The repository contains 3 folders:
 
 ### 1. Data
-This is where your toy data sets will be saved to and loaded from.
+This is where the artificial toy data sets will be saved to and loaded from.
 
 ### 2. Notebooks
 This folder contains a collection of Jupyter Notebooks for various small tasks,
-such as synthesizing the artificial dataset and wrangling the data once created.
+such as synthesizing the artificial data sets and wrangling the data once
+synthesized.
 
 ### 3. Scripts
 This folder contains Python scripts for running the core experiments. Here you
