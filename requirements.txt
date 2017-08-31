@@ -1,0 +1,5 @@
+numpy
+pandas
+scikit-learn
+tensorflow
+Keras >= 2.0
