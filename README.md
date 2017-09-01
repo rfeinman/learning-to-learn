@@ -31,14 +31,11 @@ For the first experiments, I used a single-layer perceptron with 30 hidden
 units. The datasets were one-hot-encoded, meaning that there is one element in
 the input vector for each possible feature category.
 
-1.
-data set: 10 categories, 2 exemplars per category, 10 textures, 10 colors
+data set: 10 categories, 2 exemplars per category, 10 textures, 10 colors \
 result: 100% classification accuracy after 68 epochs
 
-2.
-data set: 100 categories, 5 exemplars per category, 20 textures, 20 colors
+data set: 100 categories, 5 exemplars per category, 20 textures, 20 colors \
 result: 100% classification accuracy after 63 epochs
 
-3.
-data set: 1000 categories, 10 exemplars per category, 20 textures, 20 colors
+data set: 1000 categories, 10 exemplars per category, 20 textures, 20 colors \
 result: 100% classification accuracy after 50 epochs
