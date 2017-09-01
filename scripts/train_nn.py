@@ -37,9 +37,11 @@ def build_NN(nb_in, nb_classes):
     :return: (keras Sequential) a compiled keras model
     """
     model = Sequential()
-    model.add(Dense(30, input_dim=nb_in, kernel_regularizer=l2(0.01)))
+    #model.add(Dense(30, input_dim=nb_in, kernel_regularizer=l2(0.01)))
+    model.add(Dense(30, input_dim=nb_in))
     model.add(Activation('relu'))
-    model.add(Dense(nb_classes, kernel_regularizer=l2(0.01)))
+    #model.add(Dense(nb_classes, kernel_regularizer=l2(0.01)))
+    model.add(Dense(nb_classes))
     model.add(Activation('softmax'))
     model.compile(
         loss='categorical_crossentropy',
@@ -64,7 +66,7 @@ def main(args):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25)
     # build a neural network model and train it with the training set
     model = build_NN(X.shape[-1], Y.shape[-1])
-    model.fit(X_train, Y_train, epochs=args.nb_epochs)
+    model.fit(X_train, Y_train, epochs=args.nb_epochs, shuffle=True)
     loss, acc = model.evaluate(X_train, Y_train)
     print('Accuracy: %0.02f%%' % (acc*100))
 
@@ -72,15 +74,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--data_path',
                         help='The path to the data CSV file.',
-                        required=False, type=str)
+                        required=True, type=str)
     parser.add_argument('-l', '--labels_path',
                         help='The path to the labels text file.',
-                        required=False, type=str)
+                        required=True, type=str)
     parser.add_argument('-e', '--nb_epochs',
                         help='The number of epochs to train for.',
                         required=False, type=int)
-    parser.set_defaults(data_path='../data/smith_objects.csv')
-    parser.set_defaults(labels_path='../data/smith_labels.csv')
     parser.set_defaults(nb_epochs=20)
     args = parser.parse_args()
     main(args)
