@@ -2,7 +2,7 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Activation
 #from keras.regularizers import l2
 
-def build_NN(nb_in, nb_classes):
+def simple_mlp(nb_in, nb_classes):
     """
     Construct a basic one-layer neural net using keras Sequential.
     :param nb_in: (int) the size of the input vector

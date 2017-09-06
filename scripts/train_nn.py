@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from toy_neuralnet.models import build_NN
+from toy_neuralnet.models import simple_mlp
 from toy_neuralnet.util import preprocess_data
 
 def main(args):
@@ -23,7 +23,7 @@ def main(args):
     # split the data set into train-test
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25)
     # build a neural network model and train it with the training set
-    model = build_NN(X.shape[-1], Y.shape[-1])
+    model = simple_mlp(X.shape[-1], Y.shape[-1])
     model.fit(X_train, Y_train, epochs=args.nb_epochs, shuffle=True)
     loss, acc = model.evaluate(X_train, Y_train)
     print('\n Holdout accuracy: %0.02f%%' % (acc*100))
