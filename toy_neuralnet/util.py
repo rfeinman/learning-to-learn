@@ -73,3 +73,34 @@ def preprocess_data(df, labels, one_hot=False, nb_bits=None):
     Y = ohe.fit_transform(y.reshape(-1, 1))
 
     return X, Y
+
+def synthesize_data(nb_categories, nb_exemplars, nb_textures, nb_colors):
+    """
+    TODO
+    :param nb_categories:
+    :param nb_exemplars:
+    :param nb_textures:
+    :param nb_colors:
+    :return:
+    """
+    # keep a running list of the dataframe chunks
+    df_chunks = []
+    # intialize labels
+    labels = []
+    for cat in range(nb_categories):
+        # create placeholder array for this segment of the data
+        arr = np.zeros((nb_exemplars, 3), dtype=np.int16)
+        # shape is always correlated with the category
+        arr[:,0] = cat
+        # color and texture are generated at random
+        arr[:,1] = np.random.choice(range(nb_textures), nb_exemplars,
+                                    replace=True)
+        arr[:,2] = np.random.choice(range(nb_colors), nb_exemplars,
+                                    replace=True)
+        # create a dataframe chunk with arr, append it to the list of chunks
+        df_chunks.append(pd.DataFrame(arr, columns=['shape', 'color',
+                                                    'texture'], dtype=np.int16))
+        # add to labels
+        labels.extend(['obj%i' % cat for i in range(nb_exemplars)])
+    # concatenate df chunks, turn labels list into series, return
+    return pd.concat(df_chunks), pd.Series(labels)
