@@ -1,3 +1,4 @@
+*.pyc
 .idea/
 data/*.csv
 notebooks/scratch_pad.ipynb
