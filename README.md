@@ -25,9 +25,12 @@ This folder contains a collection of Jupyter Notebooks for various small tasks,
 such as synthesizing the artificial data sets and wrangling the data once
 synthesized.
 
+### 3. Toy-neuralnet
+This folder contains core reusable source code for the experiments.
+
 ### 3. Scripts
-This folder contains Python scripts for running the core experiments. Here you
-will find code for training a neural network model and evaluating its
+This folder contains short Python scripts for running some experiments. Here
+you will find scripts for training a neural network model and evaluating its
 performance.
 
 ## Demo
