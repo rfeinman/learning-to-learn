@@ -1,3 +1,4 @@
 .idea/
 data/*.csv
+notebooks/scratch_pad.ipynb
 notebooks/.ipynb_checkpoints/
