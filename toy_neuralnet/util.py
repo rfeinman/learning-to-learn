@@ -53,10 +53,16 @@ def preprocess_data(df, labels, one_hot=False, nb_bits=None):
     :param nb_bits:
     :return:
     """
+    # check on form of the dataframe
+    cols = df.columns.tolist()
+    assert len(cols) == 3
+    assert 'shape' in cols and 'color' in cols and 'texture' in cols
+    # warn if nb_bits is provided but will not be used
     if one_hot and nb_bits is not None:
         warnings.warn('nb_bits parameter is not used when one_hot=True.')
+    # encode the categorical variables
     if one_hot:
-        # one-hot-encode the categorical variables in the dataset
+        # one-hot-encode the categorical variables in the data set
         df = pd.get_dummies(df, columns=['shape', 'color', 'texture'])
         X = df.values
     else:

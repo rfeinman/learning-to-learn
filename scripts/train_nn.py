@@ -1,3 +1,7 @@
+"""
+Train a simple neural network using a pre-specified dataset.
+"""
+
 import argparse
 import os
 import pandas as pd
@@ -8,9 +12,8 @@ from toy_neuralnet.util import preprocess_data
 
 def main(args):
     """
-    TODO
-    :param args:
-    :return:
+    The main script code.
+    :param args: (Namespace object) command line arguments
     """
     # load the data from text files
     df = pd.read_csv(os.path.realpath(args.data_path))
