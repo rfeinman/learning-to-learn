@@ -1,4 +1,5 @@
 import argparse
+import os
 import numpy as np
 
 from toy_neuralnet.models import simple_mlp
@@ -44,7 +45,11 @@ def main(args):
     The main script code.
     :param args: (Namespace object) command line arguments
     """
-    out_file = open('../results.txt', 'w')
+    # if a results file already exists, remove it.
+    try:
+        os.remove('../results.txt')
+    except OSError:
+        pass
     results = {}
     #for nb_categories in [100, 500, 1000, 5000, 10000]:
     #    for nb_exemplars in [3, 5, 10, 20]:
@@ -55,9 +60,9 @@ def main(args):
             key = 'cat_%i_ex_%i' % (nb_categories, nb_exemplars)
             results[key] = run_experiment(nb_categories, nb_exemplars, 200,
                                           200, 100)
-            out_file.write('cat %0.6i, ex %0.2i: %0.3f\n' %
-                           (nb_categories, nb_exemplars, results[key]))
-    out_file.close()
+            with open('../results.txt', 'a') as f:
+                f.write('cat %0.6i, ex %0.2i: %0.3f\n' %
+                        (nb_categories, nb_exemplars, results[key]))
     print('Experiment loop complete.')
 
 if __name__ == '__main__':
