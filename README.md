@@ -17,18 +17,18 @@ to enable imports from any folder:
 ## Repository Structure
 The repository contains 3 folders:
 
-### 1. Data
+### 1. data
 This is where the artificial toy data sets will be saved to and loaded from.
 
-### 2. Notebooks
+### 2. notebooks
 This folder contains a collection of Jupyter Notebooks for various small tasks,
 such as synthesizing the artificial data sets and wrangling the data once
 synthesized.
 
-### 3. Toy-neuralnet
+### 3. toy-neuralnet
 This folder contains core reusable source code for the experiments.
 
-### 3. Scripts
+### 3. scripts
 This folder contains short Python scripts for running some experiments. Here
 you will find scripts for training a neural network model and evaluating its
 performance.
@@ -39,6 +39,8 @@ To run train_nn.py from the scripts folder, you must indicate the data file and
 the labels file to use for training. The command might look as follows:
 
     python train_nn.py -d ../data/objects.csv -l ../data/labels.csv
+
+TODO: finish demo
 
 
 ## Results (in progress)
