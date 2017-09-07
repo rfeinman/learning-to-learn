@@ -42,16 +42,46 @@ the labels file to use for training. The command might look as follows:
 
 
 ## Results (in progress)
+Our ultimate goal is to model the infant learning tasks described in Smith
+et al. 2002 using simple neural network (NN) models. In order to do so, we use
+artificial toy data that is designed to mimic the data described in the paper.
+Each sample in the dataset is assigned a shape, texture and color value. Since
+these are categorical feature values, we encode the values using unique bit
+vectors that are randomly assigned at the beginning of the experiment. A given
+training set has a certain number of categories and a certain number of exemplars
+per category; these quantities are varied. The shape values are perfectly
+correlated with the categories, and the texture & color values are selected at
+random from a set of 200 possible values. In Smith et al., there are 2 evaluation
+metrics used: the first-order generalization and the second-order
+generalization. Below, we describe experiments for each case. In both, we use a
+simple feed-forward NN with one hidden layer of 30 units, and the
+ReLU activation function.
 
-For the first experiments, I used a single-layer perceptron with 30 hidden
-units. The datasets were one-hot-encoded, meaning that there is one element in
-the input vector for each possible feature category.
+### First-order Generalization
+For the first-order generalization test, infants are asked to evaluate novel
+instances of familiar objects. To simulate this test, we trained our NN model
+to classify objects, ensuring that objects of the same category were assigned
+the same shape in the training set. Then, we built a test set by creating one
+novel instance of each category that was presented in the training set. Results
+are shown below for a variety of different (# category) and (# exemplar/category)
+values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
+that as the # category value increases, the classification task becomes more
+challenging (more possible classes).
 
-data set: 10 categories, 2 exemplars per category, 10 textures, 10 colors \
-result: 100% classification accuracy after 68 epochs
+# categories    | # exemplars   | test accuracy
+100             | 3             | 86.0%
+100             | 5             | 100.0%
+100             | 10            | 100.0%
+500             | 3             | 99.4%
+500             | 5             | 100.0%
+500             | 10            | 100.0%
+1000            | 3             | 97.8%
+1000            | 5             | 100.0%
+1000            | 10            | 100.0%
+5000            | 3             | 96.2%
+5000            | 5             | 99.3%
+5000            | 10            | 99.7%
 
-data set: 100 categories, 5 exemplars per category, 20 textures, 20 colors \
-result: 100% classification accuracy after 63 epochs
 
-data set: 1000 categories, 10 exemplars per category, 20 textures, 20 colors \
-result: 100% classification accuracy after 50 epochs
+### Second-order Generalization
+TODO
