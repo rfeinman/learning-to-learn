@@ -7,6 +7,15 @@ from toy_neuralnet.util import synthesize_data, preprocess_data
 
 def run_experiment(nb_categories, nb_exemplars, nb_textures, nb_colors,
                    nb_epochs):
+    """
+    TODO
+    :param nb_categories:
+    :param nb_exemplars:
+    :param nb_textures:
+    :param nb_colors:
+    :param nb_epochs:
+    :return:
+    """
     # synthesize the training data. we will use one extra exemplar per category
     # as a test set - it will be separated later.
     df, labels = synthesize_data(nb_categories,
@@ -30,12 +39,11 @@ def run_experiment(nb_categories, nb_exemplars, nb_textures, nb_colors,
     loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0)
     return acc
 
-def print_results(results):
-    with open('../results.txt', 'w') as f:
-        for elt in results:
-            f.write('%s: %s\n' % (elt, results[elt]))
-
 def main(args):
+    """
+    The main script code.
+    :param args: (Namespace object) command line arguments
+    """
     out_file = open('../results.txt', 'w')
     results = {}
     #for nb_categories in [100, 500, 1000, 5000, 10000]:
@@ -47,7 +55,6 @@ def main(args):
             key = 'cat_%i_ex_%i' % (nb_categories, nb_exemplars)
             results[key] = run_experiment(nb_categories, nb_exemplars, 200,
                                           200, 100)
-            #print_results(results)
             out_file.write('cat %0.6i, ex %0.2i: %0.3f\n' %
                            (nb_categories, nb_exemplars, results[key]))
     out_file.close()
