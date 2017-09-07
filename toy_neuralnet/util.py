@@ -107,6 +107,6 @@ def synthesize_data(nb_categories, nb_exemplars, nb_textures, nb_colors):
         df_chunks.append(pd.DataFrame(arr, columns=['shape', 'color',
                                                     'texture'], dtype=np.int16))
         # add to labels
-        labels.extend(['obj%i' % cat for i in range(nb_exemplars)])
+        labels.extend(['obj%0.8i' % cat for i in range(nb_exemplars)])
     # concatenate df chunks, turn labels list into series, return
     return pd.concat(df_chunks), pd.Series(labels)
