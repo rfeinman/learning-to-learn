@@ -68,9 +68,9 @@ values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
-# categories    | # exemplars   | test accuracy
-100             | 3             | 86.0%
-100             | 5             | 100.0%
+| # categories    | # exemplars   | test accuracy
+| 100             | 3             | 86.0%
+| 100             | 5             | 100.0%
 100             | 10            | 100.0%
 500             | 3             | 99.4%
 500             | 5             | 100.0%
