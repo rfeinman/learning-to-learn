@@ -51,7 +51,7 @@ vectors that are randomly assigned at the beginning of the experiment. A given
 training set has a certain number of categories and a certain number of exemplars
 per category; these quantities are varied. The shape values are perfectly
 correlated with the categories, and the texture & color values are selected at
-random from a set of 200 possible values. In Smith et al., there are 2 evaluation
+random from sets of 200 possible values. In Smith et al., there are 2 evaluation
 metrics used: the first-order generalization and the second-order
 generalization. Below, we describe experiments for each case. In both, we use a
 simple feed-forward NN with one hidden layer of 30 units, and the
