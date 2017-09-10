@@ -45,14 +45,13 @@ def main(args):
     The main script code.
     :param args: (Namespace object) command line arguments
     """
-    # if a results file already exists, remove it.
+    # If a results file already exists, remove it.
     try:
         os.remove('../results.txt')
     except OSError:
         pass
     results = {}
-    #for nb_categories in [100, 500, 1000, 5000, 10000]:
-    #    for nb_exemplars in [3, 5, 10, 20]:
+    # Loop through different values of (nb_categories, nb_exemplars)
     for nb_categories in [100, 500, 1000, 5000]:
         for nb_exemplars in [3, 5, 10]:
             print('Testing for %i categories and %i exemplars...' %
@@ -60,7 +59,8 @@ def main(args):
             key = 'cat_%i_ex_%i' % (nb_categories, nb_exemplars)
             results[key] = run_experiment(nb_categories, nb_exemplars, 200,
                                           200, 100)
-            with open('../results.txt', 'a') as f:
+            # Save results from this run to text file
+            with open('../results_firstOrder.txt', 'a') as f:
                 f.write('cat %0.6i, ex %0.2i: %0.3f\n' %
                         (nb_categories, nb_exemplars, results[key]))
     print('Experiment loop complete.')
