@@ -3,7 +3,9 @@ import warnings
 import math
 import pandas as pd
 import numpy as np
+from scipy.spatial.distance import cosine
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+import keras.backend as K
 
 
 def generate_dictionary(column, nb_bits=None):
@@ -110,3 +112,98 @@ def synthesize_data(nb_categories, nb_exemplars, nb_textures, nb_colors):
         labels.extend(['obj%0.8i' % cat for i in range(nb_exemplars)])
     # concatenate df chunks, turn labels list into series, return
     return pd.concat(df_chunks), pd.Series(labels)
+
+def synthesize_new_data(nb_categories, nb_textures, nb_colors):
+    """
+    Synthesize new object data for the second order generalization test.
+    Groupings of 4 samples are generated: first, a baseline example of the new
+    object category, and then 3 comparison samples. One of the comparison
+    samples maintains the same shape as the baseline, another the same
+    color, and another the same texture. For each, the other features are
+    different from the baseline.
+    :param nb_categories: (int) The number of categories in our original data
+                            set
+    :param nb_textures: (int) The number of textures in our original data set
+    :param nb_colors: (int) The number of textures in our original data set
+    :return: (Pandas DataFrame, Pandas Series) The data features and labels
+    """
+    # Create the first grouping
+    a = np.asarray([[nb_categories, nb_colors, nb_textures],
+                    [nb_categories, nb_colors+1, nb_textures+1],
+                    [nb_categories+1, nb_colors, nb_textures+2],
+                    [nb_categories+2, nb_colors+2, nb_textures]])
+    # Loop through, incrementing grouping by 3 each time and stacking them all
+    # on top of each other
+    dfs = []
+    labels = []
+    for i in range(nb_categories):
+        dfs.append(pd.DataFrame(a+3*i, columns=['shape', 'color', 'texture']))
+        labels.extend(['obj%0.8i' % (nb_categories+3*i) for j in range(4)])
+    return pd.concat(dfs), pd.Series(labels)
+
+def get_hidden_representations(model, X, layer_num, batch_size=32):
+    """
+    Given a Keras model and a data matrix X, this function computes the hidden
+    layer representations of the model for each sample in X. The user must
+    specify which layer is desired.
+    :param model: (Keras Sequential) The model to use for translation
+    :param X: (Numpy array) The input data.
+    :param layer_num: (int) The layer number we'd like to use as output.
+    :param batch_size: (int) The batch size to use when evaluating the model
+                        on a set of inputs.
+    :return: (Numpy array) The output features.
+    """
+    # Record the hidden layer dimensionality
+    output_dim = model.layers[layer_num].output.shape[-1].value
+    # Define the Keras function that will return features
+    get_features = K.function([model.layers[0].input],
+                              [model.layers[layer_num].output])
+    # Now, run through batches and compute features
+    n_batches = int(np.ceil(X.shape[0] / float(batch_size)))
+    output = np.zeros(shape=(len(X), output_dim))
+    for i in range(n_batches):
+        output[i*batch_size:(i+1)*batch_size] = \
+            get_features([X[i*batch_size:(i+1)*batch_size], 0])[0]
+
+    return output
+
+def similarity(x1, x2):
+    """
+    Computes the cosine similarity between two vectors.
+    :param x1: (Numpy array) The first vector.
+    :param x2: (Numpy array) The second vector.
+    :return: (int) The similarity score.
+    """
+    return 1 - cosine(x1, x2)
+
+def evaluate_secondOrder(model, X, batch_size=32):
+    """
+    Evaluate a trained Keras model on a set of novel objects. The novel objects
+    come in groupings of 4, where each grouping contains a baseline sample, a
+    shape constant sample, a color constant sample, and a texture constant
+    sample. For each grouping, we find which of the other 3 samples is most
+    similar to the baseline sample according to the model's internal features.
+    Then, we compute the fraction of times that it was the correct (shape
+    constant) sample.
+    :param model: (Keras Sequential) The Keras model to be used for evaluation.
+    :param X: (Numpy array) The input data.
+    :param batch_size: (int) The batch size to use when evaluating the model
+                        on a set of inputs.
+    :return: (float) The fraction of groupings in which the shape constant
+                    sample was most similar to the baseline sample.
+    """
+    # Since we have groupings of 4 samples, X should have a length that is a
+    # multiple of 4.
+    assert len(X) % 4 == 0
+    X_p = get_hidden_representations(model, X, layer_num=1,
+                                     batch_size=batch_size)
+    nb_correct = 0
+    for i in range(len(X) / 4):
+        score_shape = similarity(X_p[4*i], X_p[4*i+1])
+        score_color = similarity(X_p[4*i], X_p[4*i+2])
+        score_texture = similarity(X_p[4*i], X_p[4*i+3])
+        if np.argmax([score_shape, score_color, score_texture]) == 0:
+            nb_correct += 1
+
+    # Return the percentage of times we were correct
+    return nb_correct / float(len(X)/4)
