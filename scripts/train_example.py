@@ -13,7 +13,7 @@ from toy_neuralnet.util import preprocess_data
 def main(args):
     """
     The main script code.
-    :param args: (Namespace object) command line arguments
+    :param args: (Namespace object) Command line arguments.
     """
     # Load the data from text files
     df = pd.read_csv(os.path.realpath(args.data_path))

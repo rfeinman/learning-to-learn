@@ -8,7 +8,7 @@ from toy_neuralnet.util import synthesize_data, preprocess_data
 def main(args):
     """
     The main script code.
-    :param args: (Namespace object) command line arguments
+    :param args: (Namespace object) Command line arguments.
     """
     # Synthesize the training data. we will use one extra exemplar per category
     # as a test set - it will be separated later.

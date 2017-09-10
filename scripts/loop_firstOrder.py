@@ -43,7 +43,7 @@ def run_experiment(nb_categories, nb_exemplars, nb_textures, nb_colors,
 def main(args):
     """
     The main script code.
-    :param args: (Namespace object) command line arguments
+    :param args: (Namespace object) Command line arguments.
     """
     # If a results file already exists, remove it.
     try:
