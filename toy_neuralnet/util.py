@@ -34,6 +34,7 @@ def generate_dictionary(column, nb_bits=None):
     inds = np.random.choice(range(len(candidates)), nb_vals, replace=False)
     # now select the vectors
     vectors = candidates[inds]
+    
     return {val_set[i]: vectors[i] for i in range(nb_vals)}
 
 def convert_column(column, nb_bits=None):
@@ -44,6 +45,7 @@ def convert_column(column, nb_bits=None):
     :return:
     """
     dictionary = generate_dictionary(column, nb_bits)
+
     return np.asarray([dictionary[elt] for elt in column])
 
 def preprocess_data(df, labels, one_hot=False, nb_bits=None):
@@ -111,6 +113,7 @@ def synthesize_data(nb_categories, nb_exemplars, nb_textures, nb_colors):
         # add to labels
         labels.extend(['obj%0.8i' % cat for i in range(nb_exemplars)])
     # concatenate df chunks, turn labels list into series, return
+
     return pd.concat(df_chunks), pd.Series(labels)
 
 def synthesize_new_data(nb_categories, nb_textures, nb_colors):

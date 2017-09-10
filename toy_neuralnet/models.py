@@ -21,4 +21,5 @@ def simple_mlp(nb_in, nb_classes):
         optimizer='rmsprop',
         metrics=['accuracy']
     )
+    
     return model

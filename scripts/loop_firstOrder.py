@@ -38,6 +38,7 @@ def run_experiment(nb_categories, nb_exemplars, nb_textures, nb_colors,
               shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
               verbose=0)
     loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0)
+
     return acc
 
 def main(args):
