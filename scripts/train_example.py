@@ -1,5 +1,5 @@
 """
-Train a simple neural network using a pre-specified dataset.
+Train a simple neural network using a pre-specified data set.
 """
 
 import argparse

@@ -33,8 +33,6 @@ def main(args):
     model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
     model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
               shuffle=True, validation_data=(X[test_inds], Y[test_inds]))
-    loss, acc = model.evaluate(X[test_inds], Y[test_inds])
-    #print('\nHoldout accuracy: %0.04f' % acc)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -43,16 +41,20 @@ if __name__ == '__main__':
                         required=False, type=int)
     parser.add_argument('-ca', '--nb_categories',
                         help='The number of categories.',
-                        required=True, type=int)
+                        required=False, type=int)
     parser.add_argument('-ex', '--nb_exemplars',
                         help='The number of exemplars.',
-                        required=True, type=int)
+                        required=False, type=int)
     parser.add_argument('-te', '--nb_textures',
                         help='The number of textures.',
-                        required=True, type=int)
+                        required=False, type=int)
     parser.add_argument('-co', '--nb_colors',
                         help='The number of colors.',
-                        required=True, type=int)
+                        required=False, type=int)
     parser.set_defaults(nb_epochs=20)
+    parser.set_defaults(nb_categories=100)
+    parser.set_defaults(nb_exemplars=5)
+    parser.set_defaults(nb_textures=200)
+    parser.set_defaults(nb_colors=200)
     args = parser.parse_args()
     main(args)
