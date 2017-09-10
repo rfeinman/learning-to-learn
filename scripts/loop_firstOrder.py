@@ -48,7 +48,7 @@ def main(args):
     """
     # If a results file already exists, remove it.
     try:
-        os.remove('../results.txt')
+        os.remove('../results_firstOrder.txt')
     except OSError:
         pass
     results = {}
