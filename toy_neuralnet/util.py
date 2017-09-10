@@ -34,7 +34,7 @@ def generate_dictionary(column, nb_bits=None):
     inds = np.random.choice(range(len(candidates)), nb_vals, replace=False)
     # now select the vectors
     vectors = candidates[inds]
-    
+
     return {val_set[i]: vectors[i] for i in range(nb_vals)}
 
 def convert_column(column, nb_bits=None):
