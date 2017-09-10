@@ -59,7 +59,7 @@ def main(args):
                   (nb_categories, nb_exemplars))
             key = 'cat_%i_ex_%i' % (nb_categories, nb_exemplars)
             results[key] = run_experiment(nb_categories, nb_exemplars, 200,
-                                          200, 100)
+                                          200, args.nb_epoch)
             # Save results from this run to text file
             with open('../results_firstOrder.txt', 'a') as f:
                 f.write('cat %0.6i, ex %0.2i: %0.3f\n' %
@@ -71,6 +71,6 @@ if __name__ == '__main__':
     parser.add_argument('-ep', '--nb_epochs',
                         help='The number of epochs to train for.',
                         required=False, type=int)
-    parser.set_defaults(nb_epochs=20)
+    parser.set_defaults(nb_epochs=100)
     args = parser.parse_args()
     main(args)
