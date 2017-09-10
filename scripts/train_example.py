@@ -15,17 +15,17 @@ def main(args):
     The main script code.
     :param args: (Namespace object) command line arguments
     """
-    # load the data from text files
+    # Load the data from text files
     df = pd.read_csv(os.path.realpath(args.data_path))
     labels = pd.read_csv(os.path.realpath(args.labels_path), header=None,
                          squeeze=True)
-    # pre-process the data
+    # Pre-process the data
     X, Y = preprocess_data(df, labels, one_hot=False, nb_bits=20)
     print('X shape: ', X.shape)
     print('Y shape: ', Y.shape)
-    # split the data set into train-test
+    # Split the data set into train-test
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25)
-    # build a neural network model and train it with the training set
+    # Build a neural network model and train it with the training set
     model = simple_mlp(X.shape[-1], Y.shape[-1])
     model.fit(X_train, Y_train, epochs=args.nb_epochs, shuffle=True)
     loss, acc = model.evaluate(X_train, Y_train)

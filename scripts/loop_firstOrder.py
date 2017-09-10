@@ -17,22 +17,22 @@ def run_experiment(nb_categories, nb_exemplars, nb_textures, nb_colors,
     :param nb_epochs:
     :return:
     """
-    # synthesize the training data. we will use one extra exemplar per category
+    # Synthesize the training data. We will use one extra exemplar per category
     # as a test set - it will be separated later.
     df, labels = synthesize_data(nb_categories,
                                  nb_exemplars+1,
                                  nb_textures,
                                  nb_colors)
-    # pre-process the data
+    # Pre-process the data
     X, Y = preprocess_data(df, labels, one_hot=False, nb_bits=20)
-    # now, we separate the train and test sets
+    # Now, we separate the train and test sets
     test_inds = [i*(nb_exemplars+1) for i in range(nb_categories)]
     train_inds = list(set(range(df.shape[0])).difference(test_inds))
-    # check to make sure we did this right
+    # Check to make sure we did this right
     for i in range(nb_categories):
         assert np.array_equal(X[test_inds][i][:20],
                               X[train_inds][i * nb_exemplars][:20])
-    # build a neural network model and train it with the training set
+    # Build a neural network model and train it with the training set
     model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
     model.fit(X[train_inds], Y[train_inds], epochs=nb_epochs,
               shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
