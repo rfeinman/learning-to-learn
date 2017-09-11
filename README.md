@@ -70,6 +70,8 @@ values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder.png?raw=true" alt="firstOrder plot">
+
 | # Categories  | # Exemplars   | Test Accuracy  |
 | ------------- |:-------------:| --------------:|
 | 100           | 3             | 86.0%          |
