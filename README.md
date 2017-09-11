@@ -70,9 +70,20 @@ values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder.png?raw=true" alt="firstOrder plot">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_
+firstOrder.png?raw=true" alt="firstOrder plot">
 
 ### Second-order Generalization
+For the second-order generalization test, infants are presented with an exemplar
+of a novel object category as a baseline. Then, they are shown 3 comparison objects:
+one which has the same shape as the baseline, one with the same color, and one
+with the same texture. In each case, the other 2 features are different from
+the baseline. The infants are asked to select which of the 3 comparison objects
+are of the same category as the baseline object. We simulated this test by
+creating an evaluation set containing groupings of 4 samples: the baseline,
+the shape constant, the color constant, and the texture constant. Each grouping
+serves as one test example. We find which su...
 
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder.png?raw=true" alt="secondOrder plot">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_
+secondOrder.png?raw=true" alt="secondOrder plot">
 
