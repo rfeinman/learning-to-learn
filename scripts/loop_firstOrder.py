@@ -1,6 +1,7 @@
 import argparse
 import os
 import numpy as np
+import pandas as pd
 
 from toy_neuralnet.models import simple_mlp
 from toy_neuralnet.util import synthesize_data, preprocess_data
@@ -41,6 +42,13 @@ def run_experiment(nb_categories, nb_exemplars, nb_textures, nb_colors,
 
     return acc
 
+def save_results(cats, exemps, scores):
+    df = pd.DataFrame()
+    df['nb_categories'] = cats
+    df['nb_exemplars'] = exemps
+    df['score'] = scores
+    df.to_csv('../results_firstOrder.csv', index=False)
+
 def main(args):
     """
     The main script code.
@@ -48,22 +56,24 @@ def main(args):
     """
     # If a results file already exists, remove it.
     try:
-        os.remove('../results_firstOrder.txt')
+        os.remove('../results_firstOrder.csv')
     except OSError:
         pass
-    results = {}
+    cats = []
+    exemps = []
+    scores = []
     # Loop through different values of (nb_categories, nb_exemplars)
-    for nb_categories in [100, 500, 1000, 5000]:
-        for nb_exemplars in [3, 5, 10]:
+    for nb_categories in range(50, 251, 50):
+        for nb_exemplars in range(1, 8):
             print('Testing for %i categories and %i exemplars...' %
                   (nb_categories, nb_exemplars))
-            key = 'cat_%i_ex_%i' % (nb_categories, nb_exemplars)
-            results[key] = run_experiment(nb_categories, nb_exemplars, 200,
-                                          200, args.nb_epoch)
+            result = run_experiment(nb_categories, nb_exemplars, 200, 200,
+                                        args.nb_epochs)
+            cats.append(nb_categories)
+            exemps.append(nb_exemplars)
+            scores.append(result)
             # Save results from this run to text file
-            with open('../results_firstOrder.txt', 'a') as f:
-                f.write('cat %0.6i, ex %0.2i: %0.3f\n' %
-                        (nb_categories, nb_exemplars, results[key]))
+            save_results(cats, exemps, scores)
     print('Experiment loop complete.')
 
 if __name__ == '__main__':
