@@ -13,9 +13,7 @@ def main(args):
     # Synthesize the training data. we will use one extra exemplar per category
     # as a test set - it will be separated later.
     df, labels = synthesize_data(args.nb_categories,
-                                 args.nb_exemplars+1,
-                                 args.nb_textures,
-                                 args.nb_colors)
+                                 args.nb_exemplars+1)
     # Pre-process the data
     X, Y = preprocess_data(df, labels, one_hot=False, nb_bits=20)
     # Now, we separate the train and test sets
@@ -46,16 +44,8 @@ if __name__ == '__main__':
     parser.add_argument('-ex', '--nb_exemplars',
                         help='The number of exemplars.',
                         required=False, type=int)
-    parser.add_argument('-te', '--nb_textures',
-                        help='The number of textures.',
-                        required=False, type=int)
-    parser.add_argument('-co', '--nb_colors',
-                        help='The number of colors.',
-                        required=False, type=int)
-    parser.set_defaults(nb_epochs=20)
+    parser.set_defaults(nb_epochs=100)
     parser.set_defaults(nb_categories=100)
     parser.set_defaults(nb_exemplars=5)
-    parser.set_defaults(nb_textures=200)
-    parser.set_defaults(nb_colors=200)
     args = parser.parse_args()
     main(args)

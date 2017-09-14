@@ -7,23 +7,18 @@ from toy_neuralnet.models import simple_mlp
 from toy_neuralnet.util import synthesize_data, preprocess_data
 
 
-def run_experiment(nb_categories, nb_exemplars, nb_textures, nb_colors,
-                   nb_epochs):
+def run_experiment(nb_categories, nb_exemplars, nb_epochs):
     """
     TODO
     :param nb_categories:
     :param nb_exemplars:
-    :param nb_textures:
-    :param nb_colors:
     :param nb_epochs:
     :return:
     """
     # Synthesize the training data. We will use one extra exemplar per category
     # as a test set - it will be separated later.
     df, labels = synthesize_data(nb_categories,
-                                 nb_exemplars+1,
-                                 nb_textures,
-                                 nb_colors)
+                                 nb_exemplars+1)
     # Pre-process the data
     X, Y = preprocess_data(df, labels, one_hot=False, nb_bits=20)
     # Now, we separate the train and test sets
@@ -67,8 +62,7 @@ def main(args):
         for nb_exemplars in range(1, 8):
             print('Testing for %i categories and %i exemplars...' %
                   (nb_categories, nb_exemplars))
-            result = run_experiment(nb_categories, nb_exemplars, 200, 200,
-                                        args.nb_epochs)
+            result = run_experiment(nb_categories, nb_exemplars, args.nb_epochs)
             cats.append(nb_categories)
             exemps.append(nb_exemplars)
             scores.append(result)
