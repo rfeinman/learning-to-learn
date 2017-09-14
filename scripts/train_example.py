@@ -1,7 +1,3 @@
-"""
-Train a simple neural network using a pre-specified data set.
-"""
-
 import argparse
 import os
 import pandas as pd
