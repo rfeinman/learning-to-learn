@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 from toy_neuralnet.models import simple_mlp
 from toy_neuralnet.util import preprocess_data
 
-def main(args):
+def main():
     """
     The main script code.
     :param args: (Namespace object) Command line arguments.
@@ -40,4 +40,4 @@ if __name__ == '__main__':
                         required=False, type=int)
     parser.set_defaults(nb_epochs=20)
     args = parser.parse_args()
-    main(args)
+    main()

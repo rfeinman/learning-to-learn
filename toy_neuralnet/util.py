@@ -104,7 +104,7 @@ def synthesize_data(nb_categories, nb_exemplars):
     df['texture'] = textures
     return df, pd.Series(labels)
 
-def synthesize_new_data(nb_categories, nb_textures, nb_colors):
+def synthesize_new_data(nb_categories):
     """
     Synthesize new object data for the second order generalization test.
     Groupings of 4 samples are generated: first, a baseline example of the new
@@ -114,15 +114,13 @@ def synthesize_new_data(nb_categories, nb_textures, nb_colors):
     different from the baseline.
     :param nb_categories: (int) The number of categories in our original data
                             set
-    :param nb_textures: (int) The number of textures in our original data set
-    :param nb_colors: (int) The number of textures in our original data set
     :return: (Pandas DataFrame, Pandas Series) The data features and labels
     """
     # Create the first grouping
-    a = np.asarray([[nb_categories, nb_colors, nb_textures],
-                    [nb_categories, nb_colors+1, nb_textures+1],
-                    [nb_categories+1, nb_colors, nb_textures+2],
-                    [nb_categories+2, nb_colors+2, nb_textures]])
+    a = np.asarray([[nb_categories, nb_categories, nb_categories],
+                    [nb_categories, nb_categories+1, nb_categories+1],
+                    [nb_categories+1, nb_categories, nb_categories+2],
+                    [nb_categories+2, nb_categories+2, nb_categories]])
     # Loop through, incrementing grouping by 3 each time and stacking them all
     # on top of each other
     dfs = []
@@ -198,3 +196,17 @@ def evaluate_secondOrder(model, X, batch_size=32):
 
     # Return the percentage of times we were correct
     return nb_correct / float(len(X)/4)
+
+def save_results(cats, exemps, scores, save_path):
+    """
+    TODO
+    :param cats:
+    :param exemps:
+    :param scores:
+    :param save_path:
+    :return:
+    """
+    df = pd.DataFrame(index=np.unique(exemps), columns=np.unique(cats))
+    for c, e, s in zip(cats, exemps, scores):
+        df[c].loc[e] = s
+    df.to_csv(save_path, index=True)

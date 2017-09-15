@@ -5,7 +5,7 @@ from toy_neuralnet.models import simple_mlp
 from toy_neuralnet.util import synthesize_data, preprocess_data
 
 
-def main(args):
+def main():
     """
     The main script code.
     :param args: (Namespace object) Command line arguments.
@@ -24,10 +24,6 @@ def main(args):
     for i in range(args.nb_categories):
         assert np.array_equal(X[test_inds][i][:20],
                               X[train_inds][i*args.nb_exemplars][:20])
-    print('X_train shape: ', X[train_inds].shape)
-    print('Y_train shape: ', Y[train_inds].shape)
-    print('X_test shape: ', X[test_inds].shape)
-    print('Y_test shape: ', Y[test_inds].shape)
     # Build a neural network model and train it with the training set
     model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
     model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
@@ -48,4 +44,4 @@ if __name__ == '__main__':
     parser.set_defaults(nb_categories=100)
     parser.set_defaults(nb_exemplars=5)
     args = parser.parse_args()
-    main(args)
+    main()

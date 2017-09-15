@@ -5,20 +5,16 @@ from toy_neuralnet.models import simple_mlp
 from toy_neuralnet.util import (synthesize_data, synthesize_new_data,
                                 preprocess_data, evaluate_secondOrder)
 
-def main(args):
+def main():
     """
     The main script code.
     :param args: (Namespace object) Command line arguments.
     """
     # Synthesize the training data.
     df, labels = synthesize_data(args.nb_categories,
-                                 args.nb_exemplars,
-                                 args.nb_textures,
-                                 args.nb_colors)
+                                 args.nb_exemplars)
     # Now we will create the test data set for the second-order generalization
-    df_new, labels_new = synthesize_new_data(args.nb_categories,
-                                             args.nb_textures,
-                                             args.nb_colors)
+    df_new, labels_new = synthesize_new_data(args.nb_categories)
     # Check to make sure that all new feature values have not been seen in
     # training
     for feature in ['shape', 'color', 'texture']:
@@ -49,16 +45,8 @@ if __name__ == '__main__':
     parser.add_argument('-ex', '--nb_exemplars',
                         help='The number of exemplars.',
                         required=False, type=int)
-    parser.add_argument('-te', '--nb_textures',
-                        help='The number of textures.',
-                        required=False, type=int)
-    parser.add_argument('-co', '--nb_colors',
-                        help='The number of colors.',
-                        required=False, type=int)
     parser.set_defaults(nb_epochs=100)
     parser.set_defaults(nb_categories=100)
     parser.set_defaults(nb_exemplars=5)
-    parser.set_defaults(nb_textures=200)
-    parser.set_defaults(nb_colors=200)
     args = parser.parse_args()
-    main(args)
+    main()
