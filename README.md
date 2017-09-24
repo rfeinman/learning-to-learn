@@ -33,17 +33,8 @@ This folder contains short Python scripts for running some experiments. Here
 you will find scripts for training a neural network model and evaluating its
 performance.
 
-## Demo
 
-To run train_nn.py from the scripts folder, you must indicate the data file and
-the labels file to use for training. The command might look as follows:
-
-    python train_nn.py -d ../data/objects.csv -l ../data/labels.csv
-
-TODO: finish demo
-
-
-## Results (in progress)
+## Results
 Our ultimate goal is to model the infant learning tasks described in Smith
 et al. 2002 using simple neural network (NN) models. In order to do so, we use
 artificial toy data that is designed to mimic the data described in the paper.
@@ -82,7 +73,7 @@ the baseline. The infants are asked to select which of the 3 comparison objects
 are of the same category as the baseline object. We simulated this test by
 creating an evaluation set containing groupings of 4 samples: the baseline,
 the shape constant, the color constant, and the texture constant. Each grouping
-serves as one test example. We find which su...
+serves as one test example. We find which su... TODO
 
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder1.png?raw=true" alt="secondOrder plot"> \
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder2.png?raw=true" alt="secondOrder plot">
