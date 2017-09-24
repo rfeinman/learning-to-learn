@@ -1,8 +1,8 @@
-# Neural network learning of object categories from canonicalized feature representations
+# Learning the Shape Bias with Neural Networks
 
 In this project, we train a neural network on artificial toy data for the task
-of object recognition. Each sample is represented by a shape,
-color and texture value.
+of object recognition. Each sample has a specific shape, color and texture
+value. Objects with the same shape are of the same category.
 
 ## Requirements & Setup
 This code repository requires Keras and TensorFlow. Keras must be
@@ -26,15 +26,15 @@ such as synthesizing the artificial data sets and wrangling the data once
 synthesized.
 
 ### 3. toy-neuralnet
-This folder contains core reusable source code for the experiments.
+This folder contains the core reusable source code for the project.
 
 ### 3. scripts
 This folder contains short Python scripts for running some experiments. Here
 you will find scripts for training a neural network model and evaluating its
-performance.
+performance. There are also scripts for generating and saving datasets.
 
 
-## Results
+## Results: Canonical Bit-vector Features
 Our ultimate goal is to model the infant learning tasks described in Smith
 et al. 2002 using simple neural network (NN) models. In order to do so, we use
 artificial toy data that is designed to mimic the data described in the paper.
@@ -78,3 +78,6 @@ serves as one test example. We find which su... TODO
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder1.png?raw=true" alt="secondOrder plot"> \
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder2.png?raw=true" alt="secondOrder plot">
 
+
+## Results: Image Data
+TODO explain the image data...
