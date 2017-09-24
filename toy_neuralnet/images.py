@@ -2,6 +2,7 @@ from __future__ import division, print_function
 import numpy as np
 import functools
 from random import randint
+from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 
@@ -120,3 +121,23 @@ def generate_image(shape, color, texture, save_file):
     plt.xlim([-2,2])
     plt.axis('off')
     fig.savefig(save_file)
+
+def resize(img_array, width, height, color=True):
+    """
+    TODO
+    :param img_array:
+    :param width:
+    :param height:
+    :param color:
+    :return:
+    """
+    if color:
+        nb_channels = 3
+    else:
+        nb_channels = 1
+    # convert to PIL image
+    img = Image.fromarray(img_array)
+    # resize using PIL
+    img = img.resize((width, height), PIL.Image.ANTIALIAS)
+    # convert back to numpy array and return
+    return 1 - np.array(img.getdata()).reshape(img.size[0], img.size[1], nb_channels)
