@@ -62,6 +62,7 @@ that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
 ![firstOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder1.png)
+
 ![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder2.png)
 
 ### Second-order Generalization
@@ -76,6 +77,7 @@ the shape constant, the color constant, and the texture constant. Each grouping
 serves as one test example. We find which su... TODO
 
 ![secondOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder1.png)
+
 ![secondOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder2.png)
 
 
@@ -83,6 +85,6 @@ serves as one test example. We find which su... TODO
 
 Exemplar #1                |  Exemplar #2
 :-------------------------:|:-------------------------:
-![image 0](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0000.png?raw=true)  |  ![image 1](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0001.png?raw=true)
-
-![image examples](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_examples.png?raw=true)
+![image 0](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0000.png)  |  ![image 1](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0001.png)
+![image 2](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0002.png)  |  ![image 3](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0003.png)
+![image 12](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0012.png)  |  ![image 13](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0013.png)
