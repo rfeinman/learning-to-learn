@@ -98,7 +98,7 @@ Shape 1, Color 3, Texture 0 | Shape 1, Color 7, Texture 9
 Shape 6, Color 1, Texture 7 | Shape 6, Color 4, Texture 7
 
 Results:
-•Small toy dataset with 10 categories and 2 exemplars per category
-•% time correct: 100%
-•Average cosine similarity for correct matches: __
-•Average cosine similarity for incorrect matches: __
+* Small toy dataset with 10 categories and 2 exemplars per category
+* % time correct match was max: 100%
+* Average cosine similarity for correct matches: 0.830
+* Average cosine similarity for incorrect matches: 0.256
