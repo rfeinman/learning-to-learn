@@ -80,4 +80,5 @@ serves as one test example. We find which su... TODO
 
 
 ## Results: Image Data
-![image examples](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_examples.png?raw=true)
+![image 0](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0000.png?raw=true)
+![image examples](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_examples.png)
