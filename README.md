@@ -34,12 +34,14 @@ you will find scripts for training a neural network model and evaluating its
 performance. There are also scripts for generating and saving datasets.
 
 
-## Results: Canonical Bit-vector Features
+## Results
 Our ultimate goal is to model the infant learning tasks described in Smith
 et al. 2002 using simple neural network (NN) models. In order to do so, we use
 artificial toy data that is designed to mimic the data described in the paper.
-Each sample in the dataset is assigned a shape, texture and color value. Since
-these are categorical feature values, we encode the values using unique bit
+Each sample in the dataset is assigned a shape, texture and color value.
+
+### Canonical Bit-vector Features
+Since these are categorical feature values, we encode the values using unique bit
 vectors that are randomly assigned at the beginning of the experiment. A given
 training set has a certain number of categories and a certain number of exemplars
 per category; these quantities are varied. The shape values are perfectly
@@ -50,7 +52,7 @@ generalization. Below, we describe experiments for each case. In both, we use a
 simple feed-forward NN with one hidden layer of 30 units, and the
 ReLU activation function.
 
-### First-order Generalization
+#### 1. First-order Generalization
 For the first-order generalization test, infants are asked to evaluate novel
 instances of familiar objects. To simulate this test, we trained our NN model
 to classify objects, ensuring that objects of the same category were assigned
@@ -65,7 +67,7 @@ challenging (more possible classes).
 
 ![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder2.png)
 
-### Second-order Generalization
+#### 2. Second-order Generalization
 For the second-order generalization test, infants are presented with an exemplar
 of a novel object category as a baseline. Then, they are shown 3 comparison objects:
 one which has the same shape as the baseline, one with the same color, and one
@@ -84,7 +86,7 @@ model chose the correct (shape-similar) object.
 ![secondOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder2.png)
 
 
-## Results: Image Data
+### Image Data
 
 Some examples of the images:
 
