@@ -61,8 +61,8 @@ values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
-![firstOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder1.png?raw=true)
-![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder2.png?raw=true)
+![firstOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder1.png)
+![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder2.png)
 
 ### Second-order Generalization
 For the second-order generalization test, infants are presented with an exemplar
@@ -75,10 +75,14 @@ creating an evaluation set containing groupings of 4 samples: the baseline,
 the shape constant, the color constant, and the texture constant. Each grouping
 serves as one test example. We find which su... TODO
 
-![secondOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder1.png?raw=true)
-![secondOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder2.png?raw=true)
+![secondOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder1.png)
+![secondOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder2.png)
 
 
 ## Results: Image Data
-![image 0](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0000.png?raw=true)
-![image examples](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_examples.png)
+
+Exemplar #1                |  Exemplar #2
+:-------------------------:|:-------------------------:
+![image 0](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0000.png?raw=true)  |  ![image 1](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0001.png?raw=true)
+
+![image examples](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_examples.png?raw=true)
