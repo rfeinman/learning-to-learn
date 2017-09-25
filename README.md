@@ -85,6 +85,9 @@ serves as one test example. We find which su... TODO
 
 Exemplar #1                |  Exemplar #2
 :-------------------------:|:-------------------------:
+Shape 1, Color 2, Texture 9 | Shape 2, Color 3, Texture 7
 ![image 0](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0000.png)  |  ![image 1](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0001.png)
+Shape 1, Color 2, Texture 9 | Shape 2, Color 3, Texture 7
 ![image 2](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0002.png)  |  ![image 3](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0003.png)
+Shape 1, Color 2, Texture 9 | Shape 2, Color 3, Texture 7
 ![image 12](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0012.png)  |  ![image 13](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0013.png)
