@@ -1,3 +1,4 @@
+from __future__ import division
 import argparse
 import numpy as np
 import pandas as pd
@@ -56,10 +57,8 @@ def main():
     exemps = []
     scores = []
     # Loop through different values of (nb_categories, nb_exemplars)
-    #for nb_categories in range(5, 51, 5):
-    #    for nb_exemplars in range(1, 15):
-    for nb_categories in range(5, 11, 5):
-        for nb_exemplars in range(1, 3):
+    for nb_categories in range(5, 51, 5):
+        for nb_exemplars in range(1, 15):
             print('Testing for %i categories and %i exemplars...' %
                   (nb_categories, nb_exemplars))
             result = run_experiment(nb_categories, nb_exemplars)
