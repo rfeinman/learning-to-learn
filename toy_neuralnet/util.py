@@ -127,7 +127,7 @@ def synthesize_new_data(nb_categories):
     labels = []
     for i in range(nb_categories):
         dfs.append(pd.DataFrame(a+3*i, columns=['shape', 'color', 'texture']))
-        labels.extend(['obj%0.8i' % (nb_categories+3*i) for j in range(4)])
+        labels.extend([nb_categories+3*i for _ in range(4)])
     return pd.concat(dfs), pd.Series(labels)
 
 def get_hidden_representations(model, X, layer_num, batch_size=32):
@@ -187,7 +187,7 @@ def evaluate_secondOrder(model, X, batch_size=32):
     X_p = get_hidden_representations(model, X, layer_num=1,
                                      batch_size=batch_size)
     nb_correct = 0
-    for i in range(len(X) / 4):
+    for i in range(int(len(X) / 4)):
         score_shape = similarity(X_p[4*i], X_p[4*i+1])
         score_color = similarity(X_p[4*i], X_p[4*i+2])
         score_texture = similarity(X_p[4*i], X_p[4*i+3])
@@ -210,3 +210,15 @@ def save_results(cats, exemps, scores, save_path):
     for c, e, s in zip(cats, exemps, scores):
         df[c].loc[e] = s
     df.to_csv(save_path, index=True)
+
+def add_noise(X, p):
+    """
+    Randomly flip the bits of the input binary feature matrix X with some
+    probability p.
+    :param X: (Numpy array) The input feature matrix. Must contain 0/1s only
+    :param p: (float) A value between 0-1 that represents the probability
+                of a given bit flipping.
+    :return: (Numpy array) The corrupted feature matrix
+    """
+    mask = np.random.binomial(n=1, p=p, size=X.shape)
+    return np.abs(X - mask)

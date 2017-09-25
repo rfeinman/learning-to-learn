@@ -2,7 +2,7 @@ import argparse
 import numpy as np
 
 from toy_neuralnet.models import simple_mlp
-from toy_neuralnet.util import synthesize_data, preprocess_data
+from toy_neuralnet.util import synthesize_data, preprocess_data, add_noise
 
 
 def main():
@@ -16,17 +16,22 @@ def main():
                                  args.nb_exemplars+1)
     # Pre-process the data
     X, Y = preprocess_data(df, labels, one_hot=False, nb_bits=20)
+    # Add noise if indicated by command line params
+    if args.noise > 0.:
+        X = add_noise(X, p=args.noise)
     # Now, we separate the train and test sets
     test_inds = [i*(args.nb_exemplars+1) for i in range(args.nb_categories)]
     # The train inds are the set difference of all inds and test inds
     train_inds = list(set(range(df.shape[0])).difference(test_inds))
-    # Check to make sure we did this right
-    for i in range(args.nb_categories):
-        assert np.array_equal(X[test_inds][i][:20],
-                              X[train_inds][i*args.nb_exemplars][:20])
+    # Add noise if indicated by command line params
+    if args.noise > 0.:
+        print('Adding noise with p=%0.2f' % args.noise)
+        X_train = add_noise(X[train_inds], p=args.noise)
+    else:
+        X_train = X[train_inds]
     # Build a neural network model and train it with the training set
     model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
-    model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
+    model.fit(X_train, Y[train_inds], epochs=args.nb_epochs,
               shuffle=True, validation_data=(X[test_inds], Y[test_inds]))
 
 if __name__ == '__main__':
@@ -40,8 +45,15 @@ if __name__ == '__main__':
     parser.add_argument('-ex', '--nb_exemplars',
                         help='The number of exemplars.',
                         required=False, type=int)
-    parser.set_defaults(nb_epochs=100)
+    parser.add_argument('-no', '--noise',
+                        help='Noise fraction; binomial probability between '
+                             '0-1.',
+                        required=False, type=float)
+    parser.set_defaults(nb_epochs=200)
     parser.set_defaults(nb_categories=100)
     parser.set_defaults(nb_exemplars=5)
+    parser.set_defaults(noise=0.)
     args = parser.parse_args()
+    assert args.noise >= 0. and args.noise <= 1., "'noise' parameter must be " \
+                                                  "a float between 0-1."
     main()

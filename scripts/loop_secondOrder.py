@@ -1,10 +1,11 @@
 import argparse
+import numpy as np
 import pandas as pd
 
 from toy_neuralnet.models import simple_mlp
 from toy_neuralnet.util import (synthesize_data, synthesize_new_data,
                                 preprocess_data, evaluate_secondOrder,
-                                save_results)
+                                save_results, add_noise)
 
 def run_experiment(nb_categories, nb_exemplars):
     """
@@ -29,13 +30,22 @@ def run_experiment(nb_categories, nb_exemplars):
     # Keep track of location of train and test sets
     train_inds = range(df.shape[0])
     test_inds = range(df.shape[0], X.shape[0])
+    # Add noise if indicated by command line params
+    if args.noise > 0.:
+        print('Adding noise with p=%0.2f' % args.noise)
+        X_train = add_noise(X[train_inds], p=args.noise)
+    else:
+        X_train = X[train_inds]
     # Build a neural network model and train it with the training set
-    model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
-    model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
-              shuffle=True, batch_size=32, verbose=0)
-    score = evaluate_secondOrder(model, X[test_inds], batch_size=32)
+    scores = []
+    for _ in range(5):
+        model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
+        model.fit(X_train, Y[train_inds], epochs=args.nb_epochs, shuffle=True,
+                  verbose=0)
+        score = evaluate_secondOrder(model, X[test_inds], batch_size=32)
+        scores.append(score)
 
-    return score
+    return np.mean(scores)
 
 def main():
     """
@@ -46,8 +56,10 @@ def main():
     exemps = []
     scores = []
     # Loop through different values of (nb_categories, nb_exemplars)
-    for nb_categories in range(5, 51, 5):
-        for nb_exemplars in range(1, 15):
+    #for nb_categories in range(5, 51, 5):
+    #    for nb_exemplars in range(1, 15):
+    for nb_categories in range(5, 11, 5):
+        for nb_exemplars in range(1, 3):
             print('Testing for %i categories and %i exemplars...' %
                   (nb_categories, nb_exemplars))
             result = run_experiment(nb_categories, nb_exemplars)
@@ -66,7 +78,12 @@ if __name__ == '__main__':
     parser.add_argument('-sp', '--save_path',
                         help='The file path where results should be saved',
                         required=False, type=str)
+    parser.add_argument('-no', '--noise',
+                        help='Noise fraction; binomial probability between '
+                             '0-1.',
+                        required=False, type=float)
     parser.set_defaults(nb_epochs=100)
+    parser.set_defaults(noise=0.)
     parser.set_defaults(save_path='../results/results_secondOrder.csv')
     args = parser.parse_args()
     main()
