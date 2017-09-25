@@ -74,7 +74,10 @@ the baseline. The infants are asked to select which of the 3 comparison objects
 are of the same category as the baseline object. We simulated this test by
 creating an evaluation set containing groupings of 4 samples: the baseline,
 the shape constant, the color constant, and the texture constant. Each grouping
-serves as one test example. We find which su... TODO
+serves as one test example. We find which of the 3 samples the NN thinks to be
+most similar by evaluating the cosine similarity using the hidden layer features
+of the model. The accuracy metric used is the % of groupings for which the
+model chose the correct (shape-similar) object.
 
 ![secondOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder1.png)
 
@@ -93,3 +96,9 @@ Shape 0, Color 1, Texture 1 | Shape 0, Color 9, Texture 5
 Shape 1, Color 3, Texture 0 | Shape 1, Color 7, Texture 9
 ![image 12](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0012.png) | ![image 13](https://github.com/rfeinman/toy-neuralnet/blob/master/data/image_dataset/img0013.png)
 Shape 6, Color 1, Texture 7 | Shape 6, Color 4, Texture 7
+
+Results:
+•Small toy dataset with 10 categories and 2 exemplars per category
+•% time correct: 100%
+•Average cosine similarity for correct matches: __
+•Average cosine similarity for incorrect matches: __
