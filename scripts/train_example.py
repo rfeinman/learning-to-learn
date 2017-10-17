@@ -3,8 +3,8 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from toy_neuralnet.models import simple_mlp
-from toy_neuralnet.util import preprocess_data
+from learning2learn.models import simple_mlp
+from learning2learn.util import preprocess_data
 
 def main():
     """

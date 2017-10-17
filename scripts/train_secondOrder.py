@@ -2,10 +2,10 @@ from __future__ import division
 import argparse
 import pandas as pd
 
-from toy_neuralnet.models import simple_mlp
-from toy_neuralnet.util import (synthesize_data, synthesize_new_data,
-                                preprocess_data, evaluate_secondOrder,
-                                add_noise)
+from learning2learn.models import simple_mlp
+from learning2learn.util import (synthesize_data, synthesize_new_data,
+                                 preprocess_data, evaluate_secondOrder,
+                                 add_noise)
 
 def main():
     """

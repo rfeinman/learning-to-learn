@@ -3,10 +3,10 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from toy_neuralnet.models import simple_mlp
-from toy_neuralnet.util import (synthesize_data, synthesize_new_data,
-                                preprocess_data, evaluate_secondOrder,
-                                save_results, add_noise)
+from learning2learn.models import simple_mlp
+from learning2learn.util import (synthesize_data, synthesize_new_data,
+                                 preprocess_data, evaluate_secondOrder,
+                                 save_results, add_noise)
 
 def run_experiment(nb_categories, nb_exemplars):
     """

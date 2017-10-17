@@ -3,8 +3,8 @@ import os
 import shutil
 import argparse
 import warnings
-from toy_neuralnet.images import generate_dataset_parameters, generate_image
-from toy_neuralnet.util import synthesize_data
+from learning2learn.images import generate_dataset_parameters, generate_image
+from learning2learn.util import synthesize_data
 
 def main():
     # Generate the set of shapes, colors and textures that we will draw from

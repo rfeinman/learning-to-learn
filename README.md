@@ -11,7 +11,7 @@ in `requirements.txt`. After cloning this repository, it is recommended that
 you add the path to the repository to your `PYTHONPATH` environment variable
 to enable imports from any folder:
 
-    export PYTHONPATH="/path/to/toy-neuralnet:$PYTHONPATH"
+    export PYTHONPATH="/path/to/learning-to-learn:$PYTHONPATH"
 
 
 ## Repository Structure
@@ -25,7 +25,7 @@ This folder contains a collection of Jupyter Notebooks for various small tasks,
 such as synthesizing the artificial data sets and wrangling the data once
 synthesized.
 
-#### 3. toy-neuralnet
+#### 3. learning-to-learn
 This folder contains the core reusable source code for the project.
 
 #### 3. scripts

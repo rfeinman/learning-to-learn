@@ -2,8 +2,8 @@ from __future__ import division
 import argparse
 import numpy as np
 
-from toy_neuralnet.models import simple_mlp
-from toy_neuralnet.util import synthesize_data, preprocess_data, add_noise
+from learning2learn.models import simple_mlp
+from learning2learn.util import synthesize_data, preprocess_data, add_noise
 
 
 def main():
