@@ -17,22 +17,21 @@ to enable imports from any folder:
 ## Repository Structure
 The repository contains 3 folders:
 
-#### 1. data
-This is where the artificial toy data sets will be saved to and loaded from.
-
-#### 2. notebooks
-This folder contains a collection of Jupyter Notebooks for various small tasks,
-such as synthesizing the artificial data sets and wrangling the data once
-synthesized.
-
-#### 3. learning-to-learn
+#### 1. learning2learn
 This folder contains the core reusable source code for the project.
 
-#### 3. scripts
+#### 2. scripts
 This folder contains short Python scripts for running some experiments. Here
 you will find scripts for training a neural network model and evaluating its
 performance. There are also scripts for generating and saving datasets.
 
+#### 3. data
+This is where the artificial toy data sets will be saved to and loaded from.
+
+#### 4. notebooks
+This folder contains a collection of Jupyter Notebooks for various small tasks,
+such as synthesizing the artificial data sets and wrangling the data once
+synthesized.
 
 ## Results
 Our ultimate goal is to model the infant learning tasks described in Smith
