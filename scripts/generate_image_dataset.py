@@ -27,8 +27,6 @@ def main():
     # Save the dataset parameters so we know what we're working with
     df.to_csv(os.path.join(args.save_folder, 'data.csv'))
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--nb_categories',
