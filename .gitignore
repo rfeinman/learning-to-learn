@@ -1,6 +1,7 @@
 results.txt
 *.pyc
 .idea/
+data/temp/
 data/*.csv
 notebooks/scratch_pad.ipynb
 notebooks/.ipynb_checkpoints/
