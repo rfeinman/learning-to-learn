@@ -357,7 +357,8 @@ def generate_dataset_parameters(nb_categories, image_size=500):
         t_list = [generate_texture(patch_type, image_size)
                   for _ in range(nb_variations)]
         textures.extend(t_list)
-    hatch_types = ['/', '//', '-', '--', '+', '++']
+    #hatch_types = ['/', '//', '-', '--', '+', '++']
+    hatch_types = ['/', '-', '+']
     for hatch_type in hatch_types:
         textures.append(Texture(hatch_type, gradient=None))
         textures.append(Texture(hatch_type, gradient='right'))
