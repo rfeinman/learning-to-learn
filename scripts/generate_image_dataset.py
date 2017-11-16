@@ -29,10 +29,10 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--nb_categories',
+    parser.add_argument('-ca', '--nb_categories',
                         help='The number of categories in the dataset.',
                         required=False, type=int)
-    parser.add_argument('-e', '--nb_exemplars',
+    parser.add_argument('-ex', '--nb_exemplars',
                         help='The number of exemplars of each category in'
                              'the dataset.',
                         required=False, type=int)
