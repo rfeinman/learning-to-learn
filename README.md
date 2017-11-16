@@ -98,7 +98,7 @@ Exemplar #1                |  Exemplar #2
 Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
 ![image 2](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0002.png) | ![image 3](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0003.png)
 Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
-![image 12](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img004.png) | ![image 13](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0005.png)
+![image 12](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0004.png) | ![image 13](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0005.png)
 Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
 
 Results:
