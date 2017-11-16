@@ -12,7 +12,7 @@ class Texture:
     """
     TODO
     """
-    def __init__(self, patch_type, gradient, step, params):
+    def __init__(self, patch_type, gradient, step=None, params=None):
         """
 
         :param patch_type:
@@ -351,7 +351,7 @@ def generate_dataset_parameters(nb_categories, image_size=500):
             'ellipse', 'arc', 'arrow', 'circle',
             'rectangle', 'wedge', 'pentagon'
         ]
-    nb_variations = int(np.ceil(nb_categories / len(patch_types)))
+    nb_variations = max(int(np.ceil(nb_categories / len(patch_types))), 3)
     textures = []
     for patch_type in patch_types:
         t_list = [generate_texture(patch_type, image_size)
@@ -359,7 +359,9 @@ def generate_dataset_parameters(nb_categories, image_size=500):
         textures.extend(t_list)
     hatch_types = ['/', '//', '-', '--', '+', '++']
     for hatch_type in hatch_types:
-        textures.append(generate_texture(hatch_type, image_size))
+        textures.append(Texture(hatch_type, gradient=None))
+        textures.append(Texture(hatch_type, gradient='right'))
+        textures.append(Texture(hatch_type, gradient='left'))
     textures = np.random.choice(textures, nb_categories, replace=False)
 
     return shapes, colors, textures
