@@ -166,7 +166,7 @@ def similarity(x1, x2):
     """
     return 1 - cosine(x1, x2)
 
-def evaluate_secondOrder(model, X, batch_size=32):
+def evaluate_secondOrder(model, X, layer_num, batch_size=32):
     """
     Evaluate a trained Keras model on a set of novel objects. The novel objects
     come in groupings of 4, where each grouping contains a baseline sample, a
@@ -177,6 +177,8 @@ def evaluate_secondOrder(model, X, batch_size=32):
     constant) sample.
     :param model: (Keras Sequential) The Keras model to be used for evaluation.
     :param X: (Numpy array) The input data.
+    :param layer_num: (int) The index of the layer whose representation will be
+                        used for similarity evaluation
     :param batch_size: (int) The batch size to use when evaluating the model
                         on a set of inputs.
     :return: (float) The fraction of groupings in which the shape constant
@@ -185,14 +187,14 @@ def evaluate_secondOrder(model, X, batch_size=32):
     # Since we have groupings of 4 samples, X should have a length that is a
     # multiple of 4.
     assert len(X) % 4 == 0
-    X_p = get_hidden_representations(model, X, layer_num=1,
+    X_p = get_hidden_representations(model, X, layer_num=layer_num,
                                      batch_size=batch_size)
     nb_correct = 0
     for i in range(int(len(X) / 4)):
         score_shape = similarity(X_p[4*i], X_p[4*i+1])
         score_color = similarity(X_p[4*i], X_p[4*i+2])
         score_texture = similarity(X_p[4*i], X_p[4*i+3])
-        if np.argmax([score_shape, score_color, score_texture]) == 0:
+        if score_shape > score_color and score_shape > score_texture:
             nb_correct += 1
 
     # Return the percentage of times we were correct
