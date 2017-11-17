@@ -12,7 +12,7 @@ mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
 from learning2learn.images import generate_dataset_parameters, generate_image
-from learning2learn.util import synthesize_data
+from learning2learn.util import synthesize_data, synthesize_new_data
 
 def create_dataset(nb_categories, nb_exemplars, data_folder):
     # Generate the set of shapes, colors and textures that we will draw from
@@ -23,10 +23,9 @@ def create_dataset(nb_categories, nb_exemplars, data_folder):
         print('A dataset of the specified parameters already exists. Using '
               'the existing one...')
     else:
-        print('Building the image dataset...')
+        print('Building the training dataset...')
         os.mkdir(data_folder)
-        # Synthesize the dataset. Use nb_exemplars+1 because 1 exemplar
-        # of each class will be used for testing.
+        # Synthesize the dataset.
         df, _ = synthesize_data(nb_categories, nb_exemplars+1)
         shapes = [shape_set[i] for i in df['shape']]
         colors = [color_set[i] for i in df['color']]
@@ -37,6 +36,32 @@ def create_dataset(nb_categories, nb_exemplars, data_folder):
             generate_image(shape, color, texture, save_file)
         # Save the dataset parameters so we know what we're working with
         df.to_csv(os.path.join(data_folder, 'data.csv'))
+    f = os.path.join(data_folder, 'test0000/')
+    if not os.path.isdir(f):
+        print('The test sets do not exist. Building the test sets...')
+        # Now Synthesize the test datasets
+        df_test, _ = synthesize_new_data(nb_categories)
+        shape_set_test, color_set_test, texture_set_test = \
+            generate_dataset_parameters(3*nb_categories)
+        shapes_test = [shape_set_test[i-nb_categories] for i in df_test['shape']]
+        colors_test = [color_set_test[i-nb_categories] for i in df_test['color']]
+        textures_test = [texture_set_test[i-nb_categories] for i in df_test['texture']]
+        for i in range(int(len(df_test)/4)):
+            test_folder = os.path.join(data_folder, 'test%0.4i' % i)
+            os.mkdir(test_folder)
+            img_file = os.path.join(test_folder, 'base.png')
+            generate_image(shapes_test[i*4], colors_test[i*4],
+                           textures_test[i*4], img_file)
+            img_file = os.path.join(test_folder, 'shape_match.png')
+            generate_image(shapes_test[i*4+1], colors_test[i*4+1],
+                           textures_test[i*4+1], img_file)
+            img_file = os.path.join(test_folder, 'color_match.png')
+            generate_image(shapes_test[i*4+2], colors_test[i*4+2],
+                           textures_test[i*4+2], img_file)
+            img_file = os.path.join(test_folder, 'texture_match.png')
+            generate_image(shapes_test[i*4+3], colors_test[i*4+3],
+                           textures_test[i*4+3], img_file)
+
 
 def load_dataset(data_folder):
     # First load the images
@@ -65,6 +90,8 @@ def main():
     data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
                                    (args.nb_categories, args.nb_exemplars))
     create_dataset(args.nb_categories, args.nb_exemplars, data_folder)
+    import ipdb; ipdb.set_trace()
+    # TODO: finish this!
     X, shapes = load_dataset(data_folder)
     ohe = OneHotEncoder(sparse=False)
     Y = ohe.fit_transform(shapes.reshape(-1, 1))
@@ -76,8 +103,7 @@ def main():
     print('Training CNN model...')
     model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
     model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
-              shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
-              batch_size=args.batch_size)
+              shuffle=True, batch_size=args.batch_size)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -101,11 +127,11 @@ if __name__ == '__main__':
     parser.set_defaults(nb_exemplars=5)
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
-    args = parser.parse_args(0)
+    args = parser.parse_args()
     if args.gpu_num is not None:
         gpu_options = tf.GPUOptions(allow_growth=True,
                                     visible_device_list=args.gpu_num)
         sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
         K.set_session(sess)
-    tf.set_random_seed()
+    tf.set_random_seed(0)
     main()

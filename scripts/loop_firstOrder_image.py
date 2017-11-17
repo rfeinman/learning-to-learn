@@ -3,6 +3,8 @@ import os
 import argparse
 import numpy as np
 import pandas as pd
+import tensorflow as tf
+import keras.backend as K
 from keras.preprocessing import image
 from sklearn.preprocessing import OneHotEncoder
 import matplotlib as mpl
@@ -54,12 +56,15 @@ def load_dataset(data_folder):
 
     return imgs, shapes
 
-def run_experiment(nb_categories, nb_exemplars):
+def run_experiment(nb_categories, nb_exemplars, gpu_options=None):
 
     """
     The main script code.
     :param args: (Namespace object) Command line arguments.
     """
+    if gpu_options is not None:
+        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        K.set_session(sess)
     data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
                                    (nb_categories, nb_exemplars))
     create_dataset(nb_categories, nb_exemplars, data_folder)
@@ -75,12 +80,16 @@ def run_experiment(nb_categories, nb_exemplars):
     model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
     model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
               shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
-              verbose=0)
-    loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0)
+              verbose=0, batch_size=args.batch_size)
+    loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0,
+                               batch_size=args.batch_size)
+    if gpu_options is not None:
+        K.clear_session()
+        sess.close()
 
     return acc
 
-def main():
+def main(gpu_options=None):
     """
     The main script code.
     :param args: (Namespace object) Command line arguments.
@@ -93,7 +102,7 @@ def main():
         for nb_exemplars in range(1, 15):
             print('Testing for %i categories and %i exemplars...' %
                   (nb_categories, nb_exemplars))
-            result = run_experiment(nb_categories, nb_exemplars)
+            result = run_experiment(nb_categories, nb_exemplars, gpu_options)
             cats.append(nb_categories)
             exemps.append(nb_exemplars)
             scores.append(result)
@@ -109,7 +118,21 @@ if __name__ == '__main__':
     parser.add_argument('-sp', '--save_path',
                         help='The file path where results should be saved',
                         required=False, type=str)
+    parser.add_argument('-g', '--gpu_num',
+                        help='Int indicating which GPU to use',
+                        required=False, type=str)
+    parser.add_argument('-b', '--batch_size',
+                        help='Int indicating the batch size to use',
+                        required=False, type=int)
     parser.set_defaults(nb_epochs=100)
     parser.set_defaults(save_path='../results/results_firstOrder_image.csv')
+    parser.set_defaults(gpu_num=None)
+    parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    main()
+    tf.set_random_seed(0)
+    if args.gpu_num is not None:
+        gpu_options = tf.GPUOptions(allow_growth=True,
+                                    visible_device_list=args.gpu_num)
+        main(gpu_options)
+    else:
+        main()
