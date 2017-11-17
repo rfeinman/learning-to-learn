@@ -41,25 +41,11 @@ def generate_dictionary(column, nb_bits=None):
     return {val_set[i]: vectors[i] for i in range(nb_vals)}
 
 def convert_column(column, nb_bits=None):
-    """
-    TODO
-    :param column:
-    :param nb_bits:
-    :return:
-    """
     dictionary = generate_dictionary(column, nb_bits)
 
     return np.asarray([dictionary[elt] for elt in column])
 
 def preprocess_data(df, labels, one_hot=False, nb_bits=None):
-    """
-    TODO
-    :param df:
-    :param labels:
-    :param one_hot:
-    :param nb_bits:
-    :return:
-    """
     # check on form of the dataframe
     cols = df.columns.tolist()
     assert len(cols) == 3
@@ -88,12 +74,6 @@ def preprocess_data(df, labels, one_hot=False, nb_bits=None):
     return X, Y
 
 def synthesize_data(nb_categories, nb_exemplars):
-    """
-
-    :param nb_categories:
-    :param nb_exemplars:
-    :return:
-    """
     labels = []
     shapes = []
     for i in range(nb_categories):
@@ -203,14 +183,6 @@ def evaluate_secondOrder(model, X, layer_num, batch_size=32):
     return nb_correct / float(len(X)/4)
 
 def save_results(cats, exemps, scores, save_path):
-    """
-    TODO
-    :param cats:
-    :param exemps:
-    :param scores:
-    :param save_path:
-    :return:
-    """
     df = pd.DataFrame(index=np.unique(exemps), columns=np.unique(cats))
     for c, e, s in zip(cats, exemps, scores):
         df[c].loc[e] = s
