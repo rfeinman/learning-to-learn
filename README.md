@@ -65,9 +65,9 @@ values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
-![firstOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder1.png)
+![firstOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png)
 
-![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_firstOrder2.png)
+![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png)
 
 #### 2. Second-order Generalization
 For the second-order generalization test, infants are presented with an exemplar
@@ -83,9 +83,9 @@ most similar by evaluating the cosine similarity using the hidden layer features
 of the model. The accuracy metric used is the % of groupings for which the
 model chose the correct (shape-similar) object.
 
-![secondOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder1.png)
+![secondOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder1.png)
 
-![secondOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/plot_secondOrder2.png)
+![secondOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder2.png)
 
 
 ### Image Data
