@@ -43,7 +43,8 @@ def run_experiment(nb_categories, nb_exemplars):
         model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
         model.fit(X_train, Y[train_inds], epochs=args.nb_epochs, shuffle=True,
                   verbose=0)
-        score = evaluate_secondOrder(model, X[test_inds], batch_size=32)
+        score = evaluate_secondOrder(model, X[test_inds], layer_num=1,
+                                     batch_size=32)
         scores.append(score)
 
     return np.mean(scores)
