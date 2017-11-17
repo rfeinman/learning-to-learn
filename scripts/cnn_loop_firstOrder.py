@@ -5,14 +5,14 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import keras.backend as K
-from keras.preprocessing import image
 from sklearn.preprocessing import OneHotEncoder
 import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
 from learning2learn.images import generate_dataset_parameters, generate_image
-from learning2learn.util import synthesize_data, save_results
+from learning2learn.util import (synthesize_data, save_results,
+                                 load_image_dataset)
 
 def create_dataset(nb_categories, nb_exemplars, data_folder):
     # Generate the set of shapes, colors and textures that we will draw from
@@ -38,24 +38,6 @@ def create_dataset(nb_categories, nb_exemplars, data_folder):
         # Save the dataset parameters so we know what we're working with
         df.to_csv(os.path.join(data_folder, 'data.csv'))
 
-def load_dataset(data_folder):
-    # First load the images
-    imgs = []
-    files = [file for file in os.listdir(data_folder) if file.endswith('png')]
-    files = sorted(files)
-    for file in files:
-        img_path = os.path.join(data_folder, file)
-        img = image.load_img(img_path, target_size=(200, 200))
-        imgs.append(image.img_to_array(img))
-    imgs = np.asarray(imgs)
-    imgs /= 255.
-    # Now load the feature info
-    feature_file = os.path.join(data_folder, 'data.csv')
-    df = pd.read_csv(feature_file, index_col=0)
-    shapes = df['shape'].as_matrix()
-
-    return imgs, shapes
-
 def run_experiment(nb_categories, nb_exemplars, gpu_options=None):
 
     """
@@ -68,7 +50,7 @@ def run_experiment(nb_categories, nb_exemplars, gpu_options=None):
     data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
                                    (nb_categories, nb_exemplars))
     create_dataset(nb_categories, nb_exemplars, data_folder)
-    X, shapes = load_dataset(data_folder)
+    X, shapes = load_image_dataset(data_folder, target_size=(200, 200))
     ohe = OneHotEncoder(sparse=False)
     Y = ohe.fit_transform(shapes.reshape(-1, 1))
     # Now, we separate the train and test sets
@@ -125,7 +107,7 @@ if __name__ == '__main__':
                         help='Int indicating the batch size to use',
                         required=False, type=int)
     parser.set_defaults(nb_epochs=100)
-    parser.set_defaults(save_path='../results/results_firstOrder_image.csv')
+    parser.set_defaults(save_path='../results/cnn_results_firstOrder.csv')
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
