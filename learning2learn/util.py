@@ -126,19 +126,17 @@ def get_hidden_representations(model, X, layer_num, batch_size=32):
                         on a set of inputs.
     :return: (Numpy array) The output features.
     """
-    # Record the hidden layer dimensionality
-    output_dim = model.layers[layer_num].output.shape[-1].value
     # Define the Keras function that will return features
     get_features = K.function([model.layers[0].input],
                               [model.layers[layer_num].output])
     # Now, run through batches and compute features
     n_batches = int(np.ceil(X.shape[0] / float(batch_size)))
-    output = np.zeros(shape=(len(X), output_dim))
+    outputs = []
     for i in range(n_batches):
-        output[i*batch_size:(i+1)*batch_size] = \
-            get_features([X[i*batch_size:(i+1)*batch_size], 0])[0]
+        outputs.append(get_features([X[i*batch_size:(i+1)*batch_size], 0])[0])
 
-    return output
+    # Concatenate the list of arrays and return
+    return np.concatenate(outputs)
 
 def similarity(x1, x2):
     """
