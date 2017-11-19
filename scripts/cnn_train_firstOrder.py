@@ -1,8 +1,6 @@
 from __future__ import division
 import os
 import argparse
-import numpy as np
-import pandas as pd
 import tensorflow as tf
 import keras.backend as K
 from sklearn.preprocessing import OneHotEncoder
@@ -37,28 +35,51 @@ def create_dataset(nb_categories, nb_exemplars, data_folder):
         # Save the dataset parameters so we know what we're working with
         df.to_csv(os.path.join(data_folder, 'data.csv'))
 
-def main():
-
-    """
-    The main script code.
-    :param args: (Namespace object) Command line arguments.
-    """
+def run_experiment(nb_categories, nb_exemplars, params):
+    if params['gpu_options'] is not None:
+        sess = tf.Session(
+            config=tf.ConfigProto(gpu_options=params['gpu_options'])
+        )
+        K.set_session(sess)
     data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
-                                   (args.nb_categories, args.nb_exemplars))
-    create_dataset(args.nb_categories, args.nb_exemplars, data_folder)
+                                   (nb_categories, nb_exemplars))
+    create_dataset(nb_categories, nb_exemplars, data_folder)
     X, shapes = load_image_dataset(data_folder, target_size=(200, 200))
     ohe = OneHotEncoder(sparse=False)
     Y = ohe.fit_transform(shapes.reshape(-1, 1))
     # Now, we separate the train and test sets
-    test_inds = [i*(args.nb_exemplars+1) for i in range(args.nb_categories)]
+    test_inds = [i*(nb_exemplars+1) for i in range(nb_categories)]
     # The train inds are the set difference of all inds and test inds
     train_inds = list(set(range(len(shapes))).difference(test_inds))
     # Build a neural network model and train it with the training set
     print('Training CNN model...')
     model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
-    model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
+    model.fit(X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
               shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
-              batch_size=args.batch_size)
+              verbose=1, batch_size=params['batch_size'])
+    loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0,
+                               batch_size=params['batch_size'])
+    if params['gpu_options'] is not None:
+        K.clear_session()
+        sess.close()
+
+    return acc
+
+def main():
+    # GPU settings
+    if args.gpu_num is not None:
+        gpu_options = tf.GPUOptions(allow_growth=True,
+                                    visible_device_list=args.gpu_num)
+    else:
+        gpu_options = None
+    # Create the experiment parameter dictionary
+    params = {
+        'nb_epochs': args.nb_epochs,
+        'batch_size': args.batch_size,
+        'gpu_options': gpu_options
+    }
+    # Run the experiment
+    acc = run_experiment(args.nb_categories, args.nb_exemplars, params)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -83,10 +104,5 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    if args.gpu_num is not None:
-        gpu_options = tf.GPUOptions(allow_growth=True,
-                                    visible_device_list=args.gpu_num)
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
-        K.set_session(sess)
     tf.set_random_seed(0)
     main()

@@ -1,5 +1,6 @@
 from __future__ import division
 import os
+import sys
 import itertools
 import warnings
 import math
@@ -207,7 +208,8 @@ def load_image_dataset(data_folder, target_size=(200, 200), feature_info=True):
     files = sorted(files)
     for file in files:
         img_path = os.path.join(data_folder, file)
-        img = image.load_img(img_path, target_size=target_size)
+        img = image.load_img(img_path, target_size=target_size,
+                             interpolation='bicubic')
         imgs.append(image.img_to_array(img))
     imgs = np.asarray(imgs)
     imgs /= 255.
@@ -221,3 +223,30 @@ def load_image_dataset(data_folder, target_size=(200, 200), feature_info=True):
     else:
         # Return just images
         return imgs
+
+def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
+                    results_path):
+    cats = []
+    exemps = []
+    scores = []
+    stdout = sys.stdout
+    # Loop through different values of (nb_categories, nb_exemplars)
+    for nb_categories in category_trials:
+        for nb_exemplars in exemplar_trials:
+            print('Testing for %i categories and %i exemplars...' %
+                  (nb_categories, nb_exemplars))
+            if not os.path.isdir(results_path):
+                os.mkdir(results_path)
+            log_file = os.path.join(results_path,
+                                    'log_ca%0.4i_ex%0.4i' %
+                                    (nb_categories, nb_exemplars))
+            sys.stdout = open(log_file,'w')
+            result = exectue_fn(nb_categories, nb_exemplars, params)
+            sys.stdout = stdout
+            cats.append(nb_categories)
+            exemps.append(nb_exemplars)
+            scores.append(result)
+            # Save results from this run to text file
+            save_file = os.path.join(results_path, 'results.csv')
+            save_results(cats, exemps, scores, save_file)
+    print('Experiment loop complete.')
