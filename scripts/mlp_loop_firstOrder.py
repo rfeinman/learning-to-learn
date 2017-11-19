@@ -11,10 +11,8 @@ def main():
         'noise': args.noise,
         'nb_trials': 5
     }
-    #category_trials = range(5, 51, 5)
-    #exemplar_trials = range(1, 15)
-    category_trials = [5, 10]
-    exemplar_trials = [2, 3]
+    category_trials = range(5, 51, 5)
+    exemplar_trials = range(1, 15)
     experiment_loop(
         run_experiment, category_trials=category_trials,
         exemplar_trials=exemplar_trials, params=params,
