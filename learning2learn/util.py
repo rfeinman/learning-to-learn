@@ -1,6 +1,7 @@
 from __future__ import division
 import os
 import sys
+import shutil
 import itertools
 import warnings
 import math
@@ -228,13 +229,16 @@ def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
     exemps = []
     scores = []
     stdout = sys.stdout
+    # Create results_path folder. Remove previous one if it already exists.
+    if os.path.isdir(results_path):
+        warnings.warn('Removing old results folder of the same name!')
+        shutil.rmtree(results_path)
+    os.mkdir(results_path)
     # Loop through different values of (nb_categories, nb_exemplars)
     for nb_categories in category_trials:
         for nb_exemplars in exemplar_trials:
             print('Testing for %i categories and %i exemplars...' %
                   (nb_categories, nb_exemplars))
-            if not os.path.isdir(results_path):
-                os.mkdir(results_path)
             log_file = os.path.join(results_path,
                                     'log_ca%0.4i_ex%0.4i' %
                                     (nb_categories, nb_exemplars))

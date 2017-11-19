@@ -1,8 +1,10 @@
-from __future__ import division
+from __future__ import division, print_function
 import os
 import argparse
+import numpy as np
 import tensorflow as tf
 import keras.backend as K
+from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import OneHotEncoder
 import matplotlib as mpl
 mpl.use('Agg')
@@ -44,7 +46,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
     data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
                                    (nb_categories, nb_exemplars))
     create_dataset(nb_categories, nb_exemplars, data_folder)
-    X, shapes = load_image_dataset(data_folder, target_size=(200, 200))
+    X, shapes = load_image_dataset(data_folder, target_size=params['img_size'])
     ohe = OneHotEncoder(sparse=False)
     Y = ohe.fit_transform(shapes.reshape(-1, 1))
     # Now, we separate the train and test sets
@@ -53,17 +55,23 @@ def run_experiment(nb_categories, nb_exemplars, params):
     train_inds = list(set(range(len(shapes))).difference(test_inds))
     # Build a neural network model and train it with the training set
     print('Training CNN model...')
-    model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
-    model.fit(X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
-              shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
-              verbose=1, batch_size=params['batch_size'])
-    loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0,
-                               batch_size=params['batch_size'])
+    scores = []
+    for i in range(params['nb_trials']):
+        print('Round #%i' % (i+1))
+        model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
+        model.fit(X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
+                  shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
+                  verbose=1, batch_size=params['batch_size'],
+                  callbacks=[EarlyStopping(monitor='loss', patience=5)])
+        loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0,
+                                   batch_size=params['batch_size'])
+        scores.append(acc)
+
     if params['gpu_options'] is not None:
         K.clear_session()
         sess.close()
 
-    return acc
+    return np.mean(scores)
 
 def main():
     # GPU settings
@@ -76,6 +84,8 @@ def main():
     params = {
         'nb_epochs': args.nb_epochs,
         'batch_size': args.batch_size,
+        'nb_trials': 1,
+        'img_size': (200, 200),
         'gpu_options': gpu_options
     }
     # Run the experiment

@@ -1,8 +1,7 @@
-from __future__ import division
+from __future__ import division, print_function
 import os
 import argparse
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 import keras.backend as K
 from sklearn.preprocessing import OneHotEncoder

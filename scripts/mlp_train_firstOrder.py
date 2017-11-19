@@ -1,6 +1,7 @@
-from __future__ import division
+from __future__ import division, print_function
 import argparse
 import numpy as np
+from keras.callbacks import EarlyStopping
 
 from learning2learn.models import simple_mlp
 from learning2learn.util import synthesize_data, preprocess_data, add_noise
@@ -28,11 +29,13 @@ def run_experiment(nb_categories, nb_exemplars, params):
         X_train = X[train_inds]
     # Build a neural network model and train it with the training set
     scores = []
-    for _ in range(params['nb_trials']):
+    for i in range(params['nb_trials']):
+        print('Round #%i' % (i + 1))
         model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
         model.fit(X_train, Y[train_inds], epochs=params['nb_epochs'],
                   shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
-                  verbose=1, batch_size=params['batch_size'])
+                  verbose=1, batch_size=params['batch_size'],
+                  callbacks=[EarlyStopping(monitor='loss', patience=5)])
         loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0,
                                    batch_size=params['batch_size'])
         scores.append(acc)

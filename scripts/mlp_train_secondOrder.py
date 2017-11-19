@@ -1,7 +1,8 @@
-from __future__ import division
+from __future__ import division, print_function
 import argparse
 import numpy as np
 import pandas as pd
+from keras.callbacks import EarlyStopping
 
 from learning2learn.models import simple_mlp
 from learning2learn.util import (synthesize_data, synthesize_new_data,
@@ -39,10 +40,12 @@ def run_experiment(nb_categories, nb_exemplars, params):
         X_train = X[train_inds]
     # Build a neural network model and train it with the training set
     scores = []
-    for _ in range(params['nb_trials']):
+    for i in range(params['nb_trials']):
+        print('Round #%i' % (i + 1))
         model = simple_mlp(nb_in=X.shape[-1], nb_classes=Y.shape[-1])
         model.fit(X_train, Y[train_inds], epochs=params['nb_epochs'],
-                  shuffle=True, verbose=1, batch_size=params['batch_size'])
+                  shuffle=True, verbose=1, batch_size=params['batch_size'],
+                  callbacks=[EarlyStopping(monitor='loss', patience=5)])
         score = evaluate_secondOrder(model, X[test_inds], layer_num=1,
                                      batch_size=params['batch_size'])
         scores.append(score)

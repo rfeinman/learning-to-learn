@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 import argparse
 import tensorflow as tf
 import matplotlib as mpl
@@ -18,12 +18,18 @@ def main():
     params = {
         'nb_epochs': args.nb_epochs,
         'batch_size': args.batch_size,
+        'nb_trials': 5,
+        'img_size': (200, 200),
         'gpu_options': gpu_options
     }
     # Start the experiment loop
+    #category_trials = range(5, 51, 5)
+    category_trials = [5, 10]
+    exemplar_trials = range(1, 15)
     experiment_loop(
-        run_experiment, category_trials=[5], exemplar_trials=[2, 3],
-        params=params, results_path=args.save_path
+        run_experiment, category_trials=category_trials,
+        exemplar_trials=exemplar_trials, params=params,
+        results_path=args.save_path
     )
 
 if __name__ == '__main__':
