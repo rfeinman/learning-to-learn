@@ -65,7 +65,11 @@ values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
-![firstOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png){:height="50%" width="50%"}
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="400" height="790">
+
+
+
+![firstOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png)
 
 ![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png)
 
