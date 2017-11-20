@@ -159,10 +159,5 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    if args.gpu_num is not None:
-        gpu_options = tf.GPUOptions(allow_growth=True,
-                                    visible_device_list=args.gpu_num)
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
-        K.set_session(sess)
     tf.set_random_seed(0)
     main()
