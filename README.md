@@ -2,7 +2,9 @@
 
 In this project, we train a neural network on artificial toy data for the task
 of object recognition. Each sample has a specific shape, color and texture
-value. Objects with the same shape are of the same category.
+value. Objects with the same shape are of the same category. The data is
+designed to mimic the objects that were used to teach children the shape bias
+from [Smith et al. 2002](https://www.ncbi.nlm.nih.gov/pubmed/11892773).
 
 ## Requirements & Setup
 This code repository requires Keras and TensorFlow. Keras must be
@@ -33,7 +35,7 @@ synthesized.
 #### 4. data
 This is where the artificial toy data sets will be saved to and loaded from.
 
-#### 5. data
+#### 5. results
 This is where experiment results will be saved to and loaded from.
 
 ## Results
@@ -42,7 +44,9 @@ et al. 2002 using simple neural network (NN) models. In order to do so, we use
 artificial toy data that is designed to mimic the data described in the paper.
 Each sample in the dataset is assigned a shape, texture and color value.
 
-### Canonical Bit-vector Features
+### Simple MLP with Bit-vector Data
+To begin with, we use a simple Multi-layer Perceptron (MLP) with one hidden
+layer.
 Since these are categorical feature values, we encode the values using unique bit
 vectors that are randomly assigned at the beginning of the experiment. A given
 training set has a certain number of categories and a certain number of exemplars
