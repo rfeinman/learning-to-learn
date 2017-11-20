@@ -66,6 +66,9 @@ that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="400" height="500">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png" width="400" height="500">
+
+
 ![firstOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png)
 
 #### 2. Second-order Generalization
