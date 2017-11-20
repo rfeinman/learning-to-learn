@@ -48,7 +48,7 @@ challenging (more possible classes).
 
 Set 1             |  Set 2
 :----------------:|:----------------:
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="400" height="500"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png" width="400" height="300">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="400" height="500"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png" width="250" height="250">
 
 ### 2. Second-order Generalization
 Results are shown below for a variety of different (# categories, # exemplars)
@@ -56,7 +56,7 @@ training set sizes.
 
 Set 1             |  Set 2
 :----------------:|:----------------:
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder1.png" width="400" height="500"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder2.png" width="400" height="300">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder1.png" width="400" height="500"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder2.png" width="250" height="250">
 
 
 ## Simple CNN with Image Data
