@@ -65,6 +65,10 @@ values. With each dataset, the NN model was trained for 100 epochs. Keep in mind
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
+Solarized dark             |  Solarized Ocean
+:-------------------------:|:-------------------------:
+!<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="200" height="250">  |  <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png" width="150" height="150">
+
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="400" height="500">
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png" width="300" height="300">
 
