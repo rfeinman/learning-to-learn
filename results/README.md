@@ -6,7 +6,7 @@ artificial toy data that is designed to mimic the data described in the paper.
 Each object sample is assigned a shape, texture and color value. There are two
 types of model evaluations performed, both drawn from Smith et al. 2002:
 
-### 1. First-order Generalization
+### 1. First-order Generalization Test
 For the first-order generalization test, infants are asked to evaluate novel
 instances of familiar objects. To simulate this test, we trained our neural network models
 to classify objects, ensuring that objects of the same category were assigned
@@ -16,7 +16,7 @@ exemplar has the same shape as the training exemplars of that category, but a
 new color and texture combination. This test was repeated for different training
 set sizes, i.e. different combinations of (# categories, # exemplars).
 
-### 2. Second-order Generalization
+### 2. Second-order Generalization Test
 For the second-order generalization test, infants are presented with an exemplar
 of a novel object category as a baseline. Then, they are shown 3 comparison objects:
 one which has the same shape as the baseline, one with the same color, and one
@@ -57,6 +57,7 @@ training set sizes.
 Set 1             |  Set 2
 :----------------:|:----------------:
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder1.png" width="400" height="500"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder2.png" width="300" height="350">
+
 
 
 ## Simple CNN with Image Data
