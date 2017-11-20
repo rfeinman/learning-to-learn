@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 import tensorflow as tf
 import keras.backend as K
+from keras.callbacks import EarlyStopping
 from sklearn.preprocessing import OneHotEncoder
 import matplotlib as mpl
 mpl.use('Agg')
@@ -66,45 +67,74 @@ def create_dataset(nb_categories, nb_exemplars, data_folder):
             generate_image(shapes_test[i*4+3], colors_test[i*4+3],
                            textures_test[i*4+3], img_file)
 
-def get_test_set(data_folder):
+def get_test_set(data_folder, target_size):
     contents = [elt for elt in os.listdir(data_folder)
                 if elt.startswith('test')]
     contents = sorted(contents)
     X = []
     for dir in contents:
         dir_path = os.path.join(data_folder, dir)
-        imgs = load_image_dataset(dir_path, target_size=(200, 200),
+        imgs = load_image_dataset(dir_path, target_size=target_size,
                                   feature_info=False)
         X.append(imgs)
     X = np.concatenate(X)
 
     return X
 
-def main():
-
-    """
-    The main script code.
-    :param args: (Namespace object) Command line arguments.
-    """
+def run_experiment(nb_categories, nb_exemplars, params):
+    if params['gpu_options'] is not None:
+        sess = tf.Session(
+            config=tf.ConfigProto(gpu_options=params['gpu_options'])
+        )
+        K.set_session(sess)
     data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
-                                   (args.nb_categories, args.nb_exemplars))
-    create_dataset(args.nb_categories, args.nb_exemplars, data_folder)
-    X, shapes = load_image_dataset(data_folder, target_size=(200, 200))
+                                   (nb_categories, nb_exemplars))
+    create_dataset(nb_categories, nb_exemplars, data_folder)
+    X, shapes = load_image_dataset(data_folder, target_size=params['img_size'])
     ohe = OneHotEncoder(sparse=False)
     Y = ohe.fit_transform(shapes.reshape(-1, 1))
     # Now, we separate the train and test sets
-    test_inds = [i*(args.nb_exemplars+1) for i in range(args.nb_categories)]
+    test_inds = [i*(nb_exemplars+1) for i in range(nb_categories)]
     # The train inds are the set difference of all inds and test inds
     train_inds = list(set(range(len(shapes))).difference(test_inds))
-    X_test = get_test_set(data_folder)
+    X_test = get_test_set(data_folder, target_size=params['img_size'])
     # Build a neural network model and train it with the training set
     print('Training CNN model...')
-    model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
-    model.fit(X[train_inds], Y[train_inds], epochs=args.nb_epochs,
-              shuffle=True, batch_size=args.batch_size)
-    score = evaluate_secondOrder(model, X_test, layer_num=-4,
-                                 batch_size=32)
-    print('\nScore: %0.4f' % score)
+    scores = []
+    for i in range(params['nb_trials']):
+        print('Round #%i' % (i + 1))
+        model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
+        model.fit(X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
+                  shuffle=True, verbose=1, batch_size=params['batch_size'],
+                  callbacks=[EarlyStopping(monitor='loss', patience=5)])
+        score = evaluate_secondOrder(model, X_test, layer_num=-4,
+                                     batch_size=params['batch_size'])
+        scores.append(score)
+    avg_score = np.mean(scores)
+    print('\nScore: %0.4f' % avg_score)
+    if params['gpu_options'] is not None:
+        K.clear_session()
+        sess.close()
+
+    return avg_score
+
+def main():
+    # GPU settings
+    if args.gpu_num is not None:
+        gpu_options = tf.GPUOptions(allow_growth=True,
+                                    visible_device_list=args.gpu_num)
+    else:
+        gpu_options = None
+    # Create the experiment parameter dictionary
+    params = {
+        'nb_epochs': args.nb_epochs,
+        'batch_size': args.batch_size,
+        'nb_trials': 1,
+        'img_size': (200, 200),
+        'gpu_options': gpu_options
+    }
+    # Run the experiment
+    acc = run_experiment(args.nb_categories, args.nb_exemplars, params)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

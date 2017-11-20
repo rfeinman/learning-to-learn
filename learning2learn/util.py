@@ -128,7 +128,7 @@ def get_hidden_representations(model, X, layer_num, batch_size=32):
     :return: (Numpy array) The output features.
     """
     # Define the Keras function that will return features
-    get_features = K.function([model.layers[0].input],
+    get_features = K.function([model.layers[0].input, K.learning_phase()],
                               [model.layers[layer_num].output])
     # Now, run through batches and compute features
     n_batches = int(np.ceil(X.shape[0] / float(batch_size)))

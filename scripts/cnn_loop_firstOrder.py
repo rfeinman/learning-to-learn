@@ -23,8 +23,7 @@ def main():
         'gpu_options': gpu_options
     }
     # Start the experiment loop
-    #category_trials = range(5, 51, 5)
-    category_trials = [5, 10]
+    category_trials = range(5, 51, 5)
     exemplar_trials = range(1, 15)
     experiment_loop(
         run_experiment, category_trials=category_trials,
