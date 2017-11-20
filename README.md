@@ -67,8 +67,7 @@ challenging (more possible classes).
 
 Set 1             |  Set 2
 :----------------:|:----------------:
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="400" height="500">  |
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png" width="400" height="300">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder1.png" width="400" height="500"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_firstOrder2.png" width="400" height="300">
 
 #### 2. Second-order Generalization
 For the second-order generalization test, infants are presented with an exemplar
@@ -84,9 +83,9 @@ most similar by evaluating the cosine similarity using the hidden layer features
 of the model. The accuracy metric used is the % of groupings for which the
 model chose the correct (shape-similar) object.
 
-![secondOrder plot 1](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder1.png)
-
-![secondOrder plot 2](https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder2.png)
+Set 1             |  Set 2
+:----------------:|:----------------:
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder1.png" width="400" height="500"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/mlp_plot_secondOrder2.png" width="400" height="300">
 
 
 ### Image Data
