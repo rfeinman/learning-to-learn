@@ -1,10 +1,12 @@
 # Learning the Shape Bias with Neural Networks
 
-In this project, we train a neural network on artificial toy data for the task
+In this project, we train simple neural network models on artificial toy data for the task
 of object recognition. Each object sample has a specific shape, color and texture
 value. Objects with the same shape are of the same category. The data is
 designed to mimic the objects that were used to teach children the shape bias
-from [Smith et al. 2002](https://www.ncbi.nlm.nih.gov/pubmed/11892773).
+from [Smith et al. 2002](https://www.ncbi.nlm.nih.gov/pubmed/11892773). Ultimately,
+we hope to analyze the development of the shape bias during object category
+learning and the influence that this bias has on future learning ("learning-to-learn").
 
 ## Requirements & Setup
 This code repository requires Keras and TensorFlow. Keras must be
