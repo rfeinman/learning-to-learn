@@ -94,11 +94,11 @@ Some examples of the images:
 
 Exemplar #1                |  Exemplar #2
 :-------------------------:|:-------------------------:
-![image 0](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0000.png) | ![image 1](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0001.png)
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0000.png" width="150" height="150"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0001.png" width="150" height="150">
 Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
-![image 2](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0002.png) | ![image 3](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0003.png)
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0002.png" width="150" height="150"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0003.png" width="150" height="150">
 Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
-![image 12](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0004.png) | ![image 13](https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0005.png)
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0004.png" width="150" height="150"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0005.png" width="150" height="150">
 Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
 
 Results:
