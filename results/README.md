@@ -78,6 +78,10 @@ training set sizes. With each dataset, the NN model was trained for 100 epochs. 
 that as the # category value increases, the classification task becomes more
 challenging (more possible classes).
 
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/cnn_plot_firstOrder.png" width="400" height="500">
+
 ### 2. Second-order Generalization
 Results are shown below for a variety of different (# categories, # exemplars)
 training set sizes.
+
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/results/cnn_plot_secondOrder.png" width="400" height="500">
