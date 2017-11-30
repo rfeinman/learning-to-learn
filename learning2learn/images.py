@@ -243,10 +243,11 @@ def get_base_image(height, width, color, shape, gradient=None):
 
     return img
 
-def generate_texture(patch_type=None, image_size=500):
+def generate_texture(patch_type=None, gradient='sample', image_size=500):
     """
 
     :param patch_type:
+    :param gradient:
     :param image_size:
     :return:
     """
@@ -307,9 +308,15 @@ def generate_texture(patch_type=None, image_size=500):
     else:
         step = None
 
-    # As a final parameter, we will sample a gradient from
-    gradient_options = [None, 'left', 'right', 'up', 'down']
-    gradient = np.random.choice(gradient_options)
+    if gradient == 'sample':
+        # As a final parameter, we will sample a gradient from
+        # a set of 5 options
+        gradient_options = [None, 'left', 'right', 'up', 'down']
+        gradient = np.random.choice(gradient_options)
+    else:
+        # In this case, the gradient has already been provided.
+        # Let's error-check it.
+        assert gradient in [None, 'left', 'right', 'up', 'down']
 
     # Now create the texture object instance and return
     return Texture(patch_type, gradient, step, params)
@@ -337,7 +344,8 @@ def add_texture(ax, texture, image_size=500):
 def generate_dataset_parameters(nb_categories, image_size=500):
     """
 
-    :param nb_shapes:
+    :param nb_categories:
+    :param image_size:
     :return:
     """
     # Generate shapes, which are sets of points for which polygons will
