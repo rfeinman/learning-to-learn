@@ -1,6 +1,7 @@
 results.txt
 *.pyc
 .idea/
+data/images_ca*
 data/temp/
 data/*.csv
 notebooks/scratch_pad.ipynb
