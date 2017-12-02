@@ -42,12 +42,12 @@ This is where experiment results will be saved to and loaded from.
 
 ## Datasets
 
-#### Bitvector categorical features
+### Bitvector categorical features
 
 As a preliminary type of training data, we used... TODO
 
 
-#### Machine-generated 2-D object images
+### Machine-generated 2-D object images
 
 As a second type of training data, we used... TODO. Some examples of the images:
 
@@ -61,15 +61,15 @@ Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
 Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
 
 
-#### Artist-designed 3-D object images
+### Artist-designed 3-D object images
 
 Exemplar #1                |  Exemplar #2
 :-------------------------:|:-------------------------:
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake1_carpet_red.jpg" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake1_sponge_yellow.jpg" width="200" height="200">
-Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
+Shape 0, Color 5, Texture 3 | Shape 0, Color 6, Texture 0
 <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake5_wood_pink.jpg" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake5_carpet_purple.jpg" width="200" height="200">
-Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake4_glass_blue.jpg" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake4_wood_green.jpg" width="200" height="200">
+Shape 1, Color 4, Texture 7 | Shape 1, Color 3, Texture 4
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake4_sponge_orange.jpg" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake4_wood_green.jpg" width="200" height="200">
 Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
 
 ## Results
