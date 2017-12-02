@@ -46,6 +46,15 @@ This is where experiment results will be saved to and loaded from.
 
 As a preliminary type of training data, we used... TODO
 
+Exemplar #1                |  Exemplar #2
+:-------------------------:|:-------------------------:
+10101 00000 00000 | 10101 00000 00000
+Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
+01010 00000 00000 | 01010 00000 00000
+Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
+10110 00000 00000 | 10110 00000 00000
+Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
+
 
 ### Machine-generated 2-D object images
 
