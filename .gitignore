@@ -4,5 +4,6 @@ results.txt
 data/images_ca*
 data/temp/
 data/*.csv
+notebooks/temp.png
 notebooks/scratch_pad.ipynb
 notebooks/.ipynb_checkpoints/
