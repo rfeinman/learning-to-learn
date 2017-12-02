@@ -19,7 +19,7 @@ to enable imports from any folder:
 
 
 ## Repository Structure
-The repository contains 5 folders:
+The repository contains 6 subfolders:
 
 #### 1. learning2learn
 This folder contains the core reusable source code for the project.
@@ -39,6 +39,9 @@ This is where the artificial toy data sets will be saved to and loaded from.
 
 #### 5. results
 This is where experiment results will be saved to and loaded from.
+
+#### 6. paper_latex
+This is where the latex for the CogSci paper is kept.
 
 ## Datasets
 
