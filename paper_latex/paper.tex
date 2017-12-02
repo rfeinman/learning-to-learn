@@ -1,0 +1,70 @@
+%
+% Annual Cognitive Science Conference
+% Sample LaTeX Paper -- Proceedings Format
+%
+
+% Original : Ashwin Ram (ashwin@cc.gatech.edu)       04/01/1994
+% Modified : Johanna Moore (jmoore@cs.pitt.edu)      03/17/1995
+% Modified : David Noelle (noelle@ucsd.edu)          03/15/1996
+% Modified : Pat Langley (langley@cs.stanford.edu)   01/26/1997
+% Latex2e corrections by Ramin Charles Nakisa        01/28/1997
+% Modified : Tina Eliassi-Rad (eliassi@cs.wisc.edu)  01/31/1998
+% Modified : Trisha Yannuzzi (trisha@ircs.upenn.edu) 12/28/1999 (in process)
+% Modified : Mary Ellen Foster (M.E.Foster@ed.ac.uk) 12/11/2000
+% Modified : Ken Forbus                              01/23/2004
+% Modified : Eli M. Silk (esilk@pitt.edu)            05/24/2005
+% Modified : Niels Taatgen (taatgen@cmu.edu)         10/24/2006
+% Modified : David Noelle (dnoelle@ucmerced.edu)     11/19/2014
+
+%% Change "letterpaper" in the following line to "a4paper" if you must.
+
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage{cogsci}
+\usepackage{pslatex}
+\usepackage{apacite}
+
+% New command: footnote without reference
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
+}
+
+
+\title{Learning-to-Learn with Neural Networks}
+
+\author{{\large \bf Reuben Feinman (reuben.feinman@nyu.edu)} \\
+  Center for Neural Science \\
+  New York University
+  \AND {\large \bf Brenden M. Lake (brenden@nyu.edu)} \\
+  Department of Psychology and Center for Data Science \\
+  New York University}
+
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+    \input{abstract.tex}
+\end{abstract}
+
+\input{introduction.tex}
+\input{experiments.tex}
+\input{acknowledgements.tex}
+
+\nocite{Ritter2017}
+
+
+\bibliographystyle{apacite}
+
+\setlength{\bibleftmargin}{.125in}
+\setlength{\bibindent}{-\bibleftmargin}
+
+\bibliography{citations}
+
+
+\end{document}

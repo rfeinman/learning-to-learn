@@ -7,3 +7,8 @@ data/*.csv
 notebooks/temp.png
 notebooks/scratch_pad.ipynb
 notebooks/.ipynb_checkpoints/
+paper_latex/paper.aux
+paper_latex/paper.bbl
+paper_latex/paper.blg
+paper_latex/paper.log
+paper_latex/paper.out

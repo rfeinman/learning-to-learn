@@ -1,0 +1,22 @@
+\section{Introduction}
+
+Deep neural networks (DNNs) are machine learning techniques that impose a hierarchical architecture consisting
+of multiple layers of nonlinear processing units. In practice, DNNs achieve state-of-the-art
+performance for a variety of generative and discriminative learning tasks from
+domains including image processing, speech recognition, drug discovery and
+genomics.
+
+Although DNNs are known to be robust to noisy inputs, they have
+been shown to be vulnerable to specially-crafted adversarial samples.
+These samples are constructed by taking a normal
+sample and perturbing it, either at once or iteratively, in a direction that
+maximizes the chance of misclassification. Figure 1 shows
+some examples of adversarial MNIST images alongside noisy images of equivalent
+perturbation size. Adversarial attacks which require only small perturbations to
+the original inputs can induce high-efficacy DNNs to misclassify at a high rate.
+Some adversarial samples can also induce a DNN to output a specific target class.
+The vulnerability of DNNs to such adversarial attacks
+highlights important security and performance implications for these models.
+Consequently, significant effort is ongoing to understand
+and explain adversarial samples and to design defenses against them.
+\blfootnote{The source code repository for this paper can be found at \url{http://github.com/rfeinman/learning-to-learn}}
