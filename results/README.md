@@ -61,17 +61,9 @@ Set 1             |  Set 2
 
 
 ## Simple CNN with Image Data
-As a second type of model, we generated artificial images...
-Some examples of the images:
-
-Exemplar #1                |  Exemplar #2
-:-------------------------:|:-------------------------:
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0000.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0001.png" width="200" height="200">
-Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0002.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0003.png" width="200" height="200">
-Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0004.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0005.png" width="200" height="200">
-Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
+As a second type of model, we generated images of artificial 2-D objects. Some
+examples of these images can be found in the "Datasets" section of the main
+repository README. TODO...
 
 ### 1. First-order Generalization
 Results are shown below for a variety of different (# categories, # exemplars)
