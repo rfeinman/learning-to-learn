@@ -1,6 +1,7 @@
-\section{Efficient Word Learning Experiments}
+\section{Efficient Word Learning}
+\label{sec:efficient_learning}
 We first set out to model the infant learning tasks described in \cite{Smith2002} using
-simple neural network models. In order to do so, we use artificial toy data that is designed
+simple neural networks. In order to do so, we use artificial toy data that is designed
 to mimic the training data described in the paper. Each object sample is assigned a shape,
 texture and color value. There are two types of model evaluations performed, both drawn from
 \cite{Smith2002}.
@@ -49,7 +50,7 @@ different training set sizes, i.e. different combinations of \{\textit{\# catego
                 \end{subfigure}
             \end{center}
             \caption{MLP}
-            \label{mlp_results}
+            \label{fig:mlp_results}
         \end{subfigure}
         % cnn results
         \begin{subfigure}[b]{0.47\textwidth}
@@ -68,58 +69,14 @@ different training set sizes, i.e. different combinations of \{\textit{\# catego
                 \end{subfigure}
             \end{center}
             \caption{CNN}
-            \label{cnn_results}
+            \label{fig:cnn_results}
         \end{subfigure}
     \end{center}
     \caption{First- and second-order generalization results for the simple MLP and CNN models.
     For each \{\textit{\# categories}, \textit{\# exemplars}\} pair, the average result from
     5 trials is shown.}
-    \label{generalization_results}
+    \label{fig:generalization_results}
 \end{figure*}
-
-% \begin{figure}[h!]
-%     % subfigure (a)
-%     \begin{subfigure}[b]{0.25\textwidth}
-%         \begin{center}
-%             \includegraphics[width=0.98\textwidth]{figures/mlp_1order_accuracy.pdf}
-%         \end{center}
-%         \label{fig:mlp_1order_results}
-%     \end{subfigure}
-%     % subfigure (b)
-%     \begin{subfigure}[b]{0.25\textwidth}
-%         \begin{center}
-%             \includegraphics[width=0.98\textwidth]{figures/mlp_2order_accuracy.pdf}
-%         \end{center}
-%         \label{fig:mlp_2order_results}
-%     \end{subfigure}
-%     % caption
-%     \caption{MLP first- and second-order generalization results. For each
-%     \{\textit{\# categories}, \textit{\# exemplars}\} pair, the average result from 5 trials
-%     is shown.}
-%     \label{fig:mlp_results}
-% \end{figure}
-
-% \begin{figure}[h!]
-%     % subfigure (a)
-%     \begin{subfigure}[b]{0.25\textwidth}
-%         \begin{center}
-%             \includegraphics[width=0.98\textwidth]{figures/cnn_1order_accuracy.pdf}
-%         \end{center}
-%         \label{fig:mlp_1order_results}
-%     \end{subfigure}
-%     % subfigure (b)
-%     \begin{subfigure}[b]{0.25\textwidth}
-%         \begin{center}
-%             \includegraphics[width=0.98\textwidth]{figures/cnn_2order_accuracy.pdf}
-%         \end{center}
-%         \label{fig:mlp_2order_results}
-%     \end{subfigure}
-%     % caption
-%     \caption{CNN first- and second-order generalization results. For each
-%     \{\textit{\# categories}, \textit{\# exemplars}\} pair, the average result from 5 trials
-%     is shown.}
-%     \label{fig:mlp_results}
-% \end{figure}
 
 \subsection{Simple Multilayer Perceptron}
 To begin with, we use a simple multilayer perceptron (MLP) that operates on categorical
@@ -127,53 +84,174 @@ data. Since shape, color, \& texture have categorical feature values, we encode 
 using unique bit vectors that are randomly assigned at the beginning of the experiment. We
 use a simple feed-forward NN with one hidden layer of 30 units, and the ReLU activation
 function. The number of units in the softmax layer depends on the \textit{\# categories}
-parameter for the particular dataset. Results are shown in Fig. \ref{mlp_results}.
+parameter for the particular dataset. Results are shown in Fig. \ref{fig:mlp_results}.
 
 \subsection{Simple Convolutional Neural Network}
+\label{sec:simple_cnn}
 As a second type of model, we used a simple convolutional neural network (CNN) architecture
 consisting of... TODO. To train this CNN, we generated images of artificial 2-D objects
-(Fig. \ref{generated_images}) with a variety of different shape, color and texture values. TODO... finish.
-Results are shown in Fig. \ref{cnn_results}.
+(Fig. \ref{fig:generated_images}) with a variety of different shape, color and texture values. TODO... finish.
+Results are shown in Fig. \ref{fig:cnn_results}.
 
 \begin{figure}[h!]
-    % shape 1
-    \begin{subfigure}[b]{0.4\textwidth}
-        \begin{center}
-            \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\linewidth]{figures/img0000.png}
-            \end{subfigure}
-            \begin{subfigure}[b]{0.5\textwidth}
-                \includegraphics[width=\linewidth]{figures/img0001.png}
-            \end{subfigure}
-        \end{center}
-    \end{subfigure}
-    % % shape 2
-    \begin{subfigure}[b]{0.4\textwidth}
-        \begin{center}
-            \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\linewidth]{figures/img0002.png}
-            \end{subfigure}
-            \begin{subfigure}[b]{0.5\textwidth}
-                \includegraphics[width=\linewidth]{figures/img0003.png}
-            \end{subfigure}
-        \end{center}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.4\textwidth}
-        \begin{center}
-            \begin{subfigure}[b]{0.48\textwidth}
-                \includegraphics[width=\linewidth]{figures/img0004.png}
-            \end{subfigure}
-            \begin{subfigure}[b]{0.5\textwidth}
-                \includegraphics[width=\linewidth]{figures/img0005.png}
-            \end{subfigure}
-        \end{center}
-    \end{subfigure}
-    \caption{Images of artificial 2D objects with different shape, color and texture features.}
-    \label{generated_images}
+    \begin{center}
+        % shape 1
+        \begin{subfigure}[b]{0.3\textwidth}
+            \begin{center}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/generated_objects/img0000.png}
+                \end{subfigure}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/generated_objects/img0001.png}
+                \end{subfigure}
+            \end{center}
+        \end{subfigure}
+        % % shape 2
+        \begin{subfigure}[b]{0.3\textwidth}
+            \begin{center}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/generated_objects/img0002.png}
+                \end{subfigure}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/generated_objects/img0003.png}
+                \end{subfigure}
+            \end{center}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.3\textwidth}
+            \begin{center}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/generated_objects/img0004.png}
+                \end{subfigure}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/generated_objects/img0005.png}
+                \end{subfigure}
+            \end{center}
+        \end{subfigure}
+    \end{center}
+    \caption{Computer-generated images of 2D objects with different shape, color and texture features.}
+    \label{fig:generated_images}
 \end{figure}
 
+\section{Extensive Bias Analysis}
+We next set out to analyze the biases of image classification models in detail. The model that
+we choose to investigate is the popular VGG-16 network \cite{}, which has been pre-trained for
+the ImageNet classification task.
+% In addition to VGG-16, we also investigate the
+% biases of our simple CNN from Section \ref{sec:efficient_learning}, trained on artificial objects with dataset
+% dimensions \{\}.
+Our analysis consists of two parts: 1) a detailed layer-wise investingation of the shape, color and
+texture biases, and 2) a parametric analysis of the shape and color biases in these models.
 
+\begin{figure}[h!]
+    \begin{center}
+        % shape 1
+        \begin{subfigure}[b]{0.3\textwidth}
+            \begin{center}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/artist_objects/fake1_carpet_red.jpg}
+                \end{subfigure}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/artist_objects/fake1_sponge_yellow.jpg}
+                \end{subfigure}
+            \end{center}
+        \end{subfigure}
+        % % shape 2
+        \begin{subfigure}[b]{0.3\textwidth}
+            \begin{center}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/artist_objects/fake5_wood_pink.jpg}
+                \end{subfigure}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/artist_objects/fake5_carpet_purple.jpg}
+                \end{subfigure}
+            \end{center}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.3\textwidth}
+            \begin{center}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/artist_objects/fake4_sponge_orange.jpg}
+                \end{subfigure}
+                \begin{subfigure}[b]{0.4\textwidth}
+                    \includegraphics[width=\linewidth]{figures/artist_objects/fake4_wood_green.jpg}
+                \end{subfigure}
+            \end{center}
+        \end{subfigure}
+    \end{center}
+    \caption{Artist-designed images of 3D objects with different shape, color and texture features.}
+    \label{fig:artist_images}
+\end{figure}
 
-\newpage
-\section{Layer-wise Bias Analysis}
+\begin{figure}[h!]
+    \caption{CogPsyc images with different shape, color and texture features (TODO).}
+    \label{fig:cogpsyc_images}
+\end{figure}
 
+\subsection{Layer-wise Biases}
+The first step of our analysis is to evaluate the shape, color and texture biases of VGG-16
+at each of its layers, in order to get a picture of how these biases develops along the
+higherarchy of the model's internal representation. In order to probe the model, we make
+use of two unique image datasets with stimuli that mimic \cite{Smith2002}.
+
+{\bf1. Artist-generated object dataset}: These images were generated by an artist in Adobe
+Photoshop. See Fig. \ref{fig:artist_images}.
+
+{\bf2. CogPsyc object dataset}: These images were provided by cognitive psychologist Linda
+Smith, and they were used in the experiments of \cite{Ritter2017}. See Fig.
+\ref{fig:cogpsyc_images}.
+
+\begin{figure*}[h]
+    \begin{center}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \begin{center}
+                \includegraphics[width=\textwidth]{figures/vgg_layer_biases.pdf}
+            \end{center}
+            \caption{Artist-generated images}
+            \label{fig:biases_artist}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+            \caption{CogPsyc images (TODO)}
+        \end{subfigure}
+        \caption{VGG-16 layer-wise biases on two image datasets. Attention strength refers to
+        the network's similarity score between the target objectand objects that match in
+        either shape, color or texture.}
+    \end{center}
+    \label{fig:layerwise_biases}
+\end{figure*}
+
+The layer-wise bias results are shown in Fig. \ref{fig:biases_artist}.
+
+\subsection{Parametric Biases}
+The second step of our analysis is to examine how the shape and color biases depend on the intensity
+of their respective feature similarities. For these tests, we make use of our computer-generated
+images so that we can quantitatively manipulate and evaluate the shape and color features of our
+objects. The parametric bias results are shown in Fig. \ref{fig:parametric_others_constant} and
+\ref{fig:parametric_others_varying}.
+\begin{figure}[h!]
+    \begin{center}
+        \begin{subfigure}[b]{0.235\textwidth}
+            \includegraphics[width=\linewidth]{figures/vgg_shape_parametric_others_constant.pdf}
+            \caption{Shape}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.235\textwidth}
+            \includegraphics[width=\linewidth]{figures/vgg_color_parametric_others_constant.pdf}
+            \caption{Color}
+        \end{subfigure}
+    \end{center}
+    \caption{VGG-16 parametric shape and color biases w/ other features constant.}
+    \label{fig:parametric_others_constant}
+\end{figure}
+
+\begin{figure}[h!]
+    \begin{center}
+        \begin{subfigure}[b]{0.235\textwidth}
+            \includegraphics[width=\linewidth]{figures/vgg_shape_parametric.pdf}
+            \caption{Shape}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.235\textwidth}
+            \includegraphics[width=\linewidth]{figures/vgg_color_parametric.pdf}
+            \caption{Color}
+        \end{subfigure}
+    \end{center}
+    \caption{VGG-16 parametric shape and color biases w/ other features varying.}
+    \label{fig:parametric_others_varying}
+\end{figure}
