@@ -223,6 +223,33 @@ def load_image_dataset(data_folder, target_size=(200, 200), feature_info=True):
         # Return just images
         return imgs
 
+def load_image_dataset1(nb_categories, nb_exemplars, data_folder,
+                        target_size=(200, 200)):
+    # First load the images
+    imgs = []
+    files = [file for file in os.listdir(data_folder) if file.endswith('png')]
+    files = sorted(files)
+    for file in files:
+        img_path = os.path.join(data_folder, file)
+        img = image.load_img(img_path, target_size=target_size,
+                             interpolation='bicubic')
+        imgs.append(image.img_to_array(img))
+    imgs = np.asarray(imgs)
+    imgs /= 255.
+    # Now load the feature info
+    feature_file = os.path.join(data_folder, 'data.csv')
+    df = pd.read_csv(feature_file, index_col=0)
+    # Collect a subset of the data according to nb_categories, nb_exemplars
+    ix = []
+    for cat in range(nb_categories):
+        ix_cat = df[df['shape'] == cat].index.tolist()
+        ix_cat = ix_cat[:nb_exemplars+1]
+        ix.extend(ix_cat)
+    imgs = imgs[ix]
+    df = df.iloc[ix]
+
+    return imgs, df['shape'].as_matrix()
+
 def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
                     results_path):
     cats = []

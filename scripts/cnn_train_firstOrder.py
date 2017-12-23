@@ -11,7 +11,8 @@ mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
 from learning2learn.images import generate_dataset_parameters, generate_image
-from learning2learn.util import synthesize_data, load_image_dataset
+from learning2learn.util import (synthesize_data, load_image_dataset,
+                                 load_image_dataset1)
 
 def create_dataset(nb_categories, nb_exemplars, data_folder):
     # Generate the set of shapes, colors and textures that we will draw from
@@ -43,10 +44,13 @@ def run_experiment(nb_categories, nb_exemplars, params):
             config=tf.ConfigProto(gpu_options=params['gpu_options'])
         )
         K.set_session(sess)
-    data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
-                                   (nb_categories, nb_exemplars))
-    create_dataset(nb_categories, nb_exemplars, data_folder)
-    X, shapes = load_image_dataset(data_folder, target_size=params['img_size'])
+    # data_folder = os.path.realpath('../data/images_ca%0.4i_ex%0.4i' %
+    #                                (nb_categories, nb_exemplars))
+    # create_dataset(nb_categories, nb_exemplars, data_folder)
+    # X, shapes = load_image_dataset(data_folder, target_size=params['img_size'])
+    data_folder = os.path.realpath('../data/images_ca0050_ex0014')
+    X, shapes = load_image_dataset1(nb_categories, nb_exemplars, data_folder,
+                                    target_size=params['img_size'])
     ohe = OneHotEncoder(sparse=False)
     Y = ohe.fit_transform(shapes.reshape(-1, 1))
     # Now, we separate the train and test sets
@@ -66,7 +70,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
         loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0,
                                    batch_size=params['batch_size'])
         scores.append(acc)
-
+    #model.save('../data/model.h5')
     if params['gpu_options'] is not None:
         K.clear_session()
         sess.close()
@@ -109,7 +113,7 @@ if __name__ == '__main__':
                         help='Int indicating the batch size to use',
                         required=False, type=int)
     parser.set_defaults(nb_epochs=100)
-    parser.set_defaults(nb_categories=100)
+    parser.set_defaults(nb_categories=10)
     parser.set_defaults(nb_exemplars=5)
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)

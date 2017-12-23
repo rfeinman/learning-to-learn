@@ -154,7 +154,7 @@ if __name__ == '__main__':
                         help='Int indicating the batch size to use',
                         required=False, type=int)
     parser.set_defaults(nb_epochs=100)
-    parser.set_defaults(nb_categories=100)
+    parser.set_defaults(nb_categories=10)
     parser.set_defaults(nb_exemplars=5)
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
