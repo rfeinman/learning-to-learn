@@ -87,6 +87,7 @@ def synthesize_data(nb_categories, nb_exemplars):
     df['shape'] = shapes
     df['color'] = colors
     df['texture'] = textures
+
     return df, pd.Series(labels)
 
 def synthesize_new_data(nb_categories):
@@ -113,6 +114,7 @@ def synthesize_new_data(nb_categories):
     for i in range(nb_categories):
         dfs.append(pd.DataFrame(a+3*i, columns=['shape', 'color', 'texture']))
         labels.extend([nb_categories+3*i for _ in range(4)])
+
     return pd.concat(dfs), pd.Series(labels)
 
 def get_hidden_representations(model, X, layer_num, batch_size=32):
@@ -198,32 +200,10 @@ def add_noise(X, p):
     :return: (Numpy array) The corrupted feature matrix
     """
     mask = np.random.binomial(n=1, p=p, size=X.shape)
+
     return np.abs(X - mask)
 
-def load_image_dataset(data_folder, target_size=(200, 200), feature_info=True):
-    # First load the images
-    imgs = []
-    files = [file for file in os.listdir(data_folder) if file.endswith('png')]
-    files = sorted(files)
-    for file in files:
-        img_path = os.path.join(data_folder, file)
-        img = image.load_img(img_path, target_size=target_size,
-                             interpolation='bicubic')
-        imgs.append(image.img_to_array(img))
-    imgs = np.asarray(imgs)
-    imgs /= 255.
-    if feature_info:
-        # Now load the feature info
-        feature_file = os.path.join(data_folder, 'data.csv')
-        df = pd.read_csv(feature_file, index_col=0)
-        shapes = df['shape'].as_matrix()
-        # Return both images and shape info
-        return imgs, shapes
-    else:
-        # Return just images
-        return imgs
-
-def load_image_dataset1(nb_categories, nb_exemplars, data_folder,
+def load_image_dataset(nb_categories, nb_exemplars, data_folder,
                         target_size=(200, 200)):
     # First load the images
     imgs = []
@@ -239,7 +219,7 @@ def load_image_dataset1(nb_categories, nb_exemplars, data_folder,
     # Now load the feature info
     feature_file = os.path.join(data_folder, 'data.csv')
     df = pd.read_csv(feature_file, index_col=0)
-    # Collect a subset of the data according to nb_categories, nb_exemplars
+    # Collect a subset of the data according to {nb_categories, nb_exemplars}
     ix = []
     for cat in range(nb_categories):
         ix_cat = df[df['shape'] == cat].index.tolist()
