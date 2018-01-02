@@ -154,7 +154,7 @@ def generate_dataset_parameters(nb_categories, image_size=500,
         nb_variations = max(int(np.ceil(nb_categories / len(patch_types))), 3)
         textures = []
         for patch_type in patch_types:
-            t_list = [generate_texture(patch_type, image_size)
+            t_list = [generate_texture(patch_type, image_size=image_size)
                       for _ in range(nb_variations)]
             textures.extend(t_list)
         hatch_types = ['/', '-', '+']
@@ -172,7 +172,7 @@ def generate_dataset_parameters(nb_categories, image_size=500,
         assert nb_categories <= len(files)
 
         # return np.random.choice(files, nb_textures, replace=False)
-        return files[:nb_categories]
+        textures = files[:nb_categories]
 
     return shapes, colors, textures
 
