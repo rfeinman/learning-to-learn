@@ -1,84 +1,14 @@
 from __future__ import division, print_function
+import os
 import numpy as np
 import functools
 from random import randint
 from keras.preprocessing import image
 import matplotlib.pyplot as plt
 import matplotlib.path as mplpath
-from matplotlib.patches import (Arc, Arrow, Circle, CirclePolygon,
-                                Ellipse, Rectangle, Wedge, Polygon)
 
-class Texture:
-    """
-    TODO
-    """
-    def __init__(self, patch_type, gradient, step=None, params=None):
-        """
-
-        :param patch_type:
-        :param gradient:
-        :param step:
-        :param params:
-        """
-        assert patch_type in [
-            'ellipse', 'arc', 'arrow', 'circle',
-            'rectangle', 'wedge', 'pentagon',
-            '/', '//', '-', '--', '+', '++'
-        ], 'invalid patch_type parameter'
-        self.patch_type = patch_type
-        self.gradient = gradient
-        self.step = step
-        self.params = params
-
-    def get_patch(self, xy):
-        if self.patch_type in ['/', '//', '-', '--', '+', '++']:
-            raise Exception('No patch to return for this patch type.')
-        elif self.patch_type == 'circle':
-            return Circle(
-                xy, self.params['radius'],
-                color='black'
-            )
-        elif self.patch_type == 'rectangle':
-            return Rectangle(
-                xy, self.params['width'],
-                self.params['height'],
-                self.params['angle'],
-                color='black'
-            )
-        elif self.patch_type == 'ellipse':
-            return Ellipse(
-                xy, self.params['width'],
-                self.params['height'],
-                self.params['angle'],
-                color='black'
-            )
-        elif self.patch_type == 'arc':
-            return Arc(
-                xy, self.params['width'],
-                self.params['height'],
-                self.params['angle'],
-                color='black'
-            )
-        elif self.patch_type == 'pentagon':
-            return CirclePolygon(
-                xy, self.params['radius'],
-                5,
-                color='black'
-            )
-        elif self.patch_type == 'wedge':
-            return Wedge(
-                xy, self.params['radius'], 0,
-                self.params['theta2'],
-                color='black'
-            )
-        elif self.patch_type == 'arrow':
-            x, y = xy
-            return Arrow(
-                x, y, self.params['dx'],
-                self.params['dy'],
-                self.params['width'],
-                color='black'
-            )
+from learning2learn.mpl_textures import (Texture, generate_texture,
+                                         get_base_image, add_texture)
 
 def rearrange_points(points):
     """
@@ -130,7 +60,6 @@ def rearrange_points(points):
 
     return sorted(points, key=functools.cmp_to_key(less))
 
-
 def generate_random_shape(x_min, x_max, y_min, y_max, edge_distance):
     """
 
@@ -180,7 +109,6 @@ def generate_random_shape(x_min, x_max, y_min, y_max, edge_distance):
 
     return points
 
-
 def generate_colors(nb_colors):
     """
     Function to generate a set of nb_colors colors. They
@@ -202,150 +130,13 @@ def generate_colors(nb_colors):
     colors = colors[-nb_colors:]
     return np.asarray(colors)
 
-def get_base_image(height, width, color, shape, gradient=None):
-    """
-
-    :param height:
-    :param width:
-    :param color:
-    :param shape:
-    :param gradient:
-    :return:
-    """
-    assert gradient in ['left', 'right', 'up', 'down', None]
-    # initialize image and mask
-    img = np.zeros(shape=(height, width, 3))
-    mask = np.ones(shape=(height, width, 3))
-    # find box window of the shape
-    x_min = int(min([s[0] for s in shape]))
-    x_max = int(max([s[0] for s in shape]))
-    y_min = int(min([s[1] for s in shape]))
-    y_max = int(max([s[1] for s in shape]))
-    dx = x_max - x_min
-    dy = y_max - y_min
-    # Step through and determine mask at each pixel
-    # in our shape window
-    for i in range(dy):
-        for j in range(dx):
-            if gradient == 'right':
-                mask[y_min + i, x_min + j] = j / dx
-            elif gradient == 'left':
-                mask[y_min + i, x_min + j] = 1 - j / dx
-            elif gradient == 'up':
-                mask[y_min + i, x_min + j] = 1 - i / dy
-            elif gradient == 'down':
-                mask[y_min + i, x_min + j] = i / dy
-
-    # Now step through and apply the mask
-    for i in range(height):
-        for j in range(width):
-            img[i, j] = mask[i, j] * color
-
-    return img
-
-def generate_texture(patch_type=None, gradient='sample', image_size=500):
-    """
-
-    :param patch_type:
-    :param gradient:
-    :param image_size:
-    :return:
-    """
-    if patch_type is None:
-        # randomly sample a patch type
-        patch_types = [
-            'ellipse', 'arc', 'arrow', 'circle',
-            'rectangle', 'wedge', 'pentagon',
-            '/', '//', '-', '--', '+', '++'
-        ]
-        patch_type = np.random.choice(patch_types)
-    # Patch size will be uniformly sampled. Let's define
-    # reasonable boundaries here
-    patch_min_size = int(0.03*image_size)
-    patch_max_size = int(0.09*image_size)
-    # Now, build the texture object according to the specified type
-    if patch_type == 'circle':
-        params = {
-            'radius': randint(patch_min_size, patch_max_size)
-        }
-    elif patch_type in ['rectangle', 'ellipse', 'arc']:
-        params = {
-            'height': randint(patch_min_size, patch_max_size),
-            'width': randint(2*patch_min_size, 2*patch_max_size),
-            'angle': randint(0, 180)
-        }
-    elif patch_type == 'pentagon':
-        params = {
-            'radius': randint(patch_min_size, patch_max_size)
-        }
-    elif patch_type == 'wedge':
-        params = {
-            'radius': randint(patch_min_size, patch_max_size),
-            'theta2': randint(45, 270)
-        }
-    elif patch_type == 'arrow':
-        params = {
-            'dx': randint(-patch_max_size, patch_max_size),
-            'dy': randint(-patch_max_size, patch_max_size),
-            'width': randint(3*patch_min_size, 3*patch_max_size)
-        }
-    elif patch_type in ['/', '//', '-', '--', '+', '++']:
-        params = None
-    else:
-        raise Exception('Invalid patch_type parameter.')
-
-    if patch_type in ['ellipse', 'arc', 'arrow', 'circle','rectangle',
-                      'wedge', 'pentagon']:
-        # As another parameter, step size (space between
-        # patches) will be uniformly sampled. Define
-        # boundaries here
-        step_min_size = int(0.15*image_size)
-        step_max_size = int(0.30*image_size)
-        # Now sample the step size. Later, we will step
-        # through the image placing the patches at different
-        # locations, 'step' pixels apart from one another
-        step = randint(step_min_size, step_max_size)
-    else:
-        step = None
-
-    if gradient == 'sample':
-        # As a final parameter, we will sample a gradient from
-        # a set of 5 options
-        gradient_options = [None, 'left', 'right', 'up', 'down']
-        gradient = np.random.choice(gradient_options)
-    else:
-        # In this case, the gradient has already been provided.
-        # Let's error-check it.
-        assert gradient in [None, 'left', 'right', 'up', 'down']
-
-    # Now create the texture object instance and return
-    return Texture(patch_type, gradient, step, params)
-
-def add_texture(ax, texture, image_size=500):
-    """
-
-    :param ax:
-    :param texture:
-    :param image_size:
-    :return:
-    """
-    if texture.patch_type in ['/', '//', '-', '--', '+', '++']:
-        square = Polygon([(0, 0), (image_size, 0), (image_size, image_size),
-                          (0, image_size)],
-                         closed=True, fill=False, color=(0, 0, 0))
-        square.set_hatch(texture.patch_type)
-        ax.add_patch(square)
-    else:
-        for i in range(10, 2*image_size, texture.step):
-            for j in range(10, 2*image_size, texture.step):
-                patch = texture.get_patch((i,j))
-                ax.add_patch(patch)
-
-def generate_dataset_parameters(nb_categories, image_size=500):
+def generate_dataset_parameters(nb_categories, image_size=500,
+                                mpl_textures=False):
     """
 
     :param nb_categories:
     :param image_size:
+    :param mpl_textures:
     :return:
     """
     # Generate shapes, which are sets of points for which polygons will
@@ -354,28 +145,38 @@ def generate_dataset_parameters(nb_categories, image_size=500):
               range(nb_categories)]
     # Generate colors, which are 3-D vectors of values between 0-1 (RGB values)
     colors = generate_colors(nb_categories)
-    # Generate textures
-    patch_types = [
-            'ellipse', 'arc', 'arrow', 'circle',
-            'rectangle', 'wedge', 'pentagon'
-        ]
-    nb_variations = max(int(np.ceil(nb_categories / len(patch_types))), 3)
-    textures = []
-    for patch_type in patch_types:
-        t_list = [generate_texture(patch_type, image_size)
-                  for _ in range(nb_variations)]
-        textures.extend(t_list)
-    #hatch_types = ['/', '//', '-', '--', '+', '++']
-    hatch_types = ['/', '-', '+']
-    for hatch_type in hatch_types:
-        textures.append(Texture(hatch_type, gradient=None))
-        textures.append(Texture(hatch_type, gradient='right'))
-        textures.append(Texture(hatch_type, gradient='left'))
-    textures = np.random.choice(textures, nb_categories, replace=False)
+    if mpl_textures:
+        # using matplotlib custom textures
+        patch_types = [
+                'ellipse', 'arc', 'arrow', 'circle',
+                'rectangle', 'wedge', 'pentagon'
+            ]
+        nb_variations = max(int(np.ceil(nb_categories / len(patch_types))), 3)
+        textures = []
+        for patch_type in patch_types:
+            t_list = [generate_texture(patch_type, image_size)
+                      for _ in range(nb_variations)]
+            textures.extend(t_list)
+        hatch_types = ['/', '-', '+']
+        for hatch_type in hatch_types:
+            textures.append(Texture(hatch_type, gradient=None))
+            textures.append(Texture(hatch_type, gradient='right'))
+            textures.append(Texture(hatch_type, gradient='left'))
+        textures = np.random.choice(textures, nb_categories, replace=False)
+    else:
+        # using pre-designed textures, which are saved as image files in the
+        # 'data' subfolder
+        assert os.path.isdir('../data/textures')
+        files = sorted([file for file in os.listdir('../data/textures') if
+                        file.endswith('tiff')])
+        assert nb_categories <= len(files)
+
+        # return np.random.choice(files, nb_textures, replace=False)
+        return files[:nb_categories]
 
     return shapes, colors, textures
 
-def generate_image(shape, color, texture, save_file):
+def generate_image(shape, color, texture, save_file, mpl_textures=False):
     """
 
     :param shape:
@@ -385,14 +186,22 @@ def generate_image(shape, color, texture, save_file):
     :return:
     """
     # Generate the base image and save it to a file
-    img = get_base_image(500, 500, color, shape, gradient=texture.gradient)
+    if mpl_textures:
+        img = get_base_image(500, 500, color, shape, gradient=texture.gradient)
+    else:
+        img = image.load_img('../data/textures/%s' % texture,
+                             target_size=(500, 500))
+        img = image.img_to_array(img) / 255.
     fig = plt.figure(frameon=False)
     fig.set_size_inches(5, 5)
     ax = plt.Axes(fig, [0., 0., 1., 1.])
     ax.set_axis_off()
     fig.add_axes(ax)
-    ax.imshow(img, interpolation='bicubic')
-    add_texture(ax, texture, 500)
+    if mpl_textures:
+        ax.imshow(img, interpolation='bicubic')
+        add_texture(ax, texture, 500)
+    else:
+        ax.imshow(img*color, interpolation='bicubic')
     plt.savefig(save_file)
     plt.close()
     # Load the base image from file, crop it using mplpath,
