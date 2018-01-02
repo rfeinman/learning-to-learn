@@ -203,7 +203,7 @@ def add_noise(X, p):
 
     return np.abs(X - mask)
 
-def load_image_dataset(nb_categories, nb_exemplars, data_folder,
+def load_image_dataset(data_folder, nb_categories, nb_exemplars,
                         target_size=(200, 200)):
     # First load the images
     imgs = []
