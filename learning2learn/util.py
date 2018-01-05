@@ -203,7 +203,24 @@ def add_noise(X, p):
 
     return np.abs(X - mask)
 
-def load_image_dataset(data_folder, nb_categories, nb_exemplars,
+
+def select_subset(df, nb_select):
+    """
+    Helper function for load_image_dataset. If we are subsampling nb_select
+    samples from a particular category, we would like to choose them such that
+    the colors are optimally spaced. This function does so.
+    :param df:
+    :param nb_select:
+    :return:
+    """
+    nb_categories = df.shape[0]
+    # Sort by color values, get the indices
+    ix = df.sort_values(by='color').index
+    step = int(np.ceil(nb_categories / nb_select)) - 1
+
+    return [ix[i * step] for i in range(nb_select)]
+
+def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
                         target_size=(200, 200)):
     # First load the images
     imgs = []
@@ -216,14 +233,20 @@ def load_image_dataset(data_folder, nb_categories, nb_exemplars,
         imgs.append(image.img_to_array(img))
     imgs = np.asarray(imgs)
     imgs /= 255.
+    if nb_categories is None:
+        # if these two parameters are 'None' we will not subsample the data.
+        # simply load and return the images.
+        assert nb_exemplars is None
+        return imgs
     # Now load the feature info
     feature_file = os.path.join(data_folder, 'data.csv')
     df = pd.read_csv(feature_file, index_col=0)
     # Collect a subset of the data according to {nb_categories, nb_exemplars}
     ix = []
     for cat in range(nb_categories):
-        ix_cat = df[df['shape'] == cat].index.tolist()
-        ix_cat = ix_cat[:nb_exemplars+1]
+        ix_cat = select_subset(df[df['shape'] == cat], nb_exemplars + 1)
+        #ix_cat = df[df['shape'] == cat].index.tolist()
+        #ix_cat = ix_cat[:nb_exemplars+1]
         ix.extend(ix_cat)
     imgs = imgs[ix]
     df = df.iloc[ix]
