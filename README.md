@@ -65,11 +65,11 @@ As a second type of training data, we used... TODO. Some examples of the images:
 
 Exemplar #1                |  Exemplar #2
 :-------------------------:|:-------------------------:
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0000.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0001.png" width="200" height="200">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category00_exemplar00.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category00_exemplar01.png" width="200" height="200">
 Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0002.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0003.png" width="200" height="200">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category01_exemplar00.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category01_exemplar01.png" width="200" height="200">
 Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0004.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/img0005.png" width="200" height="200">
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category02_exemplar00.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category02_exemplar01.png" width="200" height="200">
 Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
 
 
