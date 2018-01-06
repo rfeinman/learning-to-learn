@@ -284,3 +284,43 @@ def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
             save_file = os.path.join(results_path, 'results.csv')
             save_results(cats, exemps, scores, save_file)
     print('Experiment loop complete.')
+
+def train_model(model, X_train, Y_train, epochs, validation_data,
+                batch_size, checkpoint, burn_period=20):
+    """
+    A helper function for training a Keras model with a 'burn period.'
+    The burn period is an initial set of epochs for which the model will
+    not be saved, before using the callback ModelCheckpoint. This helps save
+    time as model saving is very slow, and we usually end up with a better model
+    down the line after these initial epochs anyways.
+    :param model:
+    :param X_train:
+    :param Y_train:
+    :param epochs:
+    :param validation_data:
+    :param batch_size:
+    :param checkpoint:
+    :param burn_period:
+    :return:
+    """
+    if burn_period < epochs:
+        # burn period training
+        model.fit(
+            X_train, Y_train, epochs=burn_period,
+            shuffle=True, validation_data=validation_data,
+            verbose=1, batch_size=batch_size
+        )
+        # training beyond burn period; start saving best model
+        model.fit(
+            X_train, Y_train, epochs=epochs-burn_period,
+            shuffle=True, validation_data=validation_data,
+            verbose=1, batch_size=batch_size,
+            callbacks=[checkpoint]
+        )
+    else:
+        model.fit(
+            X_train, Y_train, epochs=epochs,
+            shuffle=True, validation_data=validation_data,
+            verbose=1, batch_size=batch_size,
+            callbacks=[checkpoint]
+        )

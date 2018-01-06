@@ -4,13 +4,15 @@ import argparse
 import numpy as np
 import tensorflow as tf
 import keras.backend as K
-from keras.callbacks import EarlyStopping
+from keras.callbacks import ModelCheckpoint
 from sklearn.preprocessing import OneHotEncoder
 import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.util import load_image_dataset
+from learning2learn.util import load_image_dataset, train_model
+
+
 
 def run_experiment(nb_categories, nb_exemplars, params):
     # Set random seeds
@@ -22,7 +24,6 @@ def run_experiment(nb_categories, nb_exemplars, params):
             config=tf.ConfigProto(gpu_options=params['gpu_options'])
         )
         K.set_session(sess)
-    #data_folder = os.path.realpath('../data/images_generated_old/images_ca0050_ex0014')
     data_folder = os.path.realpath('../data/images_generated')
     X, shapes = load_image_dataset(data_folder, nb_categories, nb_exemplars,
                                     target_size=params['img_size'])
@@ -38,18 +39,35 @@ def run_experiment(nb_categories, nb_exemplars, params):
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
         model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
+        # We're going to keep track of the best model throughout training,
+        # monitoring the training loss
+        weights_file = '../data/cnn_firstOrder.h5'
+        if os.path.isfile(weights_file):
+            os.remove(weights_file)
+        checkpoint = ModelCheckpoint(
+            weights_file,
+            monitor='loss',
+            save_best_only=True,
+            save_weights_only=True
+        )
         # We'll provide the test set as 'validation data' merely so we can
         # monitor the trajectory... the network won't be using this data.
-        model.fit(X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
-                  shuffle=True, validation_data=(X[test_inds], Y[test_inds]),
-                  verbose=1, batch_size=params['batch_size'],
-                  callbacks=[EarlyStopping(monitor='loss', patience=5)])
-        loss, acc = model.evaluate(X[test_inds], Y[test_inds], verbose=0,
-                                   batch_size=params['batch_size'])
+        train_model(
+            model, X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
+            validation_data=(X[test_inds], Y[test_inds]),
+            batch_size=params['batch_size'], checkpoint=checkpoint
+        )
+        # Now that we've completed all training epochs, let's go ahead and
+        # load the best model
+        model.load_weights(weights_file)
+        # Now evaluate the model on the test data
+        loss, acc = model.evaluate(
+            X[test_inds], Y[test_inds], verbose=0,
+            batch_size=params['batch_size']
+        )
         scores.append(acc)
     avg_score = np.mean(scores)
     print('\nScore: %0.4f' % avg_score)
-    #model.save('../data/model.h5')
     if params['gpu_options'] is not None:
         K.clear_session()
         sess.close()
