@@ -216,9 +216,11 @@ def select_subset(df, nb_select):
     nb_categories = df.shape[0]
     # Sort by color values, get the indices
     ix = df.sort_values(by='color').index
-    step = int(np.ceil(nb_categories / nb_select)) - 1
-
-    return [ix[i * step] for i in range(nb_select)]
+    if nb_select == len(ix):
+        return ix.tolist()
+    else:
+        step = int(np.ceil(nb_categories / nb_select)) - 1
+        return [ix[i * step] for i in range(nb_select)]
 
 def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
                         target_size=(200, 200)):

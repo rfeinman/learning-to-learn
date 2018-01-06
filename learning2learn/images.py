@@ -192,6 +192,10 @@ def generate_image(shape, color, texture, save_file, mpl_textures=False):
         img = image.load_img('../data/textures/%s' % texture,
                              target_size=(500, 500))
         img = image.img_to_array(img) / 255.
+        # normalize the texture for color consistency. 0.57248
+        # is the average activation for the whole texture dataset.
+        img *= (0.57248/np.mean(img))
+        img = np.minimum(img, 1.)
     fig = plt.figure(frameon=False)
     fig.set_size_inches(5, 5)
     ax = plt.Axes(fig, [0., 0., 1., 1.])
