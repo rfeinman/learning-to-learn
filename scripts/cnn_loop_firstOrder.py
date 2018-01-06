@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 import argparse
+import numpy as np
 import tensorflow as tf
 import matplotlib as mpl
 mpl.use('Agg')
@@ -24,6 +25,8 @@ def main():
     }
     # Start the experiment loop
     category_trials = range(5, 51, 5)
+    #category_trials = [int(np.round(x)) for x in
+    #                   np.logspace(3, 8, num=6, base=1.6)]
     exemplar_trials = range(1, 15)
     experiment_loop(
         run_experiment, category_trials=category_trials,
@@ -50,5 +53,4 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    tf.set_random_seed(0)
     main()

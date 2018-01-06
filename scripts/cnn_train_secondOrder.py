@@ -13,11 +13,9 @@ mpl.use('Agg')
 from learning2learn.models import simple_cnn
 from learning2learn.util import evaluate_secondOrder, load_image_dataset
 
-
 def make_trial(shapes, colors, textures):
     # create a random trial
     ix = np.arange(len(shapes))
-
     while True:
         baseline = np.random.choice(ix)
         shape = shapes[baseline]
@@ -67,13 +65,16 @@ def build_test_trials(test_folder, nb_trials, target_size=(200, 200)):
     return imgs[ix]
 
 def run_experiment(nb_categories, nb_exemplars, params):
+    # Set random seeds
+    np.random.seed(0)
+    tf.set_random_seed(0)
+    # Create custom TF session if requested
     if params['gpu_options'] is not None:
         sess = tf.Session(
             config=tf.ConfigProto(gpu_options=params['gpu_options'])
         )
         K.set_session(sess)
-
-    # data_folder = os.path.realpath('../data/images_generated_old/images_ca0050_ex0014')
+    #data_folder = os.path.realpath('../data/images_generated_old/images_ca0050_ex0014')
     data_folder = os.path.realpath('../data/images_generated')
     X, shapes = load_image_dataset(data_folder, nb_categories, nb_exemplars,
                                        target_size=params['img_size'])
@@ -147,5 +148,4 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    tf.set_random_seed(0)
     main()
