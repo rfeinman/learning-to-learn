@@ -223,23 +223,6 @@ def select_subset(df, nb_select):
         step = int(np.ceil(nb_categories / nb_select)) - 1
         return [ix[i * step] for i in range(nb_select)]
 
-def select_subset_random(df, nb_select):
-    """
-    Helper function for load_image_dataset. If we are subsampling nb_select
-    samples from a particular category, we would like to choose them such that
-    the colors are optimally spaced. This function does so.
-    :param df:
-    :param nb_select:
-    :return:
-    """
-    assert nb_select <= 15, 'only 15 exemplars to select of each category'
-    # Sort by color values, get the indices
-    ix = df.sort_values(by='color').index
-    if nb_select == len(ix):
-        return ix.tolist()
-    else:
-        return np.random.choice(ix.tolist(), nb_select)
-
 def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
                        nb_test=5, target_size=(200, 200)):
     # First load the images
@@ -266,8 +249,6 @@ def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
     for cat in range(nb_categories):
         ix_cat = select_subset(df[df['shape'] == cat], nb_exemplars + nb_test)
         ix_cat = list(np.random.permutation(ix_cat))
-        #ix_cat = select_subset_random(df[df['shape'] == cat],
-        #                              nb_exemplars + nb_test)
         ix.extend(ix_cat)
     imgs = imgs[ix]
     df = df.iloc[ix]

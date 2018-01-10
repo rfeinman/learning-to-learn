@@ -24,10 +24,10 @@ def main():
         'gpu_options': gpu_options
     }
     # Start the experiment loop
-    category_trials = range(5, 51, 5)
-    #category_trials = [int(np.round(x)) for x in
-    #                   np.logspace(3, 8, num=6, base=1.6)]
-    exemplar_trials = range(1, 15)
+    #category_trials = range(5, 51, 5)
+    #category_trials = [2, 4, 8, 14, 22, 32, 44]
+    category_trials = np.arange(3, 21)
+    exemplar_trials = np.arange(1, 10)
     experiment_loop(
         run_experiment, category_trials=category_trials,
         exemplar_trials=exemplar_trials, params=params,
@@ -53,4 +53,7 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
+    # Set random seeds
+    np.random.seed(0)
+    tf.set_random_seed(0)
     main()

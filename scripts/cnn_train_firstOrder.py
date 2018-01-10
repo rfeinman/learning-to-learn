@@ -10,14 +10,11 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.util import load_image_dataset, train_model
-
+from learning2learn.util import (load_image_dataset, train_model,
+                                 get_train_test_inds)
 
 
 def run_experiment(nb_categories, nb_exemplars, params):
-    # Set random seeds
-    np.random.seed(0)
-    tf.set_random_seed(0)
     # Create custom TF session if requested
     if params['gpu_options'] is not None:
         sess = tf.Session(
@@ -25,19 +22,20 @@ def run_experiment(nb_categories, nb_exemplars, params):
         )
         K.set_session(sess)
     data_folder = os.path.realpath('../data/images_generated')
-    X, shapes = load_image_dataset(data_folder, nb_categories, nb_exemplars,
-                                    target_size=params['img_size'])
-    ohe = OneHotEncoder(sparse=False)
-    Y = ohe.fit_transform(shapes.reshape(-1, 1))
-    # Now, we separate the train and test sets
-    test_inds = [i*(nb_exemplars+1) for i in range(nb_categories)]
-    # The train inds are the set difference of all inds and test inds
-    train_inds = list(set(range(len(shapes))).difference(test_inds))
-    # Build a neural network model and train it with the training set
     print('Training CNN model...')
     scores = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
+        # Get the dataset (random subset is selected)
+        X, shapes = load_image_dataset(data_folder, nb_categories, nb_exemplars,
+                                       params['nb_test'], params['img_size'])
+        ohe = OneHotEncoder(sparse=False)
+        Y = ohe.fit_transform(shapes.reshape(-1, 1))
+        # Now, we separate the train and test sets
+        train_inds, test_inds = get_train_test_inds(nb_categories, nb_exemplars,
+                                                    len(shapes),
+                                                    params['nb_test'])
+        # Build a neural network model and train it with the training set
         model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
         # We're going to keep track of the best model throughout training,
         # monitoring the training loss
@@ -85,6 +83,7 @@ def main():
     params = {
         'nb_epochs': args.nb_epochs,
         'batch_size': args.batch_size,
+        'nb_test': 5,
         'nb_trials': 1,
         'img_size': (200, 200),
         'gpu_options': gpu_options
@@ -115,4 +114,7 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
+    # Set random seeds
+    np.random.seed(0)
+    tf.set_random_seed(0)
     main()
