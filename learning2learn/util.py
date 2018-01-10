@@ -213,6 +213,7 @@ def select_subset(df, nb_select):
     :param nb_select:
     :return:
     """
+    assert nb_select <= 15, 'only 15 exemplars to select of each category'
     nb_categories = df.shape[0]
     # Sort by color values, get the indices
     ix = df.sort_values(by='color').index
@@ -222,8 +223,25 @@ def select_subset(df, nb_select):
         step = int(np.ceil(nb_categories / nb_select)) - 1
         return [ix[i * step] for i in range(nb_select)]
 
+def select_subset_random(df, nb_select):
+    """
+    Helper function for load_image_dataset. If we are subsampling nb_select
+    samples from a particular category, we would like to choose them such that
+    the colors are optimally spaced. This function does so.
+    :param df:
+    :param nb_select:
+    :return:
+    """
+    assert nb_select <= 15, 'only 15 exemplars to select of each category'
+    # Sort by color values, get the indices
+    ix = df.sort_values(by='color').index
+    if nb_select == len(ix):
+        return ix.tolist()
+    else:
+        return np.random.choice(ix.tolist(), nb_select)
+
 def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
-                        target_size=(200, 200)):
+                       nb_test=5, target_size=(200, 200)):
     # First load the images
     imgs = []
     files = [file for file in os.listdir(data_folder) if file.endswith('png')]
@@ -246,9 +264,10 @@ def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
     # Collect a subset of the data according to {nb_categories, nb_exemplars}
     ix = []
     for cat in range(nb_categories):
-        ix_cat = select_subset(df[df['shape'] == cat], nb_exemplars + 1)
-        #ix_cat = df[df['shape'] == cat].index.tolist()
-        #ix_cat = ix_cat[:nb_exemplars+1]
+        ix_cat = select_subset(df[df['shape'] == cat], nb_exemplars + nb_test)
+        ix_cat = list(np.random.permutation(ix_cat))
+        #ix_cat = select_subset_random(df[df['shape'] == cat],
+        #                              nb_exemplars + nb_test)
         ix.extend(ix_cat)
     imgs = imgs[ix]
     df = df.iloc[ix]
@@ -324,3 +343,22 @@ def train_model(model, X_train, Y_train, epochs, validation_data,
             verbose=1, batch_size=batch_size,
             callbacks=[checkpoint]
         )
+
+def get_train_test_inds(nb_categories, nb_exemplars, nb_samples, nb_test=1):
+    """
+
+    :param nb_categories:
+    :param nb_exemplars:
+    :param nb_shapes:
+    :param nb_test:
+    :return:
+    """
+    test_inds = []
+    for i in range(nb_categories):
+        bottom = i * (nb_exemplars + nb_test)
+        top = bottom + nb_test
+        test_inds.extend(range(bottom, top))
+    # The train inds are the set difference of all inds and test inds
+    train_inds = list(set(range(nb_samples)).difference(test_inds))
+
+    return train_inds, test_inds
