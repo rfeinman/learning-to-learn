@@ -2,6 +2,8 @@ results.txt
 *.pyc
 .idea/
 data/temp/
+data/cnn_firstOrder.h5
+data/cnn_secondOrder.h5
 data/*.csv
 notebooks/temp.png
 notebooks/scratch_pad.ipynb
