@@ -223,27 +223,55 @@ def select_subset(df, nb_select):
         step = int(np.ceil(nb_categories / nb_select)) - 1
         return [ix[i * step] for i in range(nb_select)]
 
-def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
-                       nb_test=5, target_size=(200, 200)):
+def shift_image(img, img_size=(200, 200), scale=30):
+    # compute shape boundaries
+    y_min = min(np.where(img < 1.)[0])
+    y_max = max(np.where(img < 1.)[0])
+    x_min = min(np.where(img < 1.)[1])
+    x_max = max(np.where(img < 1.)[1])
+    # randomly select offsets from a uniform R.V. The boundaries
+    # are set such that we don't cut off the object.
+    #ox = np.random.randint(low=-x_min, high=img_size[0] - x_max)
+    #oy = np.random.randint(low=-y_min, high=img_size[1] - y_max)
+    ox = np.random.randint(low=max(-scale, -x_min), high=min(scale, img_size[0] - x_max))
+    oy = np.random.randint(low=max(-scale, -y_min), high=min(scale, img_size[1] - y_max))
+    # shift the image by offsets
+    non = lambda s: s if s < 0 else None
+    mom = lambda s: max(0, s)
+    shift_img = np.ones_like(img, dtype=np.float32)
+    shift_img[mom(oy):non(oy), mom(ox):non(ox)] = img[mom(-oy):non(-oy),
+                                                  mom(-ox):non(-ox)]
+
+    return shift_img
+
+def load_images(data_folder, target_size=(200, 200), shift=True):
     # First load the images
-    imgs = []
     files = [file for file in os.listdir(data_folder) if file.endswith('png')]
     files = sorted(files)
-    for file in files:
+    imgs = np.zeros(shape=(len(files),)+target_size+(3,), dtype=np.float32)
+    for i, file in enumerate(files):
         img_path = os.path.join(data_folder, file)
         img = image.load_img(img_path, target_size=target_size,
                              interpolation='bicubic')
-        imgs.append(image.img_to_array(img))
-    imgs = np.asarray(imgs)
-    imgs /= 255.
+        img = image.img_to_array(img) / 255.
+        if shift:
+            img = shift_image(img, img_size=target_size)
+        imgs[i] = img
+    # Now load the feature info
+    feature_file = os.path.join(data_folder, 'data.csv')
+    df = pd.read_csv(feature_file, index_col=0)
+
+    return imgs, df
+
+def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
+                       nb_test=5, target_size=(200, 200)):
+    # First load the data
+    imgs, df = load_images(data_folder, target_size)
     if nb_categories is None:
         # if these two parameters are 'None' we will not subsample the data.
         # simply load and return the images.
         assert nb_exemplars is None
         return imgs
-    # Now load the feature info
-    feature_file = os.path.join(data_folder, 'data.csv')
-    df = pd.read_csv(feature_file, index_col=0)
     # Collect a subset of the data according to {nb_categories, nb_exemplars}
     ix = []
     for cat in range(nb_categories):
@@ -343,3 +371,51 @@ def get_train_test_inds(nb_categories, nb_exemplars, nb_samples, nb_test=1):
     train_inds = list(set(range(nb_samples)).difference(test_inds))
 
     return train_inds, test_inds
+
+
+def build_vocab_training_set(data_folder, nb_exemplars, nb_categories,
+                             shape_fraction, color_fraction, shift=True):
+    """
+
+    :param data_folder:
+    :param nb_exemplars:
+    :param nb_categories:
+    :param shape_fraction:
+    :param color_fraction:
+    :return:
+    """
+    # Load the data
+    imgs, df = load_images(data_folder, target_size=(200, 200), shift=shift)
+    # Select the classes
+    nb_shapes = int(nb_categories * shape_fraction)
+    nb_colors = int(nb_categories * color_fraction)
+    nb_textures = nb_categories - nb_shapes - nb_colors
+    assert nb_shapes <= 50 and nb_colors <= 50 and nb_textures <= 50
+    assert (nb_shapes + nb_colors + nb_textures) == 50
+    print('Using %i shape words, %i color words and %i texture words.' %
+          (nb_shapes, nb_colors, nb_textures))
+    shapes = np.random.choice(range(nb_categories), nb_shapes, replace=False)
+    colors = np.random.choice(range(nb_categories), nb_colors, replace=False)
+    textures = np.random.choice(range(nb_categories), nb_textures,
+                                replace=False)
+    # ...
+    inds = []
+    labels = []
+    current_class = 0
+    for s in shapes:
+        ix = np.where(df['shape'].as_matrix() == s)[0]
+        inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
+        labels.extend([current_class] * nb_exemplars)
+        current_class += 1
+    for c in colors:
+        ix = np.where(df['color'].as_matrix() == c)[0]
+        inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
+        labels.extend([current_class] * nb_exemplars)
+        current_class += 1
+    for t in textures:
+        ix = np.where(df['texture'].as_matrix() == t)[0]
+        inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
+        labels.extend([current_class] * nb_exemplars)
+        current_class += 1
+
+    return imgs[inds], np.asarray(labels)
