@@ -12,7 +12,7 @@ mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
 from learning2learn.util import (evaluate_secondOrder, load_image_dataset,
-                                 train_model, get_train_test_inds)
+                                 load_images, train_model, get_train_test_inds)
 
 
 def make_trial(shapes, colors, textures):
@@ -49,9 +49,10 @@ def make_trial(shapes, colors, textures):
 
     return [baseline, shape_match, color_match, texture_match]
 
-def build_test_trials(test_folder, nb_trials, target_size=(200, 200)):
+def build_test_trials(test_folder, nb_trials, target_size=(200, 200),
+                      shift=True):
     # First, load the images
-    imgs = load_image_dataset(test_folder, target_size=target_size)
+    imgs, _ = load_images(test_folder, target_size=target_size, shift=shift)
     # Collect the list of shapes, colors and textures
     feature_file = os.path.join(test_folder, 'data.csv')
     df = pd.read_csv(feature_file, index_col=0)
