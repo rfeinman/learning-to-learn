@@ -58,20 +58,6 @@ def main():
             config=tf.ConfigProto(gpu_options=gpu_options)
         )
         K.set_session(sess)
-    # load the dataset
-    # print('Loading the data...')
-    # data_folder = '../data/images_generated2/'
-    # X, labels = build_vocab_training_set(
-    #     data_folder=data_folder,
-    #     nb_exemplars=15,
-    #     nb_categories=50,
-    #     shape_fraction=args.shape_fraction,
-    #     color_fraction=args.color_fraction,
-    #     shift=False
-    # )
-    # test_folder = os.path.join(data_folder, 'test/')
-    # X_test = build_test_trials(test_folder, nb_trials=1000,
-    #                            target_size=(200, 200), shift=False)
     df_train, labels = synthesize_data(nb_categories=50, nb_exemplars=15)
     X_train, X_test = get_secondOrder_data(df_train, nb_test_trials=1000)
     # dummy code the labels

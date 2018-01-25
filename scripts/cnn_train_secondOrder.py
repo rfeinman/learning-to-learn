@@ -10,25 +10,50 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.wrangle import synthesize_data, get_secondOrder_data
-from learning2learn.util import evaluate_secondOrder, train_model
+from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
+                                    build_train_set, build_test_trials)
+from learning2learn.util import evaluate_secondOrder, train_model, subsample
 
 def run_experiment(nb_categories, nb_exemplars, params):
+    assert nb_categories <= 50
+    # Set random seeds
+    np.random.seed(0)
     # Create custom TF session if requested
     if params['gpu_options'] is not None:
         sess = tf.Session(
             config=tf.ConfigProto(gpu_options=params['gpu_options'])
         )
         K.set_session(sess)
+    # First, get the parameters for the training and testing sets. This step
+    # is independent of the input dataset df_train. The same breakdown is used
+    # each time.
+    df_train, labels = synthesize_data(nb_categories, nb_exemplars)
+    (shape_set_train, shape_set_test), \
+    (color_set_train, color_set_test), \
+    (texture_set_train, texture_set_test) = \
+        get_train_test_parameters(params['img_size'][0])
+    # Build the test set trials. This we want to keep constant across the runs
+    print('Building test trials...')
+    X_test = build_test_trials(shape_set_test, color_set_test,
+                               texture_set_test, nb_trials=1000,
+                               target_size=params['img_size'])
+    ohe = OneHotEncoder(sparse=False)
+    Y_train = ohe.fit_transform(labels.reshape(-1, 1))
     print('Training CNN model...')
     scores = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i + 1))
-        # Get the dataset (random subset is selected)
-        df_train, labels = synthesize_data(nb_categories, nb_exemplars)
-        X_train, X_test = get_secondOrder_data(df_train, nb_test_trials=1000)
-        ohe = OneHotEncoder(sparse=False)
-        Y_train = ohe.fit_transform(labels.reshape(-1, 1))
+        # Build the training set of images. Do this inside the loop because
+        # a slightly random subset of the parameters is selected each time;
+        # helps get some variance
+        if nb_categories < 50:
+            shape_set_train = subsample(shape_set_train, nb_categories)
+            color_set_train = subsample(color_set_train, nb_categories)
+            texture_set_train = subsample(texture_set_train, nb_categories)
+        print('Building the training set...')
+        X_train = build_train_set(df_train, shape_set_train, color_set_train,
+                                  texture_set_train,
+                                  target_size=params['img_size'])
         # Build a neural network model and train it with the training set
         model = simple_cnn(input_shape=X_train.shape[1:],
                            nb_classes=Y_train.shape[-1])
@@ -57,8 +82,8 @@ def run_experiment(nb_categories, nb_exemplars, params):
             batch_size=128
         )
         scores.append(score)
+        print('\nScore: %0.4f' % score)
     avg_score = np.mean(scores)
-    print('\nScore: %0.4f' % avg_score)
     if params['gpu_options'] is not None:
         K.clear_session()
         sess.close()
@@ -106,7 +131,4 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    # Set random seeds
-    np.random.seed(0)
-    tf.set_random_seed(0)
     main()

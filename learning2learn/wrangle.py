@@ -13,6 +13,7 @@ from learning2learn.images import (generate_image, generate_image_wrapper,
                                    generate_colors, generate_random_shape,
                                    compute_area)
 
+
 def generate_dictionary(column, nb_bits=None):
     """
     Observe the set of all values in a given feature column and create a
@@ -166,18 +167,20 @@ def build_test_trials(shape_set, color_set, texture_set, nb_trials,
 
     return np.concatenate(trials)
 
-def get_secondOrder_data(df_train, nb_test_trials=1000):
-    # count the number of categories in the training set
-    nb_train = len(np.unique(df_train['shape']))
-    # we have 58 textures, so that is our limiting factor
-    assert nb_train < 58
-    nb_test = 58 - nb_train
+def get_train_test_parameters(img_size=200):
+    # we have 58 textures, so that is our limiting factor. We will use 50 for
+    # training and hold out 8 for test.
+    nb_train = 50
+    nb_test = 8
     # get the 58 shapes
-    shape_set = [generate_random_shape(0, 200, 0, 200, 40) for _ in range(58)]
-    shape_set = sorted(shape_set, key=lambda x: compute_area(x, 200))
+    shape_set = [generate_random_shape(0, img_size, 0, img_size,
+                                       int(img_size/5.))
+                 for _ in range(nb_train+nb_test)]
+    shape_set = sorted(shape_set, key=lambda x: compute_area(x, img_size))
     # get the 58 colors
     color_set = generate_colors()
-    ix = np.sort(np.random.choice(range(len(color_set)), 58, replace=False))
+    ix = np.sort(np.random.choice(range(len(color_set)), nb_train+nb_test,
+                                  replace=False))
     color_set = color_set[ix]
     # get the 58 textures
     texture_set = sorted(
@@ -186,18 +189,12 @@ def get_secondOrder_data(df_train, nb_test_trials=1000):
     )
     # perform the train/test splits
     shape_set_train, shape_set_test = train_test_split(shape_set,
-                                                        test_size=nb_test)
+                                                       test_size=nb_test)
     color_set_train, color_set_test = train_test_split(color_set,
-                                                        test_size=nb_test)
+                                                       test_size=nb_test)
     texture_set_train, texture_set_test = train_test_split(texture_set,
-                                                            test_size=nb_test)
-    # build the training set of images
-    print('Building training set...')
-    X_train = build_train_set(df_train, shape_set_train, color_set_train,
-                              texture_set_train)
-    # build the test set trials
-    print('Building test trials...')
-    X_test = build_test_trials(shape_set_test, color_set_test, texture_set_test,
-                               nb_test_trials)
+                                                           test_size=nb_test)
 
-    return X_train, X_test
+    return (shape_set_train, shape_set_test), \
+           (color_set_train, color_set_test), \
+           (texture_set_train, texture_set_test)

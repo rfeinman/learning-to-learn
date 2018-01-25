@@ -10,28 +10,34 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.wrangle import get_train_test_inds
+from learning2learn.wrangle import (get_train_test_inds, synthesize_data,
+                                    get_train_test_parameters)
 from learning2learn.util import train_model
-from learning2learn.images import load_image_dataset
 
 
 def run_experiment(nb_categories, nb_exemplars, params):
+    # Set random seeds
+    np.random.seed(0)
     # Create custom TF session if requested
     if params['gpu_options'] is not None:
         sess = tf.Session(
             config=tf.ConfigProto(gpu_options=params['gpu_options'])
         )
         K.set_session(sess)
-    data_folder = os.path.realpath('../data/images_generated')
+    # First, get the parameters for the training and testing sets. This step
+    # is independent of the input dataset df_train. The same breakdown is used
+    # each time.
+    df, labels = synthesize_data(nb_categories, nb_exemplars+1)
+    ohe = OneHotEncoder(sparse=False)
+    Y = ohe.fit_transform(labels.reshape(-1, 1))
+    (shape_set_train, shape_set_test), \
+    (color_set_train, color_set_test), \
+    (texture_set_train, texture_set_test) = \
+        get_train_test_parameters(params['img_size'][0])
     print('Training CNN model...')
     scores = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
-        # Get the dataset (random subset is selected)
-        X, shapes = load_image_dataset(data_folder, nb_categories, nb_exemplars,
-                                       params['nb_test'], params['img_size'])
-        ohe = OneHotEncoder(sparse=False)
-        Y = ohe.fit_transform(shapes.reshape(-1, 1))
         # Now, we separate the train and test sets
         train_inds, test_inds = get_train_test_inds(nb_categories, nb_exemplars,
                                                     len(shapes),
@@ -53,8 +59,8 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # monitor the trajectory... the network won't be using this data.
         train_model(
             model, X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
-            validation_data=(X[test_inds], Y[test_inds]),
-            batch_size=params['batch_size'], checkpoint=checkpoint
+            validation_data=None, batch_size=params['batch_size'],
+            checkpoint=checkpoint
         )
         # Now that we've completed all training epochs, let's go ahead and
         # load the best model
@@ -115,7 +121,4 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    # Set random seeds
-    np.random.seed(0)
-    tf.set_random_seed(0)
     main()

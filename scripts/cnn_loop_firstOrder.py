@@ -54,7 +54,4 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    # Set random seeds
-    np.random.seed(0)
-    tf.set_random_seed(0)
     main()
