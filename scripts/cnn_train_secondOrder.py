@@ -2,7 +2,6 @@ from __future__ import division, print_function
 import os
 import argparse
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 import keras.backend as K
 from keras.callbacks import ModelCheckpoint
@@ -11,62 +10,8 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.wrangle import get_train_test_inds
+from learning2learn.wrangle import synthesize_data
 from learning2learn.util import evaluate_secondOrder, train_model
-from learning2learn.images import load_images, load_image_dataset
-
-
-def make_trial(shapes, colors, textures):
-    # create a random trial
-    ix = np.arange(len(shapes))
-    while True:
-        baseline = np.random.choice(ix)
-        shape = shapes[baseline]
-        color = colors[baseline]
-        texture = textures[baseline]
-        # only matches in shape
-        shape_matches = \
-        np.where((shapes == shape) &
-                 (colors != color) &
-                 (textures != texture))[0]
-        # only matches in color
-        color_matches = \
-        np.where((shapes != shape) &
-                 (colors == color) &
-                 (textures != texture))[0]
-        # only matches in texture
-        texture_matches = \
-        np.where((shapes != shape) &
-                 (colors != color) &
-                 (textures == texture))[0]
-
-        if len(shape_matches) > 0 and len(color_matches) > 0 and len(
-                texture_matches) > 0:
-            break  # make sure we have an option for each image...
-
-    shape_match = np.random.choice(shape_matches)
-    color_match = np.random.choice(color_matches)
-    texture_match = np.random.choice(texture_matches)
-
-    return [baseline, shape_match, color_match, texture_match]
-
-def build_test_trials(test_folder, nb_trials, target_size=(200, 200),
-                      shift=True):
-    # First, load the images
-    imgs, _ = load_images(test_folder, target_size=target_size, shift=shift)
-    # Collect the list of shapes, colors and textures
-    feature_file = os.path.join(test_folder, 'data.csv')
-    df = pd.read_csv(feature_file, index_col=0)
-    shapes = df['shape'].as_matrix()
-    colors = df['color'].as_matrix()
-    textures = df['texture'].as_matrix()
-
-    # Sample the trials
-    ix = []
-    for i in range(nb_trials):
-        ix.extend(make_trial(shapes, colors, textures))
-    ix = np.asarray(ix)
-    return imgs[ix]
 
 def run_experiment(nb_categories, nb_exemplars, params):
     # Create custom TF session if requested
@@ -75,24 +20,18 @@ def run_experiment(nb_categories, nb_exemplars, params):
             config=tf.ConfigProto(gpu_options=params['gpu_options'])
         )
         K.set_session(sess)
-    data_folder = os.path.realpath('../data/images_generated')
     print('Training CNN model...')
     scores = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i + 1))
         # Get the dataset (random subset is selected)
-        X, shapes = load_image_dataset(data_folder, nb_categories, nb_exemplars,
-                                       1, params['img_size'])
+        df_train, labels = synthesize_data(nb_categories, nb_exemplars)
+        X_train, X_test = get_secondOrder_data(df_train, nb_test_trials=1000)
         ohe = OneHotEncoder(sparse=False)
-        Y = ohe.fit_transform(shapes.reshape(-1, 1))
-        # Now, we separate the train and test sets
-        train_inds, _ = get_train_test_inds(nb_categories, nb_exemplars,
-                                            len(shapes), 1)
-        test_folder = os.path.join(data_folder, 'test/')
-        X_test = build_test_trials(test_folder, nb_trials=1000,
-                                   target_size=params['img_size'])
+        Y_train = ohe.fit_transform(labels.reshape(-1, 1))
         # Build a neural network model and train it with the training set
-        model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
+        model = simple_cnn(input_shape=X_train.shape[1:],
+                           nb_classes=Y_train.shape[-1])
         # We're going to keep track of the best model throughout training,
         # monitoring the training loss
         weights_file = '../data/cnn_secondOrder.h5'
@@ -105,7 +44,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
             save_weights_only=True
         )
         train_model(
-            model, X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
+            model, X_train, Y_train, epochs=params['nb_epochs'],
             validation_data=None, batch_size=params['batch_size'],
             checkpoint=checkpoint
         )
@@ -115,7 +54,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # Now evaluate the model on the test data
         score = evaluate_secondOrder(
             model, X_test, layer_num=-4,
-            batch_size=params['batch_size']
+            batch_size=256
         )
         scores.append(score)
     avg_score = np.mean(scores)

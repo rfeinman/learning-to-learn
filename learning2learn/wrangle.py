@@ -1,11 +1,17 @@
 from __future__ import division
+import os
 import itertools
 import warnings
 import math
+import multiprocessing as mp
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
+from learning2learn.util import train_test_split
+from learning2learn.images import (generate_image, generate_image_wrapper,
+                                   generate_colors, generate_random_shape,
+                                   compute_area)
 
 def generate_dictionary(column, nb_bits=None):
     """
@@ -111,21 +117,87 @@ def synthesize_new_data(nb_categories):
 
     return pd.concat(dfs), pd.Series(labels)
 
-def get_train_test_inds(nb_categories, nb_exemplars, nb_samples, nb_test=1):
-    """
+def build_train_set(df_train, shape_set, color_set, texture_set,
+                    target_size=(200, 200), contrast_factor=1.):
+    tups = []
+    for i in range(len(df_train)):
+        s, c, t = df_train.iloc[i]
+        tups.append(
+            (shape_set[s], color_set[c], texture_set[t], target_size,
+             contrast_factor)
+        )
+    p = mp.Pool()
+    X_train = p.map(generate_image_wrapper, tups)
+    p.close()
+    p.join()
 
-    :param nb_categories:
-    :param nb_exemplars:
-    :param nb_shapes:
-    :param nb_test:
-    :return:
-    """
-    test_inds = []
-    for i in range(nb_categories):
-        bottom = i * (nb_exemplars + nb_test)
-        top = bottom + nb_test
-        test_inds.extend(range(bottom, top))
-    # The train inds are the set difference of all inds and test inds
-    train_inds = list(set(range(nb_samples)).difference(test_inds))
+    return np.asarray(X_train)
 
-    return train_inds, test_inds
+def make_trial(shape_set, color_set, texture_set, target_size=(200, 200),
+               contrast_factor=1.):
+    # randomly select 3 of each feature
+    s1, s2, s3 = np.random.choice(range(len(shape_set)), 3, replace=False)
+    c1, c2, c3 = np.random.choice(range(len(color_set)), 3, replace=False)
+    shape1, shape2, shape3 = shape_set[s1], shape_set[s2], shape_set[s3]
+    color1, color2, color3 = color_set[c1], color_set[c2], color_set[c3]
+    texture1, texture2, texture3 = np.random.choice(texture_set, 3,
+                                                    replace=False)
+    # generate the trial images
+    baseline = generate_image(shape1, color1, texture1, target_size,
+                              contrast_factor)
+    shape_match = generate_image(shape1, color2, texture2, target_size,
+                                 contrast_factor)
+    color_match = generate_image(shape2, color1, texture3, target_size,
+                                 contrast_factor)
+    texture_match = generate_image(shape3, color3, texture1, target_size,
+                                   contrast_factor)
+
+    return np.asarray([baseline, shape_match, color_match, texture_match])
+
+def make_trial_wrapper(tup):
+    return make_trial(tup[0], tup[1], tup[2], tup[3], tup[4])
+
+def build_test_trials(shape_set, color_set, texture_set, nb_trials,
+                      target_size=(200, 200), contrast_factor=1.):
+    tups = [(shape_set, color_set, texture_set, target_size, contrast_factor)
+            for _ in range(nb_trials)]
+    p = mp.Pool()
+    trials = p.map(make_trial_wrapper, tups)
+
+    return np.concatenate(trials)
+
+def get_secondOrder_data(df_train, nb_test_trials=1000):
+    # count the number of categories in the training set
+    nb_train = len(np.unique(df_train['shape']))
+    # we have 58 textures, so that is our limiting factor
+    assert nb_train < 58
+    nb_test = 58 - nb_train
+    # get the 58 shapes
+    shape_set = [generate_random_shape(0, 200, 0, 200, 40) for _ in range(58)]
+    shape_set = sorted(shape_set, key=lambda x: compute_area(x, 200))
+    # get the 58 colors
+    color_set = generate_colors()
+    ix = np.sort(np.random.choice(range(len(color_set)), 58, replace=False))
+    color_set = color_set[ix]
+    # get the 58 textures
+    texture_set = sorted(
+        [file for file in os.listdir('../data/textures') if
+         file.endswith('tiff')]
+    )
+    # perform the train/test splits
+    shape_set_train, shape_set_test = train_test_split(shape_set,
+                                                        test_size=nb_test)
+    color_set_train, color_set_test = train_test_split(color_set,
+                                                        test_size=nb_test)
+    texture_set_train, texture_set_test = train_test_split(texture_set,
+                                                            test_size=nb_test)
+    # build the training set of images
+    print('Building training set...')
+    X_train = build_train_set(df_train, shape_set_train, color_set_train,
+                              texture_set_train)
+    # build the test set trials
+    print('Building test trials...')
+    X_test = build_test_trials(shape_set_test, color_set_test, texture_set_test,
+                               nb_test_trials)
+
+    return X_train, X_test

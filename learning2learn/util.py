@@ -9,6 +9,35 @@ from scipy.spatial.distance import cosine
 import keras.backend as K
 
 
+# def get_train_test_inds(nb_categories, nb_exemplars, nb_samples, nb_test=1):
+#     """
+#
+#     :param nb_categories:
+#     :param nb_exemplars:
+#     :param nb_shapes:
+#     :param nb_test:
+#     :return:
+#     """
+#     test_inds = []
+#     for i in range(nb_categories):
+#         bottom = i * (nb_exemplars + nb_test)
+#         top = bottom + nb_test
+#         test_inds.extend(range(bottom, top))
+#     # The train inds are the set difference of all inds and test inds
+#     train_inds = list(set(range(nb_samples)).difference(test_inds))
+#
+#     return train_inds, test_inds
+
+def train_test_split(x, test_size):
+    step = int(np.ceil(len(x) / test_size)) - 1
+    ix = list(range(len(x)))
+    ix_test = [i * step for i in range(test_size)]
+    ix_train = list(set(ix).difference(ix_test))
+    x_train = [x[i] for i in ix_train]
+    x_test = [x[i] for i in ix_test]
+
+    return x_train, x_test
+
 def get_hidden_representations(model, X, layer_num, batch_size=32):
     """
     Given a Keras model and a data matrix X, this function computes the hidden
@@ -166,49 +195,40 @@ def train_model(model, X_train, Y_train, epochs, validation_data,
             callbacks=[checkpoint]
         )
 
-def build_vocab_training_set(data_folder, nb_exemplars, nb_categories,
-                             shape_fraction, color_fraction, shift=True):
-    """
-
-    :param data_folder:
-    :param nb_exemplars:
-    :param nb_categories:
-    :param shape_fraction:
-    :param color_fraction:
-    :return:
-    """
-    # Load the data
-    imgs, df = load_images(data_folder, target_size=(200, 200), shift=shift)
-    # Select the classes
-    nb_shapes = int(nb_categories * shape_fraction)
-    nb_colors = int(nb_categories * color_fraction)
-    nb_textures = nb_categories - nb_shapes - nb_colors
-    assert nb_shapes <= 50 and nb_colors <= 50 and nb_textures <= 50
-    assert (nb_shapes + nb_colors + nb_textures) == 50
-    print('Using %i shape words, %i color words and %i texture words.' %
-          (nb_shapes, nb_colors, nb_textures))
-    shapes = np.random.choice(range(nb_categories), nb_shapes, replace=False)
-    colors = np.random.choice(range(nb_categories), nb_colors, replace=False)
-    textures = np.random.choice(range(nb_categories), nb_textures,
-                                replace=False)
-    # ...
-    inds = []
-    labels = []
-    current_class = 0
-    for s in shapes:
-        ix = np.where(df['shape'].as_matrix() == s)[0]
-        inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
-        labels.extend([current_class] * nb_exemplars)
-        current_class += 1
-    for c in colors:
-        ix = np.where(df['color'].as_matrix() == c)[0]
-        inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
-        labels.extend([current_class] * nb_exemplars)
-        current_class += 1
-    for t in textures:
-        ix = np.where(df['texture'].as_matrix() == t)[0]
-        inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
-        labels.extend([current_class] * nb_exemplars)
-        current_class += 1
-
-    return imgs[inds], np.asarray(labels)
+# def build_vocab_training_set(data_folder, nb_exemplars, nb_categories,
+#                              shape_fraction, color_fraction, shift=True):
+#     # Load the data
+#     imgs, df = load_images(data_folder, target_size=(200, 200), shift=shift)
+#     # Select the classes
+#     nb_shapes = int(nb_categories * shape_fraction)
+#     nb_colors = int(nb_categories * color_fraction)
+#     nb_textures = nb_categories - nb_shapes - nb_colors
+#     assert nb_shapes <= 50 and nb_colors <= 50 and nb_textures <= 50
+#     assert (nb_shapes + nb_colors + nb_textures) == 50
+#     print('Using %i shape words, %i color words and %i texture words.' %
+#           (nb_shapes, nb_colors, nb_textures))
+#     shapes = np.random.choice(range(nb_categories), nb_shapes, replace=False)
+#     colors = np.random.choice(range(nb_categories), nb_colors, replace=False)
+#     textures = np.random.choice(range(nb_categories), nb_textures,
+#                                 replace=False)
+#     # ...
+#     inds = []
+#     labels = []
+#     current_class = 0
+#     for s in shapes:
+#         ix = np.where(df['shape'].as_matrix() == s)[0]
+#         inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
+#         labels.extend([current_class] * nb_exemplars)
+#         current_class += 1
+#     for c in colors:
+#         ix = np.where(df['color'].as_matrix() == c)[0]
+#         inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
+#         labels.extend([current_class] * nb_exemplars)
+#         current_class += 1
+#     for t in textures:
+#         ix = np.where(df['texture'].as_matrix() == t)[0]
+#         inds.extend(list(np.random.choice(ix, nb_exemplars, replace=False)))
+#         labels.extend([current_class] * nb_exemplars)
+#         current_class += 1
+#
+#     return imgs[inds], np.asarray(labels)

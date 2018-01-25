@@ -1,20 +1,15 @@
 from __future__ import division, print_function
 
-import os
 import argparse
-import multiprocessing as mp
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 import keras.backend as K
-from keras.preprocessing import image
-import matplotlib.path as mplpath
 from sklearn.preprocessing import OneHotEncoder
 
-from learning2learn.util import build_vocab_training_set, evaluate_secondOrder
-from learning2learn.wrangle import synthesize_data
+from learning2learn.util import evaluate_secondOrder
+from learning2learn.wrangle import synthesize_data, get_secondOrder_data
 from learning2learn.models import simple_cnn
-from learning2learn.images import generate_random_shape, shift_image
 
 
 def compute_vocab_size(model, X, Y, batch_size=64):
@@ -44,157 +39,6 @@ def save_scores(epoch, trainLoss, trainAcc, secondOrderAcc, vocabSize50,
     df['vocabSize50'] = vocabSize50
     df['vocabSize80'] = vocabSize80
     df.to_csv(logfile, index=False)
-
-def generate_colors():
-    nb_colors = 64
-    nb_bins = 4
-    vals = np.linspace(0, 0.9, nb_bins)
-    colors = np.zeros(shape=(nb_colors, 3))
-    i = 0
-    for r in vals:
-        for g in vals:
-            for b in vals:
-                colors[i] = np.asarray([r, g, b])
-                i += 1
-
-    return colors
-
-def adjust_contrast(img, factor):
-    assert factor >= 1.
-    img_p = 1. - img
-    img_p /= factor
-    img_p = 1. - img_p
-
-    return img_p
-
-def generate_image(shape, color, texture, target_size=(200, 200),
-                   contrast_factor=1.):
-    # Generate the base color
-    img_color = np.ones(shape=target_size + (3,), dtype=np.float32) * color
-    # Generate the base texture
-    img_texture = image.load_img(
-        '../data/textures/%s' % texture,
-        target_size=target_size,
-        interpolation='bicubic'
-    )
-    img_texture = image.img_to_array(img_texture) / 255.
-    img_texture = img_texture[:, :, 0]
-    img_texture = adjust_contrast(img_texture, contrast_factor)
-    # Put it all together
-    img = np.ones(shape=target_size + (4,), dtype=np.float32)
-    img[:, :, :3] = img_color
-    #img[:, :, 3] = img_texture
-    # Cutout the shape
-    p = mplpath.Path(shape)
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            if not p.contains_point((i, j)):
-                img[j, i, :] = np.ones_like(img[j, i])
-    img = shift_image(img, img_size=target_size, scale=20)
-    img[:, :, 3] = img_texture
-
-    return img
-
-def generate_image_wrapper(tup):
-    return generate_image(tup[0], tup[1], tup[2])
-
-def make_trial(shape_set, color_set, texture_set, target_size=(200, 200),
-               contrast_factor=1.):
-    # randomly select 3 of each feature
-    s1, s2, s3 = np.random.choice(range(len(shape_set)), 3, replace=False)
-    c1, c2, c3 = np.random.choice(range(len(color_set)), 3, replace=False)
-    shape1, shape2, shape3 = shape_set[s1], shape_set[s2], shape_set[s3]
-    color1, color2, color3 = color_set[c1], color_set[c2], color_set[c3]
-    texture1, texture2, texture3 = np.random.choice(texture_set, 3,
-                                                    replace=False)
-    # generate the trial images
-    baseline = generate_image(shape1, color1, texture1, target_size,
-                              contrast_factor)
-    shape_match = generate_image(shape1, color2, texture2, target_size,
-                                 contrast_factor)
-    color_match = generate_image(shape2, color1, texture3, target_size,
-                                 contrast_factor)
-    texture_match = generate_image(shape3, color3, texture1, target_size,
-                                   contrast_factor)
-
-    return np.asarray([baseline, shape_match, color_match, texture_match])
-
-def make_trial_wrapper(tup):
-    return make_trial(tup[0], tup[1], tup[2], tup[3], tup[4])
-
-def build_test_trials(shape_set, color_set, texture_set, nb_trials,
-                      target_size=(200, 200), contrast_factor=1.):
-    tups = [(shape_set, color_set, texture_set, target_size, contrast_factor)
-            for _ in range(nb_trials)]
-    p = mp.Pool()
-    trials = p.map(make_trial_wrapper, tups)
-
-    return np.concatenate(trials)
-
-def compute_area(shape, img_size):
-    area = 0
-    p = mplpath.Path(shape)
-    for i in range(img_size):
-        for j in range(img_size):
-            if p.contains_point((i, j)):
-                area += 1
-
-    return area
-
-def train_test_split(x, test_size):
-    step = int(np.ceil(len(x) / test_size)) - 1
-    ix = list(range(len(x)))
-    ix_test = [i * step for i in range(test_size)]
-    ix_train = list(set(ix).difference(ix_test))
-    x_train = [x[i] for i in ix_train]
-    x_test = [x[i] for i in ix_test]
-
-    return x_train, x_test
-
-def get_secondOrder_data(df_train, nb_test_trials=1000):
-    # count the number of categories in the training set
-    nb_train = len(np.unique(df_train['shape']))
-    # we have 58 textures, so that is our limiting factor
-    assert nb_train < 58
-    nb_test = 58 - nb_train
-    # get the 58 shapes
-    shape_set = [generate_random_shape(0, 200, 0, 200, 40) for _ in range(58)]
-    shape_set = sorted(shape_set, key=lambda x: compute_area(x, 200))
-    # get the 58 colors
-    color_set = generate_colors()
-    ix = np.sort(np.random.choice(range(len(color_set)), 58, replace=False))
-    color_set = color_set[ix]
-    # get the 58 textures
-    texture_set = sorted(
-        [file for file in os.listdir('../data/textures') if
-         file.endswith('tiff')]
-    )
-    # perform the train/test splits
-    shape_set_train, shape_set_test = train_test_split(shape_set,
-                                                       test_size=nb_test)
-    color_set_train, color_set_test = train_test_split(color_set,
-                                                       test_size=nb_test)
-    texture_set_train, texture_set_test = train_test_split(texture_set,
-                                                           test_size=nb_test)
-    # build the training set of images
-    print('Building training set...')
-    tups = []
-    for i in range(len(df_train)):
-        s, c, t = df_train.iloc[i]
-        tups.append(
-            (shape_set_train[s], color_set_train[c], texture_set_train[t])
-        )
-    p = mp.Pool()
-    X_train = p.map(generate_image_wrapper, tups)
-    p.close()
-    p.join()
-    X_train = np.asarray(X_train)
-    # build the test set trials
-    print('Building test trials...')
-    X_test = build_test_trials(shape_set_test, color_set_test, texture_set_test,
-                               nb_test_trials)
-
-    return X_train, X_test
 
 def evaluate_model(model, X_train, Y_train, X_test):
     loss, acc = model.evaluate(X_train, Y_train, batch_size=256, verbose=0)
@@ -294,8 +138,8 @@ if __name__ == '__main__':
                         help='Int indicating the batch size to use.',
                         required=False, type=int)
     parser.set_defaults(nb_epochs=100)
-    parser.set_defaults(shape_fraction=0.6)
-    parser.set_defaults(color_fraction=0.2)
+    parser.set_defaults(shape_fraction=1.0)
+    parser.set_defaults(color_fraction=0.0)
     parser.set_defaults(save_path='../results/vocab_log.csv')
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
