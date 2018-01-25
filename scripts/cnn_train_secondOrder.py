@@ -10,7 +10,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.wrangle import synthesize_data
+from learning2learn.wrangle import synthesize_data, get_secondOrder_data
 from learning2learn.util import evaluate_secondOrder, train_model
 
 def run_experiment(nb_categories, nb_exemplars, params):
@@ -54,7 +54,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # Now evaluate the model on the test data
         score = evaluate_secondOrder(
             model, X_test, layer_num=-4,
-            batch_size=256
+            batch_size=128
         )
         scores.append(score)
     avg_score = np.mean(scores)
