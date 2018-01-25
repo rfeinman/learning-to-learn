@@ -11,8 +11,9 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.util import (evaluate_secondOrder, load_image_dataset,
-                                 load_images, train_model, get_train_test_inds)
+from learning2learn.wrangle import get_train_test_inds
+from learning2learn.util import evaluate_secondOrder, train_model
+from learning2learn.images import load_images, load_image_dataset
 
 
 def make_trial(shapes, colors, textures):

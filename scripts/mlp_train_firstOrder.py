@@ -4,7 +4,8 @@ import numpy as np
 from keras.callbacks import EarlyStopping
 
 from learning2learn.models import simple_mlp
-from learning2learn.util import synthesize_data, preprocess_data, add_noise
+from learning2learn.wrangle import synthesize_data, preprocess_data
+from learning2learn.util import add_noise
 
 def run_experiment(nb_categories, nb_exemplars, params):
     """

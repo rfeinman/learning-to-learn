@@ -7,7 +7,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.images import generate_dataset_parameters, generate_image
-from learning2learn.util import synthesize_data
+from learning2learn.wrangle import synthesize_data
 
 def create_dataset(nb_categories, nb_exemplars, data_folder,
                    mpl_textures):

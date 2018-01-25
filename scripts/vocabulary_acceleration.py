@@ -10,13 +10,11 @@ import keras.backend as K
 from keras.preprocessing import image
 import matplotlib.path as mplpath
 from sklearn.preprocessing import OneHotEncoder
-#from sklearn.model_selection import train_test_split
 
-from learning2learn.util import (build_vocab_training_set, evaluate_secondOrder,
-                                 synthesize_data, shift_image)
+from learning2learn.util import build_vocab_training_set, evaluate_secondOrder
+from learning2learn.wrangle import synthesize_data
 from learning2learn.models import simple_cnn
-from learning2learn.images import generate_random_shape
-#from cnn_train_secondOrder import build_test_trials
+from learning2learn.images import generate_random_shape, shift_image
 
 
 def compute_vocab_size(model, X, Y, batch_size=64):
