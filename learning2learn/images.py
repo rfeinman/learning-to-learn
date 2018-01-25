@@ -2,7 +2,6 @@ from __future__ import division, print_function
 import os
 import numpy as np
 import functools
-from random import randint
 from keras.preprocessing import image
 import matplotlib.pyplot as plt
 import matplotlib.path as mplpath
@@ -72,7 +71,7 @@ def generate_random_shape(x_min, x_max, y_min, y_max, edge_distance):
     :return:
     """
     # Sample a number of points for the polygon
-    nb_points = randint(3, 10)
+    nb_points = np.random.randint(3, 11)
     # 4 'types' of points; determines the edge that the point will be near
     point_types = ['left', 'right', 'top', 'bottom']
     # Cycle through drawing points of different types
