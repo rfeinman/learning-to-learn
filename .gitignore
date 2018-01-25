@@ -6,7 +6,6 @@ data/cnn_firstOrder.h5
 data/cnn_secondOrder.h5
 data/*.csv
 notebooks/temp.png
-notebooks/scratch_pad.ipynb
 notebooks/.ipynb_checkpoints/
 paper_latex/paper.aux
 paper_latex/paper.bbl
