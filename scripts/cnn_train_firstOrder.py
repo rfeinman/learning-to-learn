@@ -84,7 +84,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # We'll provide the test set as 'validation data' merely so we can
         # monitor the trajectory... the network won't be using this data.
         train_model(
-            model, X[train_inds], Y[train_inds], epochs=params['nb_epochs'],
+            model, X_train, Y_train, epochs=params['nb_epochs'],
             validation_data=None, batch_size=params['batch_size'],
             checkpoint=checkpoint
         )
