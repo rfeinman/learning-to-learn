@@ -6,12 +6,54 @@ import pandas as pd
 import tensorflow as tf
 import keras.backend as K
 from sklearn.preprocessing import OneHotEncoder
+from keras.optimizers import SGD
 
 from learning2learn.util import evaluate_generalization
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
                                     build_test_trials_order2, build_train_set)
 from learning2learn.models import simple_cnn
 
+# def build_model(layers):
+#     """
+#     Takes in a list of Keras layers and returns an initialized
+#     Keras Sequential model with those layers.
+#     :param layers: (list) the list of Keras layers for the model
+#     :return: (keras Sequential) a compiled Keras model
+#     """
+#     model = Sequential()
+#     for layer in layers:
+#         model.add(layer)
+#     model.compile(
+#         loss='categorical_crossentropy',
+#         optimizer=SGD(lr=0.01, momentum=0.8),
+#         metrics=['accuracy']
+#     )
+#
+#     return model
+#
+# def simple_cnn(input_shape, nb_classes):
+#     layers = [
+#         # Conv, Pool
+#         Conv2D(32, (5, 5), padding='same', input_shape=input_shape),
+#         Activation('relu'),
+#         MaxPooling2D(pool_size=(5, 5)),
+#         # Conv, Pool
+#         Conv2D(64, (5, 5), padding='same'),
+#         Activation('relu'),
+#         MaxPooling2D(pool_size=(5, 5)),
+#         # Flatten
+#         Flatten(),
+#         # Hidden layer
+#         Dropout(0.5),
+#         Dense(2048),
+#         Activation('relu'),
+#         # Output layer
+#         Dropout(0.5),
+#         Dense(nb_classes),
+#         Activation('softmax')
+#     ]
+#
+#     return build_model(layers)
 
 def compute_vocab_size(model, X, Y, batch_size=64):
     # get predictions and ground truth

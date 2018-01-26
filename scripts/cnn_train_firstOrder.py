@@ -11,7 +11,8 @@ mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
-                                    build_train_set, build_test_trials_order1)
+                                    build_train_set, build_test_trials_order1,
+                                    build_test_set_order1)
 from learning2learn.util import (train_model, train_test_split,
                                  evaluate_generalization)
 
@@ -62,7 +63,13 @@ def run_experiment(nb_categories, nb_exemplars, params):
         color_set_test, texture_set_train, texture_set_test,
         nb_trials=2000, target_size=params['img_size']
     )
+    X_test_acc, labels_test = build_test_set_order1(
+        df_train, shape_set_train, color_set_test, texture_set_test,
+        nb_trials=2000, target_size=(200, 200), contrast_factor=1.
+    )
+    Y_test = ohe.transform(labels_test.reshape(-1, 1))
     scores = []
+    accs = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
         # Build a neural network model and train it with the training set
@@ -96,13 +103,19 @@ def run_experiment(nb_categories, nb_exemplars, params):
             model, X_test, layer_num=-4,
             batch_size=128
         )
+        _, acc = model.evaluate(
+            X_test_acc, Y_test, verbose=0,
+            batch_size=params['batch_size']
+        )
         scores.append(score)
+        accs.append(acc)
         print('\nScore: %0.4f' % score)
+        print('\nAccuracy: %0.4f' % acc)
     if params['gpu_options'] is not None:
         K.clear_session()
         sess.close()
 
-    return np.asarray(scores)
+    return np.asarray(scores), np.asarray(accs)
 
 def main():
     # GPU settings
@@ -120,7 +133,7 @@ def main():
         'gpu_options': gpu_options
     }
     # Run the experiment
-    scores = run_experiment(args.nb_categories, args.nb_exemplars, params)
+    _ = run_experiment(args.nb_categories, args.nb_exemplars, params)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

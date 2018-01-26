@@ -45,7 +45,16 @@ def run_experiment(nb_categories, nb_exemplars, params):
             texture_set_train,
             50-nb_categories
         )
-    # Build the test set trials. This we want to keep constant across the runs.
+    # Build the training dataset
+    print('Building the training set...')
+    df_train, labels = synthesize_data(nb_categories, nb_exemplars)
+    ohe = OneHotEncoder(sparse=False)
+    Y_train = ohe.fit_transform(labels.reshape(-1, 1))
+    X_train = build_train_set(
+        df_train, shape_set_train, color_set_train,
+        texture_set_train, target_size=params['img_size']
+    )
+    # Build the test set trials
     print('Building test trials...')
     X_test = build_test_trials_order2(
         shape_set_test, color_set_test,texture_set_test,
@@ -55,17 +64,6 @@ def run_experiment(nb_categories, nb_exemplars, params):
     scores = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i + 1))
-        # Build the training set of images. Do this inside the loop because
-        # a slightly random subset of the parameters is selected each time;
-        # helps get some variance
-        print('Building the training set...')
-        df_train, labels = synthesize_data(nb_categories, nb_exemplars)
-        ohe = OneHotEncoder(sparse=False)
-        Y_train = ohe.fit_transform(labels.reshape(-1, 1))
-        X_train = build_train_set(
-            df_train, shape_set_train, color_set_train,
-            texture_set_train, target_size=params['img_size']
-        )
         # Build a neural network model and train it with the training set
         model = simple_cnn(
             input_shape=X_train.shape[1:],
@@ -119,7 +117,7 @@ def main():
         'gpu_options': gpu_options
     }
     # Run the experiment
-    scores = run_experiment(args.nb_categories, args.nb_exemplars, params)
+    _ = run_experiment(args.nb_categories, args.nb_exemplars, params)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

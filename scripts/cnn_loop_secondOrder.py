@@ -24,8 +24,8 @@ def main():
         'gpu_options': gpu_options
     }
     # Start the experiment loop
-    category_trials = [10, 15, 20, 25]
-    exemplar_trials = [5, 10, 15]
+    category_trials = [5, 8, 12, 15, 18, 21]
+    exemplar_trials = [10, 20, 30, 40, 50]
     #category_trials = np.arange(3, 21)
     #exemplar_trials = np.arange(1, 10)
     experiment_loop(

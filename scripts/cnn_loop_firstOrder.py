@@ -1,12 +1,55 @@
 from __future__ import division, print_function
+
+import os
+import sys
+import warnings
+import shutil
 import argparse
 import numpy as np
 import tensorflow as tf
 import matplotlib as mpl
 mpl.use('Agg')
 
-from learning2learn.util import experiment_loop
+#from learning2learn.util import experiment_loop
 from cnn_train_firstOrder import run_experiment
+
+def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
+                    results_path):
+    stdout = sys.stdout
+    # Create results_path folder. Remove previous one if it already exists.
+    if os.path.isdir(results_path):
+        warnings.warn('Removing old results folder of the same name!')
+        shutil.rmtree(results_path)
+    os.mkdir(results_path)
+    np.save(os.path.join(results_path, 'category_trials.npy'),
+            np.asarray(category_trials))
+    np.save(os.path.join(results_path, 'exemplar_trials.npy'),
+            np.asarray(exemplar_trials))
+    # Loop through different values of (nb_categories, nb_exemplars)
+    results_gen = np.zeros(
+        shape=(len(category_trials), len(exemplar_trials), params['nb_trials'])
+    )
+    results_acc = np.zeros(
+        shape=(len(category_trials), len(exemplar_trials), params['nb_trials'])
+    )
+    for i, nb_categories in enumerate(category_trials):
+        for j, nb_exemplars in enumerate(exemplar_trials):
+            print('Testing for %i categories and %i exemplars...' %
+                  (nb_categories, nb_exemplars))
+            log_file = os.path.join(results_path,
+                                    'log_ca%0.4i_ex%0.4i' %
+                                    (nb_categories, nb_exemplars))
+            sys.stdout = open(log_file,'w')
+            results_gen[i, j], results_acc[i, j] = exectue_fn(
+                nb_categories, nb_exemplars, params
+            )
+            sys.stdout = stdout
+            # Save results from this run to text file
+            save_file_gen = os.path.join(results_path, 'results_gen.npy')
+            np.save(save_file_gen, results_gen)
+            save_file_acc = os.path.join(results_path, 'results_acc.npy')
+            np.save(save_file_acc, results_acc)
+    print('Experiment loop complete.')
 
 def main():
     # GPU settings
@@ -25,10 +68,10 @@ def main():
         'gpu_options': gpu_options
     }
     # Start the experiment loop
-    #category_trials = range(5, 51, 5)
-    #category_trials = [2, 4, 8, 14, 22, 32, 44]
-    category_trials = np.arange(3, 21)
-    exemplar_trials = np.arange(1, 10)
+    category_trials = [5, 8, 12, 15, 18, 21]
+    exemplar_trials = [10, 20, 30, 40, 50]
+    #category_trials = np.arange(3, 21)
+    #exemplar_trials = np.arange(1, 10)
     experiment_loop(
         run_experiment, category_trials=category_trials,
         exemplar_trials=exemplar_trials, params=params,

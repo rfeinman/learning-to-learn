@@ -135,6 +135,42 @@ def build_train_set(df_train, shape_set, color_set, texture_set,
 
     return np.asarray(X_train)
 
+def get_sample_order1(
+        df_train, shape_set_train, color_set_test, texture_set_test,
+        target_size=(200, 200), contrast_factor=1.
+):
+    # First sample the baseline from the training set
+    i = np.random.choice(range(len(df_train)), 1)[0]
+    s, _, _ = df_train.iloc[i]
+    shape = shape_set_train[s]
+    c, t = np.random.choice(range(len(color_set_test)), 2)
+    color = color_set_test[c]
+    texture = texture_set_test[t]
+    img = generate_image(shape, color, texture, target_size, contrast_factor)
+
+    return (img, s)
+
+def get_sample_order1_wrapper(tup):
+    seed = random.randint(0, 1e7)
+    np.random.seed(seed)
+    return get_sample_order1(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+
+def build_test_set_order1(
+        df_train, shape_set_train, color_set_test, texture_set_test,
+        nb_trials, target_size=(200, 200), contrast_factor=1.
+):
+    tups = [(df_train, shape_set_train, color_set_test, texture_set_test,
+             target_size, contrast_factor)
+            for _ in range(nb_trials)]
+    p = mp.Pool()
+    samples = p.map(get_sample_order1_wrapper, tups)
+    p.close()
+    p.join()
+    imgs = [sample[0] for sample in samples]
+    labels = [sample[1] for sample in samples]
+
+    return np.asarray(imgs), np.asarray(labels)
+
 def make_trial_order1(df_train,
                       shape_set_train, shape_set_test,
                       color_set_train, color_set_test,
