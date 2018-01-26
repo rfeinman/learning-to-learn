@@ -139,7 +139,7 @@ def make_trial_order1(df_train,
                       shape_set_train, shape_set_test,
                       color_set_train, color_set_test,
                       texture_set_train, texture_set_test,
-                      nb_trials, target_size=(200, 200),
+                      target_size=(200, 200),
                       contrast_factor=1.):
     # First sample the baseline from the training set
     i = np.random.choice(range(len(df_train)), 1)[0]
@@ -174,7 +174,7 @@ def make_trial_order1_wrapper(tup):
     seed = random.randint(0, 1e7)
     np.random.seed(seed)
     return make_trial_order1(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5],
-                             tup[6], tup[7], tup[8], tup[9])
+                             tup[6], tup[7], tup[8])
 
 def build_test_trials_order1(df_train,
                              shape_set_train, shape_set_test,
@@ -184,7 +184,7 @@ def build_test_trials_order1(df_train,
                              contrast_factor=1.):
     tups = [(df_train, shape_set_train, shape_set_test, color_set_train,
              color_set_test, texture_set_train, texture_set_test,
-             nb_trials, target_size, contrast_factor)
+             target_size, contrast_factor)
             for _ in range(nb_trials)]
     p = mp.Pool()
     trials = p.map(make_trial_order1_wrapper, tups)
