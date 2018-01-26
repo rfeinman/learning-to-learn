@@ -12,7 +12,8 @@ mpl.use('Agg')
 from learning2learn.models import simple_cnn
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
                                     build_train_set, build_test_trials_order2)
-from learning2learn.util import evaluate_secondOrder, train_model, subsample, train_test_split
+from learning2learn.util import (evaluate_generalization, train_model,
+                                 train_test_split)
 
 def run_experiment(nb_categories, nb_exemplars, params):
     assert nb_categories <= 50
@@ -90,7 +91,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # load the best model
         model.load_weights(weights_file)
         # Now evaluate the model on the test data
-        score = evaluate_secondOrder(
+        score = evaluate_generalization(
             model, X_test, layer_num=-4,
             batch_size=128
         )

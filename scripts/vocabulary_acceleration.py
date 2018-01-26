@@ -7,7 +7,7 @@ import tensorflow as tf
 import keras.backend as K
 from sklearn.preprocessing import OneHotEncoder
 
-from learning2learn.util import evaluate_secondOrder
+from learning2learn.util import evaluate_generalization
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
                                     build_test_trials_order2, build_train_set)
 from learning2learn.models import simple_cnn
@@ -43,7 +43,7 @@ def save_scores(epoch, trainLoss, trainAcc, secondOrderAcc, vocabSize50,
 
 def evaluate_model(model, X_train, Y_train, X_test):
     loss, acc = model.evaluate(X_train, Y_train, batch_size=256, verbose=0)
-    acc2 = evaluate_secondOrder(
+    acc2 = evaluate_generalization(
         model, X_test, layer_num=-4,
         batch_size=256
     )

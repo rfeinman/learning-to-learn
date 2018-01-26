@@ -135,6 +135,64 @@ def build_train_set(df_train, shape_set, color_set, texture_set,
 
     return np.asarray(X_train)
 
+def make_trial_order1(df_train,
+                      shape_set_train, shape_set_test,
+                      color_set_train, color_set_test,
+                      texture_set_train, texture_set_test,
+                      nb_trials, target_size=(200, 200),
+                      contrast_factor=1.):
+    # First sample the baseline from the training set
+    i = np.random.choice(range(len(df_train)), 1)[0]
+    s1, c1, t1 = df_train.iloc[i]
+    shape1 = shape_set_train[s1]
+    color1 = color_set_train[c1]
+    texture1 = texture_set_train[t1]
+    # Now sample the 2 novel colors and textures that will be used
+    s2, s3 = np.random.choice(range(len(shape_set_test)), 2, replace=False)
+    shape2, shape3 = shape_set_test[s2], shape_set_test[s3]
+    c2, c3 = np.random.choice(range(len(color_set_test)), 2, replace=False)
+    color2, color3 = color_set_test[c2], color_set_test[c3]
+    t2, t3 = np.random.choice(range(len(texture_set_test)), 2, replace=False)
+    texture2, texture3 = texture_set_test[t2], texture_set_test[t3]
+    # Now build the images
+    baseline = generate_image(
+        shape1, color1, texture1, target_size, contrast_factor
+    )
+    shape_match = generate_image(
+        shape1, color2, texture2, target_size, contrast_factor
+    )
+    color_match = generate_image(
+        shape2, color1, texture3, target_size, contrast_factor
+    )
+    texture_match = generate_image(
+        shape3, color3, texture1, target_size, contrast_factor
+    )
+    # Collect trial and return
+    return np.asarray([baseline, shape_match, color_match, texture_match])
+
+def make_trial_order1_wrapper(tup):
+    seed = random.randint(0, 1e7)
+    np.random.seed(seed)
+    return make_trial_order1(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5],
+                             tup[6], tup[7], tup[8], tup[9])
+
+def build_test_trials_order1(df_train,
+                             shape_set_train, shape_set_test,
+                             color_set_train, color_set_test,
+                             texture_set_train, texture_set_test,
+                             nb_trials, target_size=(200, 200),
+                             contrast_factor=1.):
+    tups = [(df_train, shape_set_train, shape_set_test, color_set_train,
+             color_set_test, texture_set_train, texture_set_test,
+             nb_trials, target_size, contrast_factor)
+            for _ in range(nb_trials)]
+    p = mp.Pool()
+    trials = p.map(make_trial_order1_wrapper, tups)
+    p.close()
+    p.join()
+
+    return np.concatenate(trials)
+
 def make_trial_order2(shape_set, color_set, texture_set, target_size=(200, 200),
                       contrast_factor=1.):
     # randomly select 3 of each feature

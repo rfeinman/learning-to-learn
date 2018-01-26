@@ -10,14 +10,14 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.old import get_train_test_inds
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
-                                    build_train_set)
-from learning2learn.util import train_model, subsample
+                                    build_train_set, build_test_trials_order1)
+from learning2learn.util import (train_model, train_test_split,
+                                 evaluate_generalization)
 
 
 def run_experiment(nb_categories, nb_exemplars, params):
-    assert nb_categories+params['nb_test'] <= 50
+    assert nb_categories <= 50
     # Set random seeds
     np.random.seed(0)
     # Create custom TF session if requested
@@ -26,36 +26,50 @@ def run_experiment(nb_categories, nb_exemplars, params):
             config=tf.ConfigProto(gpu_options=params['gpu_options'])
         )
         K.set_session(sess)
-    # First, get the parameters for the training and testing sets. This step
-    # is independent of the input dataset df_train. The same breakdown is used
-    # each time.
-    df, labels = synthesize_data(nb_categories, nb_exemplars+params['nb_test'])
-    ohe = OneHotEncoder(sparse=False)
-    Y = ohe.fit_transform(labels.reshape(-1, 1))
+    # Get the shape, color, and texture parameters for the training and
+    # testing sets. Features will be drawn from these parameter sets for each
+    # sample
     (shape_set_train, shape_set_test), \
     (color_set_train, color_set_test), \
     (texture_set_train, texture_set_test) = \
         get_train_test_parameters(params['img_size'][0])
-    print('Training CNN model...')
+    if nb_categories < 50:
+        shape_set_train, _ = train_test_split(
+            shape_set_train,
+            50 - nb_categories
+        )
+        color_set_train, _ = train_test_split(
+            color_set_train,
+            50 - nb_categories
+        )
+        texture_set_train, _ = train_test_split(
+            texture_set_train,
+            50 - nb_categories
+        )
+    # Build the training set
+    print('Building the training set...')
+    df_train, labels = synthesize_data(nb_categories, nb_exemplars)
+    X_train = build_train_set(
+        df_train, shape_set_train, color_set_train,
+        texture_set_train, target_size=params['img_size']
+    )
+    ohe = OneHotEncoder(sparse=False)
+    Y_train = ohe.fit_transform(labels.reshape(-1, 1))
+    # Build the test set trials
+    print('Building test trials...')
+    X_test = build_test_trials_order1(
+        df_train, shape_set_train, shape_set_test, color_set_train,
+        color_set_test, texture_set_train, texture_set_test,
+        nb_trials=2000, target_size=params['img_size']
+    )
     scores = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
-        # Build the training set of images. Do this inside the loop because
-        # a slightly random subset of the parameters is selected each time;
-        # helps get some variance
-        if nb_categories < 50:
-            shape_set_train = subsample(shape_set_train, nb_categories)
-            color_set_train = subsample(color_set_train, nb_categories)
-            texture_set_train = subsample(texture_set_train, nb_categories)
-        print('Building the training set...')
-        X = build_train_set(df, shape_set_train, color_set_train,
-                            texture_set_train, target_size=params['img_size'])
-        # Now, we separate the train and test sets
-        train_inds, test_inds = get_train_test_inds(nb_categories, nb_exemplars,
-                                                    len(labels),
-                                                    params['nb_test'])
         # Build a neural network model and train it with the training set
-        model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
+        model = simple_cnn(
+            input_shape=X_train.shape[1:],
+            nb_classes=Y_train.shape[-1]
+        )
         # We're going to keep track of the best model throughout training,
         # monitoring the training loss
         weights_file = '../data/cnn_firstOrder.h5'
@@ -78,12 +92,12 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # load the best model
         model.load_weights(weights_file)
         # Now evaluate the model on the test data
-        loss, acc = model.evaluate(
-            X[test_inds], Y[test_inds], verbose=0,
+        score = evaluate_generalization(
+            model, X_test, layer_num=-4,
             batch_size=128
         )
-        scores.append(acc)
-        print('\nScore: %0.4f' % acc)
+        scores.append(score)
+        print('\nScore: %0.4f' % score)
     if params['gpu_options'] is not None:
         K.clear_session()
         sess.close()
@@ -101,7 +115,6 @@ def main():
     params = {
         'nb_epochs': args.nb_epochs,
         'batch_size': args.batch_size,
-        'nb_test': 5,
         'nb_trials': 1,
         'img_size': (200, 200),
         'gpu_options': gpu_options

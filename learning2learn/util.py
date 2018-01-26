@@ -70,7 +70,7 @@ def similarity(x1, x2, measure='cosine'):
     else:
         return -np.linalg.norm(x1 - x2)
 
-def evaluate_secondOrder(model, X, layer_num, batch_size=32):
+def evaluate_generalization(model, X, layer_num, batch_size=32):
     """
     Evaluate a trained Keras model on a set of novel objects. The novel objects
     come in groupings of 4, where each grouping contains a baseline sample, a
