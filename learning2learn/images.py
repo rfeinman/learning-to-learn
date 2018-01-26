@@ -1,5 +1,6 @@
 from __future__ import division
 
+import random
 import numpy as np
 import functools
 from keras.preprocessing import image
@@ -57,16 +58,6 @@ def rearrange_points(points):
     return sorted(points, key=functools.cmp_to_key(less))
 
 def generate_random_shape(x_min, x_max, y_min, y_max, edge_distance):
-    """
-
-    :param x_min:
-    :param x_max:
-    :param y_min:
-    :param y_max:
-    :param x_offset:
-    :param y_offset:
-    :return:
-    """
     # Sample a number of points for the polygon
     nb_points = np.random.randint(3, 11)
     # 4 'types' of points; determines the edge that the point will be near
@@ -188,6 +179,9 @@ def generate_image(shape, color, texture, target_size=(200, 200),
 
     return img
 
-
 def generate_image_wrapper(tup):
+    # since images are randomly shifted, we want a different random seed
+    # for each process
+    seed = random.randint(0, 1e7)
+    np.random.seed(seed)
     return generate_image(tup[0], tup[1], tup[2], tup[3], tup[4])

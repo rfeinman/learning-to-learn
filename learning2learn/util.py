@@ -15,12 +15,27 @@ def subsample(x, nb_sample):
     return [x[i] for i in ix]
 
 def train_test_split(x, test_size):
-    step = int(np.ceil(len(x) / test_size)) - 1
+    assert type(test_size) == int, 'test_size parameter must be an int'
+    if test_size <= (len(x)/2.):
+        nb_sample = test_size
+    else:
+        nb_sample = len(x) - test_size
+    # evenly space selections accross the range of the input list
+    step = int(np.floor(len(x) / nb_sample))
     ix = list(range(len(x)))
-    ix_test = [i * step for i in range(test_size)]
-    ix_train = list(set(ix).difference(ix_test))
-    x_train = [x[i] for i in ix_train]
-    x_test = [x[i] for i in ix_test]
+    ix1 = [i * step for i in range(nb_sample)]
+    # center the selections
+    diff = len(x) - 1 - max(ix1)
+    shift = int(np.floor(diff/2.))
+    ix1 = [i+shift for i in ix1]
+    # the test set is the converse of the train set
+    ix2 = list(set(ix).difference(ix1))
+    if test_size <= (len(x)/2.):
+        x_train = [x[i] for i in ix2]
+        x_test = [x[i] for i in ix1]
+    else:
+        x_train = [x[i] for i in ix1]
+        x_test = [x[i] for i in ix2]
 
     return x_train, x_test
 
@@ -110,32 +125,33 @@ def add_noise(X, p):
 
 def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
                     results_path):
-    cats = []
-    exemps = []
-    scores = []
     stdout = sys.stdout
     # Create results_path folder. Remove previous one if it already exists.
     if os.path.isdir(results_path):
         warnings.warn('Removing old results folder of the same name!')
         shutil.rmtree(results_path)
     os.mkdir(results_path)
+    np.save(os.path.join(results_path, 'category_trials.npy'),
+            np.asarray(category_trials))
+    np.save(os.path.join(results_path, 'exemplar_trials.npy'),
+            np.asarray(exemplar_trials))
     # Loop through different values of (nb_categories, nb_exemplars)
-    for nb_categories in category_trials:
-        for nb_exemplars in exemplar_trials:
+    results = np.zeros(
+        shape=(len(category_trials), len(exemplar_trials), params['nb_trials'])
+    )
+    for i, nb_categories in enumerate(category_trials):
+        for j, nb_exemplars in enumerate(exemplar_trials):
             print('Testing for %i categories and %i exemplars...' %
                   (nb_categories, nb_exemplars))
             log_file = os.path.join(results_path,
                                     'log_ca%0.4i_ex%0.4i' %
                                     (nb_categories, nb_exemplars))
             sys.stdout = open(log_file,'w')
-            result = exectue_fn(nb_categories, nb_exemplars, params)
+            results[i, j] = exectue_fn(nb_categories, nb_exemplars, params)
             sys.stdout = stdout
-            cats.append(nb_categories)
-            exemps.append(nb_exemplars)
-            scores.append(result)
             # Save results from this run to text file
-            save_file = os.path.join(results_path, 'results.csv')
-            save_results(cats, exemps, scores, save_file)
+            save_file = os.path.join(results_path, 'results.npy')
+            np.save(save_file, results)
     print('Experiment loop complete.')
 
 def train_model(model, X_train, Y_train, epochs, validation_data,

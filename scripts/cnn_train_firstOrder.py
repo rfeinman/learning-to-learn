@@ -10,12 +10,14 @@ import matplotlib as mpl
 mpl.use('Agg')
 
 from learning2learn.models import simple_cnn
-from learning2learn.wrangle import (get_train_test_inds, synthesize_data,
-                                    get_train_test_parameters)
-from learning2learn.util import train_model
+from learning2learn.old import get_train_test_inds
+from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
+                                    build_train_set)
+from learning2learn.util import train_model, subsample
 
 
 def run_experiment(nb_categories, nb_exemplars, params):
+    assert nb_categories+params['nb_test'] <= 50
     # Set random seeds
     np.random.seed(0)
     # Create custom TF session if requested
@@ -27,7 +29,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
     # First, get the parameters for the training and testing sets. This step
     # is independent of the input dataset df_train. The same breakdown is used
     # each time.
-    df, labels = synthesize_data(nb_categories, nb_exemplars+1)
+    df, labels = synthesize_data(nb_categories, nb_exemplars+params['nb_test'])
     ohe = OneHotEncoder(sparse=False)
     Y = ohe.fit_transform(labels.reshape(-1, 1))
     (shape_set_train, shape_set_test), \
@@ -38,9 +40,19 @@ def run_experiment(nb_categories, nb_exemplars, params):
     scores = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
+        # Build the training set of images. Do this inside the loop because
+        # a slightly random subset of the parameters is selected each time;
+        # helps get some variance
+        if nb_categories < 50:
+            shape_set_train = subsample(shape_set_train, nb_categories)
+            color_set_train = subsample(color_set_train, nb_categories)
+            texture_set_train = subsample(texture_set_train, nb_categories)
+        print('Building the training set...')
+        X = build_train_set(df, shape_set_train, color_set_train,
+                            texture_set_train, target_size=params['img_size'])
         # Now, we separate the train and test sets
         train_inds, test_inds = get_train_test_inds(nb_categories, nb_exemplars,
-                                                    len(shapes),
+                                                    len(labels),
                                                     params['nb_test'])
         # Build a neural network model and train it with the training set
         model = simple_cnn(input_shape=X.shape[1:], nb_classes=Y.shape[-1])
@@ -68,16 +80,15 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # Now evaluate the model on the test data
         loss, acc = model.evaluate(
             X[test_inds], Y[test_inds], verbose=0,
-            batch_size=params['batch_size']
+            batch_size=128
         )
         scores.append(acc)
-    avg_score = np.mean(scores)
-    print('\nScore: %0.4f' % avg_score)
+        print('\nScore: %0.4f' % acc)
     if params['gpu_options'] is not None:
         K.clear_session()
         sess.close()
 
-    return avg_score
+    return np.asarray(scores)
 
 def main():
     # GPU settings
@@ -96,7 +107,7 @@ def main():
         'gpu_options': gpu_options
     }
     # Run the experiment
-    acc = run_experiment(args.nb_categories, args.nb_exemplars, params)
+    scores = run_experiment(args.nb_categories, args.nb_exemplars, params)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

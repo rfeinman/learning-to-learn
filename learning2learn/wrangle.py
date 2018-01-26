@@ -3,6 +3,7 @@ import os
 import itertools
 import warnings
 import math
+import random
 import multiprocessing as mp
 import pandas as pd
 import numpy as np
@@ -134,8 +135,8 @@ def build_train_set(df_train, shape_set, color_set, texture_set,
 
     return np.asarray(X_train)
 
-def make_trial(shape_set, color_set, texture_set, target_size=(200, 200),
-               contrast_factor=1.):
+def make_trial_order2(shape_set, color_set, texture_set, target_size=(200, 200),
+                      contrast_factor=1.):
     # randomly select 3 of each feature
     s1, s2, s3 = np.random.choice(range(len(shape_set)), 3, replace=False)
     c1, c2, c3 = np.random.choice(range(len(color_set)), 3, replace=False)
@@ -155,15 +156,21 @@ def make_trial(shape_set, color_set, texture_set, target_size=(200, 200),
 
     return np.asarray([baseline, shape_match, color_match, texture_match])
 
-def make_trial_wrapper(tup):
-    return make_trial(tup[0], tup[1], tup[2], tup[3], tup[4])
+def make_trial_order2_wrapper(tup):
+    # since trials are randomly selected, we want a different random seed
+    # for each process
+    seed = random.randint(0, 1e7)
+    np.random.seed(seed)
+    return make_trial_order2(tup[0], tup[1], tup[2], tup[3], tup[4])
 
-def build_test_trials(shape_set, color_set, texture_set, nb_trials,
-                      target_size=(200, 200), contrast_factor=1.):
+def build_test_trials_order2(shape_set, color_set, texture_set, nb_trials,
+                             target_size=(200, 200), contrast_factor=1.):
     tups = [(shape_set, color_set, texture_set, target_size, contrast_factor)
             for _ in range(nb_trials)]
     p = mp.Pool()
-    trials = p.map(make_trial_wrapper, tups)
+    trials = p.map(make_trial_order2_wrapper, tups)
+    p.close()
+    p.join()
 
     return np.concatenate(trials)
 

@@ -8,7 +8,8 @@ import keras.backend as K
 from sklearn.preprocessing import OneHotEncoder
 
 from learning2learn.util import evaluate_secondOrder
-from learning2learn.wrangle import synthesize_data, get_secondOrder_data
+from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
+                                    build_test_trials_order2, build_train_set)
 from learning2learn.models import simple_cnn
 
 
@@ -51,6 +52,8 @@ def evaluate_model(model, X_train, Y_train, X_test):
     return loss, acc, acc2, vs50, vs80
 
 def main():
+    # Set random seeds
+    np.random.seed(0)
     if args.gpu_num is not None:
         gpu_options = tf.GPUOptions(allow_growth=True,
                                     visible_device_list=args.gpu_num)
@@ -58,11 +61,26 @@ def main():
             config=tf.ConfigProto(gpu_options=gpu_options)
         )
         K.set_session(sess)
+    # get parameters
+    (shape_set_train, shape_set_test), \
+    (color_set_train, color_set_test), \
+    (texture_set_train, texture_set_test) = \
+        get_train_test_parameters()
+    # build train set
     df_train, labels = synthesize_data(nb_categories=50, nb_exemplars=15)
-    X_train, X_test = get_secondOrder_data(df_train, nb_test_trials=1000)
-    # dummy code the labels
+    print('Building the training set...')
+    X_train = build_train_set(
+        df_train, shape_set_train,
+        color_set_train, texture_set_train
+    )
     ohe = OneHotEncoder(sparse=False)
     Y_train = ohe.fit_transform(labels.reshape(-1, 1))
+    # build test set
+    print('Building test trials...')
+    X_test = build_test_trials_order2(
+        shape_set_test, color_set_test,
+        texture_set_test, nb_trials=2000
+    )
     # initialize the model and compute initial metrics
     print('Initializing the model and computing initial metrics...')
     epoch = []
@@ -71,10 +89,13 @@ def main():
     secondOrderAcc = []
     vocabSize50 = []
     vocabSize80 = []
-    model = simple_cnn(input_shape=X_train.shape[1:],
-                       nb_classes=Y_train.shape[-1])
-    loss, acc, acc2, vs50, vs80 = evaluate_model(model, X_train, Y_train,
-                                                 X_test)
+    model = simple_cnn(
+        input_shape=X_train.shape[1:],
+        nb_classes=Y_train.shape[-1]
+    )
+    loss, acc, acc2, vs50, vs80 = evaluate_model(
+        model, X_train, Y_train, X_test
+    )
     print('initial shape bias: %0.3f' % acc2)
     epoch.append(0)
     trainLoss.append(loss)
@@ -82,8 +103,10 @@ def main():
     secondOrderAcc.append(acc2)
     vocabSize50.append(vs50)
     vocabSize80.append(vs80)
-    save_scores(epoch, trainLoss, trainAcc, secondOrderAcc, vocabSize50,
-                vocabSize80, args.save_path)
+    save_scores(
+        epoch, trainLoss, trainAcc, secondOrderAcc,
+        vocabSize50, vocabSize80, args.save_path
+    )
     print('Training the model...')
     for i in range(args.nb_epochs):
         print('Epoch #%i' % (i + 1))
@@ -92,16 +115,19 @@ def main():
             shuffle=True,
             verbose=1, batch_size=32
         )
-        loss, acc, acc2, vs50, vs80 = evaluate_model(model, X_train, Y_train,
-                                                     X_test)
+        loss, acc, acc2, vs50, vs80 = evaluate_model(
+            model, X_train, Y_train, X_test
+        )
         epoch.append(i + 1)
         trainLoss.append(loss)
         trainAcc.append(acc)
         secondOrderAcc.append(acc2)
         vocabSize50.append(vs50)
         vocabSize80.append(vs80)
-        save_scores(epoch, trainLoss, trainAcc, secondOrderAcc, vocabSize50,
-                    vocabSize80, args.save_path)
+        save_scores(
+            epoch, trainLoss, trainAcc, secondOrderAcc,
+            vocabSize50, vocabSize80, args.save_path
+        )
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -130,7 +156,4 @@ if __name__ == '__main__':
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
-    # Set random seeds
-    np.random.seed(0)
-    tf.set_random_seed(0)
     main()

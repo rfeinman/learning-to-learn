@@ -13,14 +13,6 @@ from learning2learn.mpl_textures import (Texture, generate_texture,
                                          get_base_image, add_texture)
 
 def get_train_test_inds(nb_categories, nb_exemplars, nb_samples, nb_test=1):
-    """
-
-    :param nb_categories:
-    :param nb_exemplars:
-    :param nb_shapes:
-    :param nb_test:
-    :return:
-    """
     test_inds = []
     for i in range(nb_categories):
         bottom = i * (nb_exemplars + nb_test)
@@ -150,13 +142,6 @@ def load_image_dataset(data_folder, nb_categories=None, nb_exemplars=None,
 
 def generate_dataset_parameters(nb_categories, image_size=500,
                                 mpl_textures=False):
-    """
-
-    :param nb_categories:
-    :param image_size:
-    :param mpl_textures:
-    :return:
-    """
     # Generate shapes, which are sets of points for which polygons will
     # be generated
     shapes = [generate_random_shape(0, 500, 0, 500, 100) for _ in
@@ -195,14 +180,6 @@ def generate_dataset_parameters(nb_categories, image_size=500,
     return shapes, colors, textures
 
 def generate_image(shape, color, texture, save_file, mpl_textures=False):
-    """
-
-    :param shape:
-    :param color:
-    :param texture:
-    :param save_file:
-    :return:
-    """
     # Generate the base image and save it to a file
     if mpl_textures:
         img = get_base_image(500, 500, color, shape, gradient=texture.gradient)
