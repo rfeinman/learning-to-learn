@@ -1,18 +1,21 @@
-People use rich prior knowledge about the world in order
-to efficiently learn new concepts. These priors--commonly referred to as
-``inductive biases"--pertain to the space of internal models considered by a
-learner, and they help maximize the amount of information that is extracted
-from limited data. Recently, it was shown that performance-optimized
-deep neural networks (DNNs) develop inductive biases similar to those
-possessed by human children. However, these models use unrealistic training
-data, and it remains unclear whether they develop their biases in the same way
-as humans. We investigate the development and influence of inductive biases
-in DNNs using an experimental paradigm borrowed from develpmental psychology.
-We find that simple neural network models can develop inductive
-biases from as few as 2 examples of each concept, and that these biases tend
-to grow with depth in the network. The development of these biases predicts
-the onset of vocabulary acceleration in our networks, a finding that mimics
-human children.
+People use rich prior knowledge about the world in order to efficiently learn
+new concepts. These priors--also known as ``inductive biases"--pertain to the
+space of internal models considered by a learner, and they help the learner
+make inferences that go beyond the observed data. A recent study found that
+deep neural networks optimized for object recognition develop the shape bias
+\citep{Ritter2017}, an inductive bias possessed by children that plays an
+important role in early word learning. However, these networks use unrealistic
+training data, and the conditions required for these biases to develop are not
+well understood. Moreover, it is unclear whether the learning dynamics of these
+networks bear any relationship to developmental processes in children. We
+investigate the development and influence of the shape bias in neural networks
+using controlled datasets of abstract patterns and synthetic images, allowing
+us to systematically vary the quantity and form of the experience provided to
+the learning algorithms. We find that simple neural networks develop a shape
+bias after seeing as few as 3 examples of each concept, and that these biases
+tend to strengthen with depth in the network. The development of these biases
+predicts the onset of vocabulary acceleration in our networks, consistent with
+the developmental process in children.
 
 \textbf{Keywords:}
-learning-to-learn; neural networks; inductive biases
+neural networks; inductive biases; learning-to-learn
