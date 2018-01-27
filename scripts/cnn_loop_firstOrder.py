@@ -62,7 +62,6 @@ def main():
     params = {
         'nb_epochs': args.nb_epochs,
         'batch_size': args.batch_size,
-        'nb_test': 5,
         'nb_trials': 5,
         'img_size': (200, 200),
         'gpu_options': gpu_options

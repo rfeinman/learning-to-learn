@@ -65,7 +65,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
     )
     X_test_acc, labels_test = build_test_set_order1(
         df_train, shape_set_train, color_set_test, texture_set_test,
-        nb_trials=2000, target_size=(200, 200), contrast_factor=1.
+        nb_trials=2000, target_size=params['img_size']
     )
     Y_test = ohe.transform(labels_test.reshape(-1, 1))
     scores = []
@@ -86,7 +86,8 @@ def run_experiment(nb_categories, nb_exemplars, params):
             weights_file,
             monitor='loss',
             save_best_only=True,
-            save_weights_only=True
+            save_weights_only=True,
+            period=2
         )
         # We'll provide the test set as 'validation data' merely so we can
         # monitor the trajectory... the network won't be using this data.

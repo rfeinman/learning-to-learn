@@ -78,7 +78,8 @@ def run_experiment(nb_categories, nb_exemplars, params):
             weights_file,
             monitor='loss',
             save_best_only=True,
-            save_weights_only=True
+            save_weights_only=True,
+            period=2
         )
         train_model(
             model, X_train, Y_train, epochs=params['nb_epochs'],

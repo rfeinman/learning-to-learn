@@ -40,43 +40,6 @@ def simple_mlp(nb_in, nb_classes):
 
     return build_model(layers)
 
-def simple_cnn_old(input_shape, nb_classes):
-    """
-    Construct a simple Cifar-style CNN model using Keras Sequential.
-    :param input_shape:
-    :param nb_classes:
-    :return:
-    """
-    layers = [
-        Conv2D(32, (3, 3), padding='same', input_shape=input_shape),
-        Activation('relu'),
-        Conv2D(32, (3, 3), padding='same'),
-        Activation('relu'),
-        MaxPooling2D(pool_size=(2, 2)),
-        Conv2D(64, (3, 3), padding='same'),
-        Activation('relu'),
-        Conv2D(64, (3, 3), padding='same'),
-        Activation('relu'),
-        MaxPooling2D(pool_size=(2, 2)),
-        Conv2D(128, (3, 3), padding='same'),
-        Activation('relu'),
-        Conv2D(128, (3, 3), padding='same'),
-        Activation('relu'),
-        MaxPooling2D(pool_size=(2, 2)),
-        Flatten(),
-        Dropout(0.5),
-        Dense(1024, kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01)),
-        Activation('relu'),
-        Dropout(0.5),
-        Dense(512, kernel_regularizer=l2(0.01), bias_regularizer=l2(0.01)),
-        Activation('relu'),
-        Dropout(0.5),
-        Dense(nb_classes),
-        Activation('softmax')
-    ]
-
-    return build_model(layers)
-
 def simple_cnn(input_shape, nb_classes):
     layers = [
         # Conv, Pool
