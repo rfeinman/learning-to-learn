@@ -41,6 +41,32 @@ def simple_mlp(nb_in, nb_classes):
     return build_model(layers)
 
 def simple_cnn(input_shape, nb_classes):
+    # Much smaller filters and FC layer, regularization added, dropout
+    # removed after last pool layer, 25 units in FC
+    layers = [
+        # Conv, Pool
+        Conv2D(5, (5, 5), padding='same', input_shape=input_shape,
+               kernel_regularizer=l2(0.01)),
+        Activation('relu'),
+        MaxPooling2D(pool_size=(5, 5)),
+        # Conv, Pool
+        Conv2D(5, (5, 5), padding='same', kernel_regularizer=l2(0.01)),
+        Activation('relu'),
+        MaxPooling2D(pool_size=(5, 5)),
+        # Flatten
+        Flatten(),
+        # Hidden layer
+        Dense(25, kernel_regularizer=l2(0.01)),
+        Activation('relu'),
+        # Output layer
+        Dropout(0.5),
+        Dense(nb_classes),
+        Activation('softmax')
+    ]
+
+    return build_model(layers)
+
+def simple_cnn_old(input_shape, nb_classes):
     layers = [
         # Conv, Pool
         Conv2D(32, (5, 5), padding='same', input_shape=input_shape),

@@ -19,6 +19,7 @@ from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
                                     build_test_set_order1)
 from learning2learn.util import (train_model, train_test_split,
                                  evaluate_generalization)
+from learning2learn.images import shift_images
 
 def run_experiment(nb_categories, nb_exemplars, params):
     assert nb_categories <= 50
@@ -55,7 +56,8 @@ def run_experiment(nb_categories, nb_exemplars, params):
     df_train, labels = synthesize_data(nb_categories, nb_exemplars)
     X_train = build_train_set(
         df_train, shape_set_train, color_set_train,
-        texture_set_train, target_size=params['img_size']
+        texture_set_train, target_size=params['img_size'],
+        shift_scale=0
     )
     ohe = OneHotEncoder(sparse=False)
     Y_train = ohe.fit_transform(labels.reshape(-1, 1))
@@ -64,16 +66,19 @@ def run_experiment(nb_categories, nb_exemplars, params):
     X_test_order1 = build_test_trials_order1(
         df_train, shape_set_train, shape_set_test, color_set_train,
         color_set_test, texture_set_train, texture_set_test,
-        nb_trials=params['nb_test'], target_size=params['img_size']
+        nb_trials=params['nb_test'], target_size=params['img_size'],
+        shift_scale=20
     )
     X_test_order1_acc, labels_test = build_test_set_order1(
         df_train, shape_set_train, color_set_test, texture_set_test,
-        nb_trials=params['nb_test'], target_size=params['img_size']
+        nb_trials=params['nb_test'], target_size=params['img_size'],
+        shift_scale=20
     )
     Y_test_order1_acc = ohe.transform(labels_test.reshape(-1, 1))
     X_test_order2 = build_test_trials_order2(
         shape_set_test, color_set_test, texture_set_test,
-        nb_trials=params['nb_test'], target_size=params['img_size']
+        nb_trials=params['nb_test'], target_size=params['img_size'],
+        shift_scale=20
     )
     scores_order1 = []
     scores_order2 = []
@@ -97,12 +102,14 @@ def run_experiment(nb_categories, nb_exemplars, params):
             save_weights_only=True,
             period=2
         )
+        # Randomly shift the training images
+        X_train_shifted = shift_images(X_train)
         # We'll provide the test set as 'validation data' merely so we can
         # monitor the trajectory... the network won't be using this data.
         train_model(
-            model, X_train, Y_train, epochs=params['nb_epochs'],
+            model, X_train_shifted, Y_train, epochs=params['nb_epochs'],
             validation_data=None, batch_size=params['batch_size'],
-            checkpoint=checkpoint
+            checkpoint=checkpoint, burn_period=50
         )
         # Now that we've completed all training epochs, let's go ahead and
         # load the best model
@@ -186,7 +193,7 @@ def main():
     params = {
         'nb_epochs': args.nb_epochs,
         'batch_size': args.batch_size,
-        'nb_trials': 5,
+        'nb_trials': 10,
         'nb_test': 2000,
         'img_size': (200, 200),
         'gpu_options': gpu_options
@@ -214,7 +221,7 @@ if __name__ == '__main__':
     parser.add_argument('-b', '--batch_size',
                         help='Int indicating the batch size to use',
                         required=False, type=int)
-    parser.set_defaults(nb_epochs=100)
+    parser.set_defaults(nb_epochs=200)
     parser.set_defaults(save_path='../results/cnn_results_combined')
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)

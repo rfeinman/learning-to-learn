@@ -151,8 +151,19 @@ def shift_image(img, img_size=(200, 200), scale=20):
 
     return shift_img
 
+def shift_images(imgs, shift_scale=20):
+    img_size = imgs.shape[1:3]
+    imgs_p = imgs
+    for i in range(len(imgs)):
+        imgs_p[i, :, :, :3] = shift_image(
+            imgs[i, :, :, :3], img_size=img_size, scale=shift_scale
+        )
+
+    return imgs_p
+
 def generate_image(shape, color, texture, target_size=(200, 200),
-                   contrast_factor=1.):
+                   shift_scale=20, contrast_factor=1.):
+    assert shift_scale >= 0 and type(shift_scale) == int
     # Generate the base color
     img_color = np.ones(shape=target_size + (3,), dtype=np.float32) * color
     # Generate the base texture
@@ -174,7 +185,8 @@ def generate_image(shape, color, texture, target_size=(200, 200),
         for j in range(img.shape[1]):
             if not p.contains_point((i, j)):
                 img[j, i, :] = np.ones_like(img[j, i])
-    img = shift_image(img, img_size=target_size, scale=20)
+    if shift_scale > 0:
+        img = shift_image(img, img_size=target_size, scale=shift_scale)
     img[:, :, 3] = img_texture
 
     return img
@@ -184,4 +196,4 @@ def generate_image_wrapper(tup):
     # for each process
     seed = random.randint(0, 1e7)
     np.random.seed(seed)
-    return generate_image(tup[0], tup[1], tup[2], tup[3], tup[4])
+    return generate_image(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
