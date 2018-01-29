@@ -20,12 +20,12 @@
         \end{subfigure}
     \end{center}
     \caption{CNN generalization results for various training set sizes. Results
-    show the average from 10 trials.}
+    show the average of 10 training runs.}
     \label{fig:cnn_gen_results}
 \end{figure*}
 
-Our first experiment uses a very simple data form. However, neural network
-architectures can achieve success with highly complex data, including natural
+Our first experiment uses a highly simplified data format. However, neural network
+architectures can perform well with complex data, including natural
 images, language and audio. In a successive experiment, ask whether similar
 generalization results can be achieved using object stimuli encoded as RGB
 images. To do so, we construct an image dataset consisting of artifical 2D
@@ -44,7 +44,7 @@ image window, and colors are generated to span the RGB vector space with even
 separation. We use black \& white textures from the Brodatz database \citep{Brodatz1966}
 for our texture categories. Some examples of our objects are shown in Fig.
 \ref{fig:generated_images}. We train a convolutional neural network (CNN)
-consisting of 2 convolution layers with 5 filters, each followed by a max pooling
+consisting of two convolution layers with five filters, each followed by a max pooling
 layer. The last pooling layer is followed by a fully-connected layer of 25 ReLU
 units, and the softmax layer again varies in size according to the number of
 categories in the dataset. The initial second-order generalization results for a
@@ -60,10 +60,12 @@ bias results are shown in Fig. \ref{fig:cnn_parametric}.
 
 \begin{figure}[t!]
     \begin{center}
-        \includegraphics[width=0.48\textwidth]{figures/generated_images.pdf}
+        \includegraphics[width=0.45\textwidth]{figures/generated_images.pdf}
     \end{center}
     \caption{Computer-generated images of 2D objects with
-    different shape, color and texture features.}
+    different shape, color and texture features. Rows correspond to object
+    categories. Dimensions 1-3 are shown on the left of each image, and
+    dimension 4 (texture) is shown on the right.}
     \label{fig:generated_images}
 \end{figure}
 

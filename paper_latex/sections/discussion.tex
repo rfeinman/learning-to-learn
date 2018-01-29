@@ -1,2 +1,28 @@
 \section{Discussion}
-blah.
+Our experiments in this paper confirm that neural networks are capabable
+of developing the shape bias from as few as three examples of each object category.
+The development of this bias is known to improve the rate of word learning in
+human children, a phenomenon that is mirrored in our networks. One implication
+of this finding is that it may be possible to train
+large-scale image recognition models more efficiently after initializing these
+models with shape bias training. In future work, we hope to investigate this
+hypothesis with ImageNet CNN models using an initialization framework designed
+after the experiments in this paper.
+
+Philosophers of science have discussed the importance of prior background knowledge
+for centuries \citep{Tenenbaum2011}. When the data provided to a learner is scarce, these
+priors help fill in the gap by constraining the space of models that the learner
+must consider. A new theory suggests that this phenomenon can be
+quantified from the perspective of information theory \citep{Mattingly2017}.
+Authors of the report show that, given an appropriate choice of prior over model
+space, a learner can maximize the amount of information extracted from limited
+data. They formalize this claim using the mutual information between the
+observed data and the parameters of the model. This measure quantifies the amount
+of information that can be learned about the model by measuring the data, or
+equivalently, the information about the data that can be encoded in the model.
+The information theory framework explains why structured model priors are
+helpful when data is scarce. The case of structured Bayesian priors is contrasted
+against that of a flat prior (i.e. no prior), with the former showing clear
+advantages.
+
+TODO: final paragraph. What is left to discuss?
