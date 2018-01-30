@@ -9,8 +9,6 @@ import tensorflow as tf
 import keras.backend as K
 from keras.callbacks import ModelCheckpoint
 from sklearn.preprocessing import OneHotEncoder
-import matplotlib as mpl
-mpl.use('Agg')
 
 from learning2learn.models import simple_mlp
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
@@ -18,7 +16,7 @@ from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
                                     build_test_trials_o1_bits,
                                     build_test_trials_o2_bits)
 from learning2learn.util import (train_model, train_test_split,
-                                 evaluate_generalization)
+                                 evaluate_generalization, add_noise)
 
 def run_experiment(nb_categories, nb_exemplars, params):
     assert nb_categories <= 50
@@ -74,10 +72,13 @@ def run_experiment(nb_categories, nb_exemplars, params):
         shape_set_test, color_set_test, texture_set_test,
         nb_trials=params['nb_test']
     )
+    X_test_order1 = add_noise(X_test_order1, p=params['noise'])
+    X_test_order2 = add_noise(X_test_order2, p=params['noise'])
     scores_order1 = []
     scores_order2 = []
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
+        X_train_noisy = add_noise(X_train, p=params['noise'])
         # Build a neural network model and train it with the training set
         model = simple_mlp(
             nb_in=X_train.shape[-1],
@@ -98,20 +99,20 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # We'll provide the test set as 'validation data' merely so we can
         # monitor the trajectory... the network won't be using this data.
         train_model(
-            model, X_train, Y_train, epochs=params['nb_epochs'],
+            model, X_train_noisy, Y_train, epochs=params['nb_epochs'],
             validation_data=None, batch_size=batch_size,
-            checkpoint=checkpoint, burn_period=20
+            checkpoint=checkpoint, burn_period=100
         )
         # Now that we've completed all training epochs, let's go ahead and
         # load the best model
         model.load_weights(weights_file)
         # Now evaluate the model on the test data
         score_order1 = evaluate_generalization(
-            model, X_test_order1, layer_num=-4,
+            model, X_test_order1, layer_num=-3,
             batch_size=128
         )
         score_order2 = evaluate_generalization(
-            model, X_test_order2, layer_num=-4,
+            model, X_test_order2, layer_num=-3,
             batch_size=128
         )
         scores_order1.append(score_order1)
@@ -161,12 +162,15 @@ def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
     print('Experiment loop complete.')
 
 def main():
+    assert args.noise >= 0. and args.noise <= 1.
+    print('Using noise level %0.2f' % args.noise)
     # Create the experiment parameter dictionary
     params = {
         'nb_epochs': args.nb_epochs,
         'batch_size': args.batch_size,
         'nb_trials': 10,
         'nb_test': 1000,
+        'noise': args.noise
     }
     # Start the experiment loop
     category_trials = [2, 4, 8, 16, 32, 50]
@@ -185,11 +189,16 @@ if __name__ == '__main__':
     parser.add_argument('-sp', '--save_path',
                         help='The file path where results should be saved',
                         required=False, type=str)
+    parser.add_argument('-no', '--noise',
+                        help='Noise fraction; binomial probability between '
+                             '0-1.',
+                        required=False, type=float)
     parser.add_argument('-b', '--batch_size',
                         help='Int indicating the batch size to use',
                         required=False, type=int)
-    parser.set_defaults(nb_epochs=100)
+    parser.set_defaults(nb_epochs=400)
     parser.set_defaults(save_path='../results/mlp_results_combined')
+    parser.set_defaults(noise=0.)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
     main()

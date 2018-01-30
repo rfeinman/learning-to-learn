@@ -33,7 +33,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
     (shape_set_train, shape_set_test), \
     (color_set_train, color_set_test), \
     (texture_set_train, texture_set_test) = \
-        get_train_test_parameters(params['img_size'][0])
+        get_train_test_parameters(img_size=params['img_size'][0])
     if nb_categories < 50:
         shape_set_train, _ = train_test_split(
             shape_set_train,

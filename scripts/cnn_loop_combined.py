@@ -9,10 +9,8 @@ import tensorflow as tf
 import keras.backend as K
 from keras.callbacks import ModelCheckpoint
 from sklearn.preprocessing import OneHotEncoder
-import matplotlib as mpl
-mpl.use('Agg')
 
-from learning2learn.models import simple_cnn
+from learning2learn.models import simple_cnn, simple_cnn1
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
                                     build_train_set, build_test_trials_order1,
                                     build_test_trials_order2,
@@ -23,6 +21,11 @@ from learning2learn.images import shift_images
 
 def run_experiment(nb_categories, nb_exemplars, params):
     assert nb_categories <= 50
+    # enforce a maximum batch size to avoid doing full-batch GD
+    batch_size = min(
+        params['batch_size'],
+        int(np.floor(nb_categories * nb_exemplars / 5))
+    )
     # Set random seeds
     np.random.seed(0)
     # Create custom TF session if requested
@@ -37,7 +40,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
     (shape_set_train, shape_set_test), \
     (color_set_train, color_set_test), \
     (texture_set_train, texture_set_test) = \
-        get_train_test_parameters(params['img_size'][0])
+        get_train_test_parameters(images=True, img_size=params['img_size'][0])
     if nb_categories < 50:
         shape_set_train, _ = train_test_split(
             shape_set_train,
@@ -86,7 +89,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
     for i in range(params['nb_trials']):
         print('Round #%i' % (i+1))
         # Build a neural network model and train it with the training set
-        model = simple_cnn(
+        model = simple_cnn1(
             input_shape=X_train.shape[1:],
             nb_classes=Y_train.shape[-1]
         )
@@ -108,7 +111,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # monitor the trajectory... the network won't be using this data.
         train_model(
             model, X_train_shifted, Y_train, epochs=params['nb_epochs'],
-            validation_data=None, batch_size=params['batch_size'],
+            validation_data=None, batch_size=batch_size,
             checkpoint=checkpoint, burn_period=50
         )
         # Now that we've completed all training epochs, let's go ahead and
@@ -199,8 +202,8 @@ def main():
         'gpu_options': gpu_options
     }
     # Start the experiment loop
-    category_trials = [3, 6, 9, 12, 15, 18]
-    exemplar_trials = [2, 4, 8, 16, 32, 50]
+    category_trials = [2, 4, 8, 16, 32, 50]
+    exemplar_trials = [3, 6, 9, 12, 15, 18]
     experiment_loop(
         run_experiment, category_trials=category_trials,
         exemplar_trials=exemplar_trials, params=params,
