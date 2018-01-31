@@ -40,8 +40,6 @@ def simple_mlp(nb_in, nb_classes):
     return build_model(layers)
 
 def simple_cnn(input_shape, nb_classes):
-    # Much smaller filters and FC layer, regularization added, dropout
-    # removed after last pool layer, 25 units in FC
     layers = [
         # Conv, Pool
         Conv2D(5, (5, 5), padding='same', input_shape=input_shape,
@@ -67,8 +65,6 @@ def simple_cnn(input_shape, nb_classes):
     return build_model(layers)
 
 def simple_cnn_old1(input_shape, nb_classes):
-    # Much smaller filters and FC layer, regularization added, dropout
-    # removed after last pool layer, 25 units in FC
     layers = [
         # Conv, Pool
         Conv2D(5, (5, 5), padding='same', input_shape=input_shape,
