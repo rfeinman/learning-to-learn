@@ -10,7 +10,7 @@ import keras.backend as K
 from keras.callbacks import ModelCheckpoint
 from sklearn.preprocessing import OneHotEncoder
 
-from learning2learn.models import simple_cnn1
+from learning2learn.models import simple_cnn
 from learning2learn.wrangle import (synthesize_data, get_train_test_parameters,
                                     build_train_set, build_test_trials_order1,
                                     build_test_trials_order2)
@@ -84,7 +84,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
             shift_scale=20
         )
         # Build a neural network model and train it with the training set
-        model = simple_cnn1(
+        model = simple_cnn(
             input_shape=X_train.shape[1:],
             nb_classes=Y_train.shape[-1]
         )
