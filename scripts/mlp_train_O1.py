@@ -51,7 +51,7 @@ def main():
         'nb_trials': 1
     }
     acc = run_experiment(args.nb_categories, args.nb_exemplars, params)
-    print('\nAccuracy: %0.4f' % score)
+    print('\nAccuracy: %0.4f' % acc)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
