@@ -95,10 +95,19 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
                                      batch_size=batch_size)
     nb_correct = 0
     for i in range(int(len(X) / 4)):
-        score_shape = similarity(X_p[4*i], X_p[4*i+1])
-        score_color = similarity(X_p[4*i], X_p[4*i+2])
-        score_texture = similarity(X_p[4*i], X_p[4*i+3])
-        if score_shape > score_color and score_shape > score_texture:
+        scores = np.zeros(3)
+        scores[0] = similarity(X_p[4*i], X_p[4*i+1]) # shape match score
+        scores[1] = similarity(X_p[4*i], X_p[4*i+2]) # color match score
+        scores[2] = similarity(X_p[4*i], X_p[4*i+3]) # texture match score
+        match = np.argmax(scores)
+        # if multiple scores were max, then argmax chooses first index... make
+        # sure that didn't happen.
+        others = list(range(3))
+        others.remove(match)
+        if (scores[match] == scores[others[0]] or
+                    scores[match] == scores[others[1]]):
+            match = np.random.choice(range(3), 1)[0]
+        if match == 0:
             nb_correct += 1
 
     # Return the percentage of times we were correct

@@ -1,7 +1,7 @@
 from __future__ import division
-from keras.models import Sequential
+from keras.models import Sequential, Model
 from keras.layers.core import Dense, Activation, Dropout
-from keras.layers import Conv2D, MaxPooling2D, Flatten
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Input
 from keras.regularizers import l2
 
 def build_model(layers):
@@ -63,6 +63,52 @@ def simple_cnn(input_shape, nb_classes):
     ]
 
     return build_model(layers)
+
+def simple_cnn_multiout(input_shape, nb_shapes, nb_colors, nb_textures,
+                        loss_weights=None):
+    layers = [
+        # Conv, Pool
+        Conv2D(5, (5, 5), padding='same', kernel_regularizer=l2(0.01)),
+        Activation('relu'),
+        MaxPooling2D(pool_size=(5, 5)),
+        # Conv, Pool
+        Conv2D(5, (5, 5), padding='same', kernel_regularizer=l2(0.01)),
+        Activation('relu'),
+        MaxPooling2D(pool_size=(5, 5)),
+        # Flatten
+        Flatten(),
+        # Hidden layer
+        Dropout(0.2),
+        Dense(25, kernel_regularizer=l2(0.01)),
+        Activation('relu'),
+        # Output layer
+        Dropout(0.5),
+    ]
+    image_in = Input(shape=input_shape, dtype='float32', name='image_in')
+    x = layers[0](image_in)
+    for layer in layers[1:]:
+        x = layer(x)
+    shape_out = Dense(nb_shapes, activation='softmax', name='shape_out')(x)
+    color_out = Dense(nb_colors, activation='softmax', name='color_out')(x)
+    texture_out = Dense(nb_textures, activation='softmax', name='texture_out')(x)
+
+    model = Model(
+        inputs=[image_in],
+        outputs=[shape_out, color_out, texture_out]
+    )
+    if loss_weights is None:
+        model.compile(
+            optimizer='rmsprop',
+            loss='categorical_crossentropy',
+        )
+    else:
+        model.compile(
+            optimizer='rmsprop',
+            loss='categorical_crossentropy',
+            loss_weights=loss_weights
+        )
+
+    return model
 
 def simple_cnn_old1(input_shape, nb_classes):
     layers = [

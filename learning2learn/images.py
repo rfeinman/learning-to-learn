@@ -88,11 +88,11 @@ def generate_random_shape(x_min, x_max, y_min, y_max, edge_distance):
         points.append((x, y))
     # Rearrange the points so that they are in the correct order
     points = rearrange_points(points)
-    #     # Now center the points by computing the mean distance
-    #     # from the center and then subtracting this mean
-    #     x_mean = np.mean([p[0] - (x_max-x_min)/2 for p in points])
-    #     y_mean = np.mean([p[1] - (y_max-y_min)/2 for p in points])
-    #     points = [(p[0]-x_mean, p[1]-y_mean) for p in points]
+    ## Now center the points by computing the mean distance
+    ## from the center and then subtracting this mean
+    # x_mean = np.mean([p[0] - (x_max-x_min)/2 for p in points])
+    # y_mean = np.mean([p[1] - (y_max-y_min)/2 for p in points])
+    # points = [(p[0]-x_mean, p[1]-y_mean) for p in points]
 
     return points
 
@@ -109,14 +109,6 @@ def generate_colors():
                 i += 1
 
     return colors
-
-def adjust_contrast(img, factor):
-    assert factor >= 1.
-    img_p = 1. - img
-    img_p /= factor
-    img_p = 1. - img_p
-
-    return img_p
 
 def compute_area(shape, img_size=200):
     area = 0
@@ -136,8 +128,6 @@ def shift_image(img, img_size=(200, 200), scale=20):
     x_max = max(np.where(img < 1.)[1])
     # randomly select offsets from a uniform R.V. The boundaries
     # are set such that we don't cut off the object.
-    #ox = np.random.randint(low=-x_min, high=img_size[0] - x_max)
-    #oy = np.random.randint(low=-y_min, high=img_size[1] - y_max)
     ox = np.random.randint(low=max(-scale, -x_min),
                            high=min(scale, img_size[0] - x_max))
     oy = np.random.randint(low=max(-scale, -y_min),
