@@ -35,9 +35,6 @@ This is where the artificial toy data sets will be saved to and loaded from.
 #### 5. results
 This is where experiment results will be saved to and loaded from.
 
-#### 6. paper_latex
-This is where the latex for the CogSci paper is kept.
-
 ## Datasets
 
 ### Bitvector categorical features
@@ -54,4 +51,4 @@ Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
 
 ### Machine-generated 2-D object images
 
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/generated_images.pdf" width="400" height="400">
+TODO: insert example images here.
