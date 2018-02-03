@@ -22,33 +22,15 @@ This folder contains the core reusable source code for the project.
 #### 2. scripts
 This folder contains short Python scripts for running some experiments. Here
 you will find scripts for training a neural network model and evaluating its
-performance. There are also scripts for generating and saving datasets.
+performance.
 
 #### 3. notebooks
 This folder contains a collection of Jupyter Notebooks for various small tasks,
-such as synthesizing the artificial data sets and wrangling the data once
-synthesized.
+such as plotting results and performing parametric sensitivity tests.
 
 #### 4. data
-This is where the artificial toy data sets will be saved to and loaded from.
+This is a placeholder folder for image and model data. The Brodatz texture
+dataset is stored here.
 
 #### 5. results
 This is where experiment results will be saved to and loaded from.
-
-## Datasets
-
-### Bitvector categorical features
-
-Exemplar #1                |  Exemplar #2
-:-------------------------:|:-------------------------:
-10101-00000-00000 | 10101-00000-00000
-Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
-01010-00000-00000 | 01010-00000-00000
-Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
-10110-00000-00000 | 10110-00000-00000
-Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
-
-
-### Machine-generated 2-D object images
-
-TODO: insert example images here.
