@@ -1,6 +1,6 @@
 # Learning Inductive Biases with Simple Neural Networks
 
-This repository contains the code for "Learning Inductive
+Code for the paper "Learning Inductive
 Biases with Simple Neural Networks" (Feinman & Lake 2018).
 
 ## Requirements & Setup
@@ -14,7 +14,7 @@ to enable imports from any folder:
 
 
 ## Repository Structure
-The repository contains 6 subfolders:
+The repository contains 5 subfolders:
 
 #### 1. learning2learn
 This folder contains the core reusable source code for the project.
