@@ -1,12 +1,7 @@
-# Learning the Shape Bias with Neural Networks
+# Learning Inductive Biases with Simple Neural Networks
 
-In this project, we train simple neural network models on artificial toy data for the task
-of object recognition. Each object sample has a specific shape, color and texture
-value. Objects with the same shape are of the same category. The data is
-designed to mimic the objects that were used to teach children the shape bias
-from [Smith et al. 2002](https://www.ncbi.nlm.nih.gov/pubmed/11892773). Ultimately,
-we hope to analyze the development of the shape bias during object category
-learning and the influence that this bias has on future learning ("learning-to-learn").
+This repository contains the code for "Learning Inductive
+Biases with Simple Neural Networks" (Feinman & Lake 2018).
 
 ## Requirements & Setup
 This code repository requires Keras and TensorFlow. Keras must be
@@ -47,8 +42,6 @@ This is where the latex for the CogSci paper is kept.
 
 ### Bitvector categorical features
 
-As a preliminary type of training data, we used... TODO
-
 Exemplar #1                |  Exemplar #2
 :-------------------------:|:-------------------------:
 10101-00000-00000 | 10101-00000-00000
@@ -61,28 +54,4 @@ Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
 
 ### Machine-generated 2-D object images
 
-As a second type of training data, we used... TODO. Some examples of the images:
-
-Exemplar #1                |  Exemplar #2
-:-------------------------:|:-------------------------:
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category00_exemplar00.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category00_exemplar01.png" width="200" height="200">
-Shape 0, Color 7, Texture 8 | Shape 0, Color 5, Texture 0
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category01_exemplar00.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category01_exemplar01.png" width="200" height="200">
-Shape 1, Color 5, Texture 7 | Shape 1, Color 4, Texture 4
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category02_exemplar00.png" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_generated/category02_exemplar01.png" width="200" height="200">
-Shape 2, Color 8, Texture 3 | Shape 2, Color 2, Texture 0
-
-
-### Artist-designed 3-D object images
-
-Exemplar #1                |  Exemplar #2
-:-------------------------:|:-------------------------:
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake1_carpet_red.jpg" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake1_sponge_yellow.jpg" width="200" height="200">
-Shape 0, Color 5, Texture 3 | Shape 0, Color 6, Texture 0
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake5_wood_pink.jpg" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake5_carpet_purple.jpg" width="200" height="200">
-Shape 1, Color 4, Texture 7 | Shape 1, Color 3, Texture 3
-<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake4_sponge_orange.jpg" width="200" height="200"> | <img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/images_artist/fake4_wood_green.jpg" width="200" height="200">
-Shape 2, Color 8, Texture 0 | Shape 2, Color 2, Texture 7
-
-## Results
-For a detailed description of results please see results/README.md.
+<img src="https://github.com/rfeinman/toy-neuralnet/blob/master/data/generated_images.pdf" width="400" height="400">
