@@ -152,7 +152,7 @@ def shift_images(imgs, shift_scale=20):
     return imgs_p
 
 def generate_image(shape, color, texture, target_size=(200, 200),
-                   shift_scale=20, contrast_factor=1.):
+                   shift_scale=20):
     assert shift_scale >= 0 and type(shift_scale) == int
     # Generate the base color
     img_color = np.ones(shape=target_size + (3,), dtype=np.float32) * color
@@ -164,7 +164,6 @@ def generate_image(shape, color, texture, target_size=(200, 200),
     )
     img_texture = image.img_to_array(img_texture) / 255.
     img_texture = img_texture[:, :, 0]
-    img_texture = adjust_contrast(img_texture, contrast_factor)
     # Put it all together
     img = np.ones(shape=target_size + (4,), dtype=np.float32)
     img[:, :, :3] = img_color
@@ -186,4 +185,4 @@ def generate_image_wrapper(tup):
     # for each process
     seed = random.randint(0, 1e7)
     np.random.seed(seed)
-    return generate_image(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+    return generate_image(tup[0], tup[1], tup[2], tup[3], tup[4])

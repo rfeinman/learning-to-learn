@@ -119,19 +119,6 @@ def save_results(cats, exemps, scores, save_path):
         df[c].loc[e] = s
     df.to_csv(save_path, index=True)
 
-def add_noise(X, p):
-    """
-    Randomly flip the bits of the input binary feature matrix X with some
-    probability p.
-    :param X: (Numpy array) The input feature matrix. Must contain 0/1s only
-    :param p: (float) A value between 0-1 that represents the probability
-                of a given bit flipping.
-    :return: (Numpy array) The corrupted feature matrix
-    """
-    mask = np.random.binomial(n=1, p=p, size=X.shape)
-
-    return np.abs(X - mask)
-
 def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
                     results_path):
     stdout = sys.stdout
