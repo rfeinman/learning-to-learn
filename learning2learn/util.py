@@ -132,8 +132,11 @@ def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
     np.save(os.path.join(results_path, 'exemplar_trials.npy'),
             np.asarray(exemplar_trials))
     # Loop through different values of (nb_categories, nb_exemplars)
-    results = np.zeros(
-        shape=(len(category_trials), len(exemplar_trials), params['nb_trials'])
+    results_O1 = np.zeros(
+        shape=(len(category_trials), len(exemplar_trials), params['nb_runs'])
+    )
+    results_O2 = np.zeros(
+        shape=(len(category_trials), len(exemplar_trials), params['nb_runs'])
     )
     for i, nb_categories in enumerate(category_trials):
         for j, nb_exemplars in enumerate(exemplar_trials):
@@ -143,11 +146,14 @@ def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
                                     'log_ca%0.4i_ex%0.4i' %
                                     (nb_categories, nb_exemplars))
             sys.stdout = open(log_file,'w')
-            results[i, j] = exectue_fn(nb_categories, nb_exemplars, params)
+            results_O1[i, j], results_O2[i, j] = \
+                exectue_fn(nb_categories, nb_exemplars, params)
             sys.stdout = stdout
             # Save results from this run to text file
-            save_file = os.path.join(results_path, 'results.npy')
-            np.save(save_file, results)
+            save_file_gen = os.path.join(results_path, 'results_O1.npy')
+            np.save(save_file_gen, results_O1)
+            save_file_gen = os.path.join(results_path, 'results_O2.npy')
+            np.save(save_file_gen, results_O2)
     print('Experiment loop complete.')
 
 def train_model(model, X_train, Y_train, epochs, validation_data,

@@ -14,10 +14,8 @@ from learning2learn.images import (generate_image, generate_image_wrapper,
 
 
 def synthesize_data(nb_categories, nb_exemplars):
-    labels = []
     shapes = []
     for i in range(nb_categories):
-        labels.extend([i for _ in range(nb_exemplars)])
         shapes.extend([i for _ in range(nb_exemplars)])
     textures = np.random.permutation(shapes)
     colors = np.random.permutation(shapes)
@@ -26,7 +24,7 @@ def synthesize_data(nb_categories, nb_exemplars):
     df['color'] = colors
     df['texture'] = textures
 
-    return df, pd.Series(labels)
+    return df
 
 def generate_bit_dictionary(nb_categories, nb_bits=20):
     min_bits = int(np.ceil(math.log(nb_categories, 2)))
