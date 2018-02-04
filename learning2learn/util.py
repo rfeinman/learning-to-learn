@@ -79,8 +79,8 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
                         used for similarity evaluation
     :param batch_size: (int) The batch size to use when evaluating the model
                         on a set of inputs.
-    :return: (float) The fraction of groupings in which the shape constant
-                    sample was most similar to the baseline sample.
+    :return: (tuple) For each of the 3 match types, the fraction of groupings in
+                    which the sample of the particular match was selected.
     """
     # Since we have groupings of 4 samples, X should have a length that is a
     # multiple of 4.
@@ -94,14 +94,13 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
         scores[0] = similarity(X_p[4*i], X_p[4*i+1]) # shape match score
         scores[1] = similarity(X_p[4*i], X_p[4*i+2]) # color match score
         scores[2] = similarity(X_p[4*i], X_p[4*i+3]) # texture match score
-        match = np.argmax(scores)
-        # if multiple scores were max, then argmax chooses first index... make
-        # sure that didn't happen.
-        others = list(range(3))
-        others.remove(match)
-        if (scores[match] == scores[others[0]] or
-                    scores[match] == scores[others[1]]):
-            match = np.random.choice(range(3), 1)[0]
+        # Find location of max
+        ix_best = np.where(scores == np.max(scores))[0]
+        # If multiple scores were max, then we want to random sample from them
+        if len(ix_best) > 1:
+            match = np.random.choice(ix_best, 1)[0]
+        else:
+            match = ix_best[0]
         counts[match] += 1
 
     # Return the percentages for each of the 3 match types
