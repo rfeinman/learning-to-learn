@@ -107,11 +107,11 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # load the best model
         model.load_weights(weights_file)
         # Now evaluate the model on the test data
-        scores_O1[i] = evaluate_generalization(
+        scores_O1[i], _, _ = evaluate_generalization(
             model, X_test_O1, layer_num=-3,
             batch_size=128
         )
-        scores_O2[i] = evaluate_generalization(
+        scores_O2[i], _, _ = evaluate_generalization(
             model, X_test_O2, layer_num=-3,
             batch_size=128
         )

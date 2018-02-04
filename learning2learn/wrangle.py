@@ -12,6 +12,9 @@ from learning2learn.images import (generate_image, generate_image_wrapper,
                                    generate_colors, generate_random_shape,
                                    compute_area)
 
+# -----------------------------------------------------------------------
+# General data wrangling
+# -----------------------------------------------------------------------
 
 def synthesize_data(nb_categories, nb_exemplars):
     shapes = []
@@ -25,6 +28,10 @@ def synthesize_data(nb_categories, nb_exemplars):
     df['texture'] = textures
 
     return df
+
+# -----------------------------------------------------------------------
+# Wrangling specific to bit-vector data
+# -----------------------------------------------------------------------
 
 def generate_bit_dictionary(nb_categories, nb_bits=20):
     min_bits = int(np.ceil(math.log(nb_categories, 2)))
@@ -101,6 +108,10 @@ def build_test_trials_O2_bits(shape_set, color_set, texture_set, nb_trials):
             [baseline, shape_match, color_match, texture_match])
 
     return X_test
+
+# -----------------------------------------------------------------------
+# Wrangling specific to image data
+# -----------------------------------------------------------------------
 
 def build_train_set(
         df_train, shape_set, color_set, texture_set, target_size=(200, 200),

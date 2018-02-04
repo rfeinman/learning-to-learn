@@ -3,16 +3,17 @@ import os
 import sys
 import shutil
 import warnings
-import pandas as pd
 import numpy as np
 from scipy.spatial.distance import cosine
 import keras.backend as K
 
 
-def subsample(x, nb_sample):
-    ix = np.random.choice(range(len(x)), nb_sample, replace=False)
-    ix = np.sort(ix)
-    return [x[i] for i in ix]
+def similarity(x1, x2, measure='cosine'):
+    assert measure in ['cosine', 'euclidean']
+    if measure == 'cosine':
+        return 1 - cosine(x1, x2)
+    else:
+        return -np.linalg.norm(x1 - x2)
 
 def train_test_split(x, test_size):
     assert type(test_size) == int, 'test_size parameter must be an int'
@@ -63,22 +64,15 @@ def get_hidden_representations(model, X, layer_num, batch_size=32):
     # Concatenate the list of arrays and return
     return np.concatenate(outputs)
 
-def similarity(x1, x2, measure='cosine'):
-    assert measure in ['cosine', 'euclidean']
-    if measure == 'cosine':
-        return 1 - cosine(x1, x2)
-    else:
-        return -np.linalg.norm(x1 - x2)
-
 def evaluate_generalization(model, X, layer_num, batch_size=32):
     """
     Evaluate a trained Keras model on a set of novel objects. The novel objects
-    come in groupings of 4, where each grouping contains a baseline sample, a
-    shape constant sample, a color constant sample, and a texture constant
-    sample. For each grouping, we find which of the other 3 samples is most
-    similar to the baseline sample according to the model's internal features.
+    come in groupings of 4, where each grouping contains an exemplar sample, a
+    shape-match sample, a color-match sample, and a texture-match
+    sample. For each grouping, we find which of the 3 match samples is most
+    similar to the exemplar sample according to the model's internal features.
     Then, we compute the fraction of times that it was the correct (shape
-    constant) sample.
+    match) sample.
     :param model: (Keras Sequential) The Keras model to be used for evaluation.
     :param X: (Numpy array) The input data.
     :param layer_num: (int) The index of the layer whose representation will be
@@ -93,7 +87,8 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
     assert len(X) % 4 == 0
     X_p = get_hidden_representations(model, X, layer_num=layer_num,
                                      batch_size=batch_size)
-    nb_correct = 0
+    # keep a count of the # times each match is selected (indexed 0,1,3)
+    counts = {0:0, 1:0, 2:0}
     for i in range(int(len(X) / 4)):
         scores = np.zeros(3)
         scores[0] = similarity(X_p[4*i], X_p[4*i+1]) # shape match score
@@ -107,17 +102,10 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
         if (scores[match] == scores[others[0]] or
                     scores[match] == scores[others[1]]):
             match = np.random.choice(range(3), 1)[0]
-        if match == 0:
-            nb_correct += 1
+        counts[match] += 1
 
-    # Return the percentage of times we were correct
-    return nb_correct / float(len(X)/4)
-
-def save_results(cats, exemps, scores, save_path):
-    df = pd.DataFrame(index=np.unique(exemps), columns=np.unique(cats))
-    for c, e, s in zip(cats, exemps, scores):
-        df[c].loc[e] = s
-    df.to_csv(save_path, index=True)
+    # Return the percentages for each of the 3 match types
+    return counts[0]/(len(X)/4.), counts[1]/(len(X)/4.), counts[2]/(len(X)/4.)
 
 def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
                     results_path):

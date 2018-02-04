@@ -55,7 +55,7 @@ def save_scores(epoch, o2_correct, vocabSize80_s, vocabSize80_t, logfile):
     df.to_csv(logfile, index=False)
 
 def evaluate_model(model, X_train, Y_train_s, Y_train_t, X_test, v80_s, v80_t):
-    acc_o2 = evaluate_generalization(
+    acc_o2, _, _ = evaluate_generalization(
         model, X_test, layer_num=-5,
         batch_size=128
     )
