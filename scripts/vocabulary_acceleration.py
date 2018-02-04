@@ -10,9 +10,12 @@ import tensorflow as tf
 import keras.backend as K
 from sklearn.preprocessing import OneHotEncoder
 
-from learning2learn.util import (evaluate_generalization, train_test_split, get_hidden_representations)
-from learning2learn.wrangle import (get_train_test_parameters,
-                                    build_test_trials_order2, build_train_set)
+from learning2learn.util import evaluate_generalization
+from learning2learn.util import train_test_split
+from learning2learn.util import get_hidden_representations
+from learning2learn.wrangle import get_train_test_parameters
+from learning2learn.wrangle import build_test_trials_O2
+from learning2learn.wrangle import build_train_set
 from learning2learn.models import simple_cnn_multiout
 
 
@@ -43,19 +46,15 @@ def get_correct_classes(Y_train, Y_pred, nb_categories, threshold=0.8):
     # collect vocabulary and return
     return np.where(accuracies >= threshold)[0]
 
-def save_scores(epoch, o2_correct, vocabSize50_s, vocabSize80_s,
-                vocabSize50_t, vocabSize80_t, logfile):
+def save_scores(epoch, o2_correct, vocabSize80_s, vocabSize80_t, logfile):
     df = pd.DataFrame()
     df['epoch'] = epoch
     df['o2_correct'] = o2_correct
-    df['vocabSize50_s'] = vocabSize50_s
     df['vocabSize80_s'] = vocabSize80_s
-    df['vocabSize50_t'] = vocabSize50_t
     df['vocabSize80_t'] = vocabSize80_t
     df.to_csv(logfile, index=False)
 
-def evaluate_model(model, X_train, Y_train_s, Y_train_t,
-                   X_test, v50_s, v80_s, v50_t, v80_t):
+def evaluate_model(model, X_train, Y_train_s, Y_train_t, X_test, v80_s, v80_t):
     acc_o2 = evaluate_generalization(
         model, X_test, layer_num=-5,
         batch_size=128
@@ -64,24 +63,16 @@ def evaluate_model(model, X_train, Y_train_s, Y_train_t,
                                           batch_size=128)
     Y_pred_t = get_hidden_representations(model, X_train, layer_num=-1,
                                           batch_size=128)
-    correct50_s = get_correct_classes(
-        Y_train_s, Y_pred_s, nb_categories=Y_train_s.shape[-1], threshold=0.5
-    )
     correct80_s = get_correct_classes(
         Y_train_s, Y_pred_s, nb_categories=Y_train_s.shape[-1], threshold=0.8
-    )
-    correct50_t = get_correct_classes(
-        Y_train_t, Y_pred_t, nb_categories=Y_train_t.shape[-1], threshold=0.5
     )
     correct80_t = get_correct_classes(
         Y_train_t, Y_pred_t, nb_categories=Y_train_t.shape[-1], threshold=0.8
     )
-    v50_s = v50_s.union(correct50_s)
     v80_s = v80_s.union(correct80_s)
-    v50_t = v50_t.union(correct50_t)
     v80_t = v80_t.union(correct80_t)
 
-    return acc_o2, v50_s, v80_s, v50_t, v80_t
+    return acc_o2, v80_s, v80_t
 
 def get_data(nb_shapes, nb_colors, nb_textures, nb_exemplars):
     print('Building image datasets...')
@@ -95,7 +86,9 @@ def get_data(nb_shapes, nb_colors, nb_textures, nb_exemplars):
     if nb_colors < 50:
         color_set_train, _ = train_test_split(color_set_train, 50-nb_colors)
     if nb_textures < 50:
-        texture_set_train, _ = train_test_split(texture_set_train, 50-nb_textures)
+        texture_set_train, _ = train_test_split(
+            texture_set_train, 50-nb_textures
+        )
     # Get the training data
     df_train = synthesize_data_multi(
         nb_shapes, nb_colors, nb_textures, nb_exemplars
@@ -111,7 +104,7 @@ def get_data(nb_shapes, nb_colors, nb_textures, nb_exemplars):
         shift_scale=20
     )
     # build the test set of images
-    X_test = build_test_trials_order2(
+    X_test = build_test_trials_O2(
         shape_set_test, color_set_test,
         texture_set_test, nb_trials=args.nb_test,
         shift_scale=20
@@ -151,9 +144,7 @@ def main():
             print('Selecting data for run %i' % i)
             X_train, Y_train_s, Y_train_c, Y_train_t, X_test = \
                 get_data(nb_shapes, nb_colors, nb_textures, args.nb_exemplars)
-        v50_s = set([])  # keep track of shape vocab w/ threshold = 50
         v80_s = set([])  # keep track of shape vocab w/ threshold = 80
-        v50_t = set([])  # keep track of texture vocab w/ threshold = 50
         v80_t = set([])  # keep track of texture vocab w/ threshold = 80
         save_file = os.path.join(
             args.save_path,
@@ -163,9 +154,7 @@ def main():
         print('Initializing the model and computing initial metrics...')
         epoch = []
         o2_correct = []
-        vocabSize50_s = []
         vocabSize80_s = []
-        vocabSize50_t = []
         vocabSize80_t = []
         model = simple_cnn_multiout(
             input_shape=X_train.shape[1:],
@@ -175,22 +164,17 @@ def main():
             loss_weights=[args.shape_fraction, args.color_fraction,
                           texture_fraction]
         )
-        acc_o2, v50_s, v80_s, v50_t, v80_t = evaluate_model(
+        acc_o2, v80_s, v80_t = evaluate_model(
             model, X_train, Y_train_s, Y_train_t,
-            X_test, v50_s, v80_s, v50_t, v80_t
+            X_test, v80_s, v80_t
         )
         nb_correct = int(np.round(acc_o2*args.nb_test))
         print('initial # shape selections: %0.3f' % nb_correct)
         epoch.append(0)
         o2_correct.append(nb_correct)
-        vocabSize50_s.append(len(v50_s))
         vocabSize80_s.append(len(v80_s))
-        vocabSize50_t.append(len(v50_t))
         vocabSize80_t.append(len(v80_t))
-        save_scores(
-            epoch, o2_correct, vocabSize50_s, vocabSize80_s,
-            vocabSize50_t, vocabSize80_t, save_file
-        )
+        save_scores(epoch, o2_correct, vocabSize80_s, vocabSize80_t, save_file)
         for j in range(args.nb_epochs):
             print('Epoch #%i' % (j + 1))
             model.fit(
@@ -200,20 +184,17 @@ def main():
                 batch_size=args.batch_size,
                 verbose=2
             )
-            acc_o2, v50_s, v80_s, v50_t, v80_t = evaluate_model(
+            acc_o2, v80_s, v80_t = evaluate_model(
                 model, X_train, Y_train_s, Y_train_t,
-                X_test, v50_s, v80_s, v50_t, v80_t
+                X_test, v80_s, v80_t
             )
             nb_correct = int(np.round(acc_o2*args.nb_test))
             epoch.append(j+1)
             o2_correct.append(nb_correct)
-            vocabSize50_s.append(len(v50_s))
             vocabSize80_s.append(len(v80_s))
-            vocabSize50_t.append(len(v50_t))
             vocabSize80_t.append(len(v80_t))
             save_scores(
-                epoch, o2_correct, vocabSize50_s, vocabSize80_s,
-                vocabSize50_t, vocabSize80_t, save_file
+                epoch, o2_correct, vocabSize80_s, vocabSize80_t, save_file
             )
     if args.gpu_num is not None:
         K.clear_session()
@@ -255,15 +236,15 @@ if __name__ == '__main__':
                         help='Whether to vary the data accross each model run.',
                         required=False, action='store_true')
     parser.set_defaults(nb_epochs=100)
-    parser.set_defaults(shape_fraction=1.0)
-    parser.set_defaults(color_fraction=0.0)
+    parser.set_defaults(shape_fraction=0.6)
+    parser.set_defaults(color_fraction=0.2)
     parser.set_defaults(nb_categories=15)
     parser.set_defaults(nb_exemplars=15)
-    parser.set_defaults(save_path='../results/vocab_log')
+    parser.set_defaults(save_path='../results/vocab_accel')
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=10)
-    parser.set_defaults(nb_runs=5)
-    parser.set_defaults(nb_test=100)
+    parser.set_defaults(nb_runs=20)
+    parser.set_defaults(nb_test=500)
     parser.set_defaults(varying_data=False)
     args = parser.parse_args()
     print(args)
