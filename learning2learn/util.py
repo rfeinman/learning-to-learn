@@ -106,8 +106,9 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
     # Return the percentages for each of the 3 match types
     return counts[0]/(len(X)/4.), counts[1]/(len(X)/4.), counts[2]/(len(X)/4.)
 
-def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
-                    results_path):
+def experiment_loop(
+        exectue_fn, category_trials, exemplar_trials, params, results_path
+):
     stdout = sys.stdout
     # Create results_path folder. Remove previous one if it already exists.
     if os.path.isdir(results_path):
@@ -143,8 +144,10 @@ def experiment_loop(exectue_fn, category_trials, exemplar_trials, params,
             np.save(save_file_gen, results_O2)
     print('Experiment loop complete.')
 
-def train_model(model, X_train, Y_train, epochs, validation_data,
-                batch_size, checkpoint, burn_period=20):
+def train_model(
+        model, X_train, Y_train, epochs, validation_data, batch_size,
+        checkpoint, burn_period=20
+):
     """
     A helper function for training a Keras model with a 'burn period.'
     The burn period is an initial set of epochs for which the model will
