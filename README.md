@@ -47,13 +47,18 @@ the scripts folder:
 
 where `</path/to/save/folder>` is a string containing the folder name you'd like
 to use for the results (folder should not yet exist, or it will be overwritten).
-This will default to `../results/mlp_loop_combined` if left unspecified.
+This will default to `../results/mlp_loop_combined` if left unspecified. Results
+of the 1st-order and 2nd-order generalization tests will be recorded for all 10
+trials of each dataset size.
 The parameter `ep=200` indicates that you'd like to train for 200 epochs,
 parameter `r=10` indicates that you'd like to train 10 model runs for each
 dataset size, and parameter `b=32` indicates that you'd like to use a batch
 size of 32 (although, for a training set with N samples, the batch size will be
 min(N/5, 32) to ensure that we use at least 5 batches in SGD). This model will
 be trained on CPU, as it is too small to benefit from GPU.
+
+To perform the parametric sensitivity tests with the MLP, see
+`notebooks/parametric_tests_mlp.ipynb` for a walk-through.
 
 ### Experiment 2
 
@@ -77,12 +82,17 @@ the generalization tests. These datasets each contain 1000 trials
 selecting a # of processes based on the available resources. You will see a
 significant speedup with a larger CPU count machine.
 
+To perform the parametric sensitivity tests with the CNN, see
+`notebooks/parametric_tests_cnn.ipynb` for a walkthrough.
+
 ### Experiment 3
 
 To train the 20 models of Experiment 3, run the following command using
 `vocabulary_acceleration.py` from the scripts folder:
 
-    python vocabulary_acceleration_multi.py -ep 70 -sf 0.6 -cf 0.2 -ca 60
-    -ex 10 -b 10 -r 20 -t 500 -g 1 -sp <blah>
+    python vocabulary_acceleration_multi.py -ep=70 -sf=0.6 -cf=0.2 -ca=60 -ex=10 -b=10 -r=20 -t=500 -g=0 -sp=</path/to/save/folder>
 
-TODO
+where `</path/to/save/folder>` is again a string containing the folder name
+you'd like to use for the results. For each model, the cumulative vocabulary
+size and the 2nd-order generalization test results at each epoch will be stored
+in a file called `run%i.csv` where `%i` is the index of the particular model.
