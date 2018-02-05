@@ -51,7 +51,7 @@ This will default to `../results/mlp_loop_combined` if left unspecified.
 The parameter `ep=200` indicates that you'd like to train for 200 epochs,
 parameter `r=10` indicates that you'd like to train 10 model runs for each
 dataset size, and parameter `b=32` indicates that you'd like to use a batch
-size of 32 (although, for a dataset with N samples, the batch size will be
+size of 32 (although, for a training set with N samples, the batch size will be
 min(N/5, 32) to ensure that we use at least 5 batches in SGD). This model will
 be trained on CPU, as it is too small to benefit from GPU.
 
@@ -61,7 +61,7 @@ To train the CNN of Experiment 2 on all dataset sizes, i.e. all pairs of
 {# categories, # examples}, run the following command using `cnn_loop.py` from
 the scripts folder:
 
-    python mlp_loop.py -ep=400 -r=10 -b=32 -s=</path/to/save/folder> -g=0
+    python cnn_loop.py -ep=400 -r=10 -b=32 -s=</path/to/save/folder> -g=0
 
 where `</path/to/save/folder>` is again a string containing the folder name
 you'd like to use for the results. This will default to
