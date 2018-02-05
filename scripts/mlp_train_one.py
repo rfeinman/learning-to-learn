@@ -86,7 +86,7 @@ def run_experiment(nb_categories, nb_exemplars, params, target='shape'):
         )
         # We're going to keep track of the best model throughout training,
         # monitoring the training loss
-        weights_file = '../data/mlp_combined.h5'
+        weights_file = '../data/mlp.h5'
         if os.path.isfile(weights_file):
             os.remove(weights_file)
         checkpoint = ModelCheckpoint(
