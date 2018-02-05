@@ -47,7 +47,7 @@ the scripts folder:
 
 where `</path/to/save/folder>` is a string containing the folder name you'd like
 to use for the results (folder should not yet exist, or it will be overwritten).
-This will default to `../results/mlp_loop_combined` if left unspecified. Results
+This will default to `../results/mlp_results` if left unspecified. Results
 of the 1st-order and 2nd-order generalization tests will be recorded for all 10
 trials of each dataset size.
 The parameter `ep=200` indicates that you'd like to train for 200 epochs,
@@ -73,7 +73,7 @@ the scripts folder:
 
 where `</path/to/save/folder>` is again a string containing the folder name
 you'd like to use for the results. This will default to
-`../results/cnn_loop_combined` if left unspecified. Note that we are using 400
+`../results/cnn_results` if left unspecified. Note that we are using 400
 epochs as opposed to the 200 from Experiment 1. The additional parameter `-g=0`
 indicates which GPU you would like to use for training, as this experiment will
 benefit significantly from GPU speedup. Defaults to the system default if left

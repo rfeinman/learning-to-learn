@@ -49,7 +49,7 @@ if __name__ == '__main__':
                         required=False, type=int)
     parser.set_defaults(nb_epochs=400)
     parser.set_defaults(nb_runs=10)
-    parser.set_defaults(save_path='../results/cnn_results_combined')
+    parser.set_defaults(save_path='../results/cnn_results')
     parser.set_defaults(gpu_num=None)
     parser.set_defaults(batch_size=32)
     args = parser.parse_args()
