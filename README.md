@@ -34,3 +34,25 @@ dataset is stored here.
 
 #### 5. results
 This is where experiment results will be saved to and loaded from.
+
+## Running the Experiments
+
+### Experiment 1
+
+To train the MLP of Experiment 1 on all dataset sizes, i.e. all pairs of
+{# categories, # examples}, run the following command using `mlp_loop.py` from
+the scripts folder:
+
+    python mlp_loop.py -ep=200 -r=10 -b=32 -s=</path/to/save/folder>
+
+Where `/path/to/save/folder` is a string containing the folder name you'd like
+to use for the results (folder should not yet exist, or it will be overwritten).
+The parameter `ep=200` indicates that you'd like to train for 200 epochs,
+parameter `r=10` indicates that you'd like to train 10 model runs for each
+dataset size, and parameter `b=32` indicates that you'd like to use a batch
+size of 32 (although, for a dataset with N samples, the batch size will be
+min(N/5, 32) to ensure that we use at least 5 batches in SGD).
+
+### Experiment 2
+
+TODO
