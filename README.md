@@ -57,6 +57,9 @@ size of 32 (although, for a training set with N samples, the batch size will be
 min(N/5, 32) to ensure that we use at least 5 batches in SGD). This model will
 be trained on CPU, as it is too small to benefit from GPU.
 
+Once training is complete, you can plot heatmaps & contours of the results using
+`notebooks/plot_results_experiments1and2.ipynb`.
+
 To perform the parametric sensitivity tests with the MLP, see
 `notebooks/parametric_tests_mlp.ipynb` for a walk-through.
 
@@ -81,6 +84,9 @@ the generalization tests. These datasets each contain 1000 trials
 (1000x4 = 4000 images). I have parallelized the code using multiprocessing,
 selecting a # of processes based on the available resources. You will see a
 significant speedup with a larger CPU count machine.
+
+Once training is complete, you can plot heatmaps & contours of the results using
+`notebooks/plot_results_experiments1and2.ipynb`.
 
 To perform the parametric sensitivity tests with the CNN, see
 `notebooks/parametric_tests_cnn.ipynb` for a walkthrough.
