@@ -79,4 +79,10 @@ significant speedup with a larger CPU count machine.
 
 ### Experiment 3
 
+To train the 20 models of Experiment 3, run the following command using
+`vocabulary_acceleration.py` from the scripts folder:
+
+    python vocabulary_acceleration_multi.py -ep 70 -sf 0.6 -cf 0.2 -ca 60
+    -ex 10 -b 10 -r 20 -t 500 -g 1 -sp <blah>
+
 TODO
