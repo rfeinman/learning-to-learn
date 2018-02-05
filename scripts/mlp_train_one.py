@@ -18,7 +18,7 @@ from learning2learn.util import train_test_split
 from learning2learn.util import evaluate_generalization
 
 
-def run_experiment(nb_categories, nb_exemplars, params):
+def run_experiment(nb_categories, nb_exemplars, params, target='shape'):
     assert nb_categories <= 50
     # enforce a maximum batch size to avoid doing full-batch GD
     batch_size = min(
@@ -40,7 +40,7 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # Build the training set
         print('Building the training set...')
         df_train = synthesize_data(nb_categories, nb_exemplars)
-        labels = df_train['shape'].values
+        labels = df_train[target].values
         ohe = OneHotEncoder(sparse=False)
         Y_train = ohe.fit_transform(labels.reshape(-1, 1))
         # Get the shape, color, and texture parameters for the training and
@@ -107,14 +107,16 @@ def run_experiment(nb_categories, nb_exemplars, params):
         # load the best model
         model.load_weights(weights_file)
         # Now evaluate the model on the test data
-        scores_O1[i], _, _ = evaluate_generalization(
+        score_O1 = evaluate_generalization(
             model, X_test_O1, layer_num=-3,
             batch_size=128
         )
-        scores_O2[i], _, _ = evaluate_generalization(
+        score_O2 = evaluate_generalization(
             model, X_test_O2, layer_num=-3,
             batch_size=128
         )
+        scores_O1[i] = score_O1[target]
+        scores_O2[i] = score_O2[target]
     K.clear_session()
     sess.close()
     print('\n1st-order generalization score: %0.4f' % scores_O1.mean())

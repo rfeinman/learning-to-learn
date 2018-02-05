@@ -89,7 +89,7 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
                                      batch_size=batch_size)
     # keep a count of the # times each match is selected (indexed 0,1,3)
     counts = {0:0, 1:0, 2:0}
-    for i in range(int(len(X) / 4)):
+    for i in range(int(len(X)/4)):
         scores = np.zeros(3)
         scores[0] = similarity(X_p[4*i], X_p[4*i+1]) # shape match score
         scores[1] = similarity(X_p[4*i], X_p[4*i+2]) # color match score
@@ -103,8 +103,14 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
             match = ix_best[0]
         counts[match] += 1
 
-    # Return the percentages for each of the 3 match types
-    return counts[0]/(len(X)/4.), counts[1]/(len(X)/4.), counts[2]/(len(X)/4.)
+    # Compute the percentages for each of the 3 match types
+    gen_scores = {
+        'shape': counts[0] / (len(X)/4.),
+        'color': counts[1] / (len(X)/4.),
+        'texture': counts[2] / (len(X)/4.)
+    }
+
+    return gen_scores
 
 def experiment_loop(
         exectue_fn, category_trials, exemplar_trials, params, results_path
