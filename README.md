@@ -89,7 +89,7 @@ Once training is complete, you can plot heatmaps & contours of the results using
 `notebooks/plot_results_experiments1and2.ipynb`.
 
 To perform the parametric sensitivity tests with the CNN, see
-`notebooks/parametric_tests_cnn.ipynb` for a walkthrough.
+`notebooks/parametric_tests_cnn.ipynb` for a walk-through.
 
 ### Experiment 3
 
@@ -102,3 +102,6 @@ where `</path/to/save/folder>` is again a string containing the folder name
 you'd like to use for the results. For each model, the cumulative vocabulary
 size and the 2nd-order generalization test results at each epoch will be stored
 in a file called `run%i.csv` where `%i` is the index of the particular model.
+
+Once training is complete, you can analyze the results using
+`notebooks/analyze_vocabulary_acceleration.ipynb`.
