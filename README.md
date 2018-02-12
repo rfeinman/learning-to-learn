@@ -124,6 +124,8 @@ and Experiment 3 (located in `vocab_accel/`).
 
 ## Citing this work
 
+Please use the following BibTeX entry when citing this paper:
+
 ```
 @article{Feinman2018,
   title={Learning inductive biases with simple neural networks},
