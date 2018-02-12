@@ -1,7 +1,7 @@
 # Learning Inductive Biases with Simple Neural Networks
 
 Code for the paper "Learning Inductive
-Biases with Simple Neural Networks" (Feinman & Lake 2018).
+Biases with Simple Neural Networks" (Feinman & Lake, 2018).
 
 ## Requirements & Setup
 This code repository requires Keras and TensorFlow. Keras must be
