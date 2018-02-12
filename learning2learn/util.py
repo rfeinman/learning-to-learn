@@ -112,44 +112,6 @@ def evaluate_generalization(model, X, layer_num, batch_size=32):
 
     return gen_scores
 
-def experiment_loop(
-        exectue_fn, category_trials, exemplar_trials, params, results_path
-):
-    stdout = sys.stdout
-    # Create results_path folder. Remove previous one if it already exists.
-    if os.path.isdir(results_path):
-        warnings.warn('Removing old results folder of the same name!')
-        shutil.rmtree(results_path)
-    os.mkdir(results_path)
-    np.save(os.path.join(results_path, 'category_trials.npy'),
-            np.asarray(category_trials))
-    np.save(os.path.join(results_path, 'exemplar_trials.npy'),
-            np.asarray(exemplar_trials))
-    # Loop through different values of (nb_categories, nb_exemplars)
-    results_O1 = np.zeros(
-        shape=(len(category_trials), len(exemplar_trials), params['nb_runs'])
-    )
-    results_O2 = np.zeros(
-        shape=(len(category_trials), len(exemplar_trials), params['nb_runs'])
-    )
-    for i, nb_categories in enumerate(category_trials):
-        for j, nb_exemplars in enumerate(exemplar_trials):
-            print('Testing for %i categories and %i exemplars...' %
-                  (nb_categories, nb_exemplars))
-            log_file = os.path.join(results_path,
-                                    'log_ca%0.4i_ex%0.4i' %
-                                    (nb_categories, nb_exemplars))
-            sys.stdout = open(log_file,'w')
-            results_O1[i, j], results_O2[i, j] = \
-                exectue_fn(nb_categories, nb_exemplars, params)
-            sys.stdout = stdout
-            # Save results from this run to text file
-            save_file_gen = os.path.join(results_path, 'results_O1.npy')
-            np.save(save_file_gen, results_O1)
-            save_file_gen = os.path.join(results_path, 'results_O2.npy')
-            np.save(save_file_gen, results_O2)
-    print('Experiment loop complete.')
-
 def train_model(
         model, X_train, Y_train, epochs, validation_data, batch_size,
         checkpoint, burn_period=20

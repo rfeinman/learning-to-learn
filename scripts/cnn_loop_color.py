@@ -35,6 +35,8 @@ def experiment_loop(category_trials, exemplar_trials, params, results_path):
                                     'log_ca%0.4i_ex%0.4i' %
                                     (nb_categories, nb_exemplars))
             sys.stdout = open(log_file,'w')
+            # Here we will indicate 'color' as the attribute by which labels
+            # should be assigned
             results_O1[i, j], results_O2[i, j] = \
                 run_experiment(nb_categories, nb_exemplars, params, 'color')
             sys.stdout = stdout
