@@ -8,9 +8,7 @@ import numpy as np
 
 from mlp_train_one import run_experiment
 
-def experiment_loop(
-        category_trials, exemplar_trials, params, results_path
-):
+def experiment_loop(category_trials, exemplar_trials, params, results_path):
     stdout = sys.stdout
     # Create results_path folder. Remove previous one if it already exists.
     if os.path.isdir(results_path):
