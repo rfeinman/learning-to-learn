@@ -58,10 +58,10 @@ min(N/5, 32) to ensure that we use at least 5 batches in SGD). This model will
 be trained on CPU, as it is too small to benefit from GPU.
 
 Once training is complete, you can plot heatmaps & contours of the results using
-`notebooks/plot_results_experiments1and2.ipynb`.
+the notebook `plot_results_experiments1and2.ipynb`.
 
 To perform the parametric sensitivity tests with the MLP, see
-`notebooks/parametric_tests_mlp.ipynb` for a walk-through.
+the notebook `parametric_tests_mlp.ipynb` for a walk-through.
 
 ### Experiment 2
 
@@ -86,10 +86,18 @@ selecting a # of processes based on the available resources. You will see a
 significant speedup with a larger CPU count machine.
 
 Once training is complete, you can plot heatmaps & contours of the results using
-`notebooks/plot_results_experiments1and2.ipynb`.
+the notebook `plot_results_experiments1and2.ipynb`.
 
-To perform the parametric sensitivity tests with the CNN, see
-`notebooks/parametric_tests_cnn.ipynb` for a walk-through.
+To perform the parametric sensitivity tests with the CNN, see the
+notebook `parametric_tests_cnn.ipynb` for a walk-through.
+
+**arXiv:** There are 2 additional experiments in the arXiv version of the
+paper under section "Experiment 2." First, we repeated the cnn_loop above, but
+this time training the CNN to label objects according to their color name.
+To run this experiment, follow the same steps from above but use the script
+`cnn_loop_color.py`. Secondly, we visualized the filters of a shape-trained and
+a color-trained CNN. This can be reproduced using the notebook
+`notebooks/visualize_cnn_filters.ipynb`
 
 ### Experiment 3
 
@@ -103,5 +111,5 @@ you'd like to use for the results. For each model, the cumulative vocabulary
 size and the 2nd-order generalization test results at each epoch will be stored
 in a file called `run%i.csv` where `%i` is the index of the particular model.
 
-Once training is complete, you can analyze the results using
-`notebooks/analyze_vocabulary_acceleration.ipynb`.
+Once training is complete, you can analyze the results using the notebook
+`analyze_vocabulary_acceleration.ipynb`.
