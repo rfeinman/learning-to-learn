@@ -1,8 +1,4 @@
 from __future__ import division
-import os
-import sys
-import shutil
-import warnings
 import numpy as np
 from scipy.spatial.distance import cosine
 import keras.backend as K
