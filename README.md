@@ -119,8 +119,8 @@ Once training is complete, you can analyze the results using the notebook
 You are welcome to re-run all experiments using the instructions above. However,
 for time efficiency you can also inspect our results from these experiments, which are included
 in the `results/` subfolder. Here you will find the results of Experiment 1
-(located in `mlp_results/`), Experiment 2 (located in `cnn_results/` and, for additional arXiv paper experiment, `cnn_results_color`),
-and Experiment 3 (located in `vocab_accel`).
+(located in `mlp_results/`), Experiment 2 (located in `cnn_results/` and, for additional arXiv paper experiment, `cnn_results_color/`),
+and Experiment 3 (located in `vocab_accel/`).
 
 ## Citing this work
 
