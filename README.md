@@ -113,3 +113,24 @@ in a file called `run%i.csv` where `%i` is the index of the particular model.
 
 Once training is complete, you can analyze the results using the notebook
 `analyze_vocabulary_acceleration.ipynb`.
+
+## Results
+
+You are welcome to re-run all experiments using the instructions above. However,
+for time efficiency you can also inspect our results from these experiments, which are included
+in the `results/` subfolder. Here you will find the results of Experiment 1
+(`mlp_results/`), Experiment 2 (`cnn_results/` and, for arXiv paper, `cnn_results_color`),
+and Experiment 3 (`vocab_accel`).
+
+## Citing this work
+
+If you conduct research that is inspired by this work, please cite our paper:
+
+```
+@article{Feinman2018,
+  title={Learning inductive biases with simple neural networks},
+  author={Reuben Feinman and Brenden M. Lake},
+  journal={arXiv preprint arXiv:1802.02745},
+  year={2018}
+}
+```
