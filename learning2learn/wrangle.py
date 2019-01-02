@@ -7,6 +7,7 @@ import multiprocessing as mp
 import pandas as pd
 import numpy as np
 
+from learning2learn import tex
 from learning2learn.util import train_test_split
 from learning2learn.images import (generate_image, generate_image_wrapper,
                                    generate_colors, generate_random_shape,
@@ -252,7 +253,7 @@ def get_train_test_parameters(images=True, img_size=200, nb_bits=20):
         color_set = color_set[ix]
         # get the set of textures
         texture_set = sorted(
-            [file for file in os.listdir('../data/textures') if
+            [file for file in os.listdir(os.path.dirname(tex.__file__)) if
              file.endswith('tiff')]
         )
     else:

@@ -1,10 +1,12 @@
 from __future__ import division
-
+import os
 import random
 import numpy as np
 import functools
 from keras.preprocessing import image
 import matplotlib.path as mplpath
+
+from learning2learn import tex
 
 
 def rearrange_points(points):
@@ -158,7 +160,7 @@ def generate_image(shape, color, texture, target_size=(200, 200),
     img_color = np.ones(shape=target_size + (3,), dtype=np.float32) * color
     # Generate the base texture
     img_texture = image.load_img(
-        '../data/textures/%s' % texture,
+        os.path.join(os.path.dirname(tex.__file__), texture),
         target_size=target_size,
         interpolation='bicubic'
     )
