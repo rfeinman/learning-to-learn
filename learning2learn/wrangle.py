@@ -7,11 +7,10 @@ import multiprocessing as mp
 import pandas as pd
 import numpy as np
 
-from learning2learn import tex
-from learning2learn.util import train_test_split
-from learning2learn.images import (generate_image, generate_image_wrapper,
-                                   generate_colors, generate_random_shape,
-                                   compute_area)
+from . import tex
+from .util import train_test_split
+from .images import (generate_image, generate_image_wrapper, generate_colors,
+                     generate_random_shape, compute_area)
 
 # -----------------------------------------------------------------------
 # General data wrangling

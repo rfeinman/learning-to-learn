@@ -6,7 +6,7 @@ import functools
 from keras.preprocessing import image
 import matplotlib.path as mplpath
 
-from learning2learn import tex
+from . import tex
 
 
 def rearrange_points(points):
