@@ -3,6 +3,9 @@
 Code for the paper "Learning Inductive
 Biases with Simple Neural Networks" (Feinman & Lake, 2018).
 
+paper: <https://arxiv.org/pdf/1802.02745.pdf>  
+poster: <http://www.cns.nyu.edu/~reuben/files/Poster-CogSci18.pdf>
+
 ## Requirements & Setup
 This code repository requires Keras and TensorFlow. Keras must be
 configured to use TensorFlow backend. A full list of requirements can be found
